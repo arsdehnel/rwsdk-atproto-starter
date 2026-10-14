@@ -22,6 +22,7 @@
     "types": "tsc"
   },
   "dependencies": {
+    "@atproto/oauth-client-node": "^0.5.9",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "react-server-dom-webpack": "19.2.8",
