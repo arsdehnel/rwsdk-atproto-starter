@@ -32,6 +32,10 @@ export async function getOAuthClient(): Promise<NodeOAuthClient> {
       redirect_uris: ["http://127.0.0.1:5173/oauth/callback"],
     }),
 
+    // stateStore and sessionStore are in-memory for now. This means OAuth
+    // tokens are lost on Worker restart and aren't shared across isolates.
+    // Post 4 (authenticated writes) will need a durable store here, keyed
+    // by DID — separate from the DO session which is keyed by session ID.
     stateStore: {
       async get(key) {
         return globalAuth.stateStore.get(key);
