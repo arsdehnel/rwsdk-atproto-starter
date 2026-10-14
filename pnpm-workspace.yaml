@@ -2,6 +2,7 @@
 # also installed standalone (tarball E2E envs, create-rwsdk output), so they
 # carry their own build-script approvals.
 allowBuilds:
+  core-js: true
   esbuild: true
   sharp: true
   workerd: true
