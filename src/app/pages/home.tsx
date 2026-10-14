@@ -1,4 +1,14 @@
-export function Home() {
+import type { RequestInfo } from "rwsdk/worker";
+
+import { BlueskyFeed } from "@/components/bluesky-feed/bluesky-feed";
+
+const ENDPOINT =
+  "https://bsky.social/xrpc/com.atproto.repo.listRecords?repo=bsky.app&collection=app.bsky.feed.post&limit=3";
+
+export async function Home(_: RequestInfo) {
+  const response = await fetch(ENDPOINT);
+  const records = await response.json();
+
   return (
     <div className="container">
       <header className="header">
@@ -22,14 +32,18 @@ export function Home() {
 
       <main>
         <section className="section">
-          <h2 className="sectionTitle">What you'll build</h2>
+          <h2 className="sectionTitle">Live from the AT Protocol</h2>
+          <BlueskyFeed endpoint={ENDPOINT} records={records} />
+        </section>
+
+        <section className="section">
+          <h2 className="sectionTitle">What you're building</h2>
           <p className="prose">
-            This starter is the companion code for a{" "}
+            You're on Post 1 of a{" "}
             <a href="https://arsdehnel.com/posts" target="_blank" rel="noreferrer" className="link">
               blog series
             </a>{" "}
-            that walks through building a real AT Protocol app — step by step, from reading your first public record to
-            running a full social feed with your own AppView.
+            that builds a real AT Protocol app from scratch — one step at a time. By the end the series covers:
           </p>
           <ul className="featureList">
             <li>
@@ -80,7 +94,7 @@ export function Home() {
         <section className="section">
           <h2 className="sectionTitle">The series</h2>
           <ol className="seriesList">
-            <li>Your First AT Protocol Read</li>
+            <li><strong>Your First AT Protocol Read</strong> — you are here</li>
             <li>AT Protocol OAuth with rwsdk and Cloudflare Workers</li>
             <li>Local Development with Docker Compose</li>
             <li>Lexicons and Writing to Your PDS</li>
@@ -90,31 +104,35 @@ export function Home() {
             <li>Where to Go From Here</li>
           </ol>
           <p className="prose">
-            Each post has a corresponding branch in this repo. By the end you'll have built a small{" "}
-            <a href="https://atproto.com/guides/overview" target="_blank" rel="noreferrer" className="link">
-              AppView
-            </a>{" "}
-            — an app that indexes AT Protocol records from other users and serves its own view of the data. Check out{" "}
-            <code className="inlineCode">post/01-first-read</code> to see where Post 1 left off, and so on.
+            Each post has a corresponding branch in this repo. Check out{" "}
+            <code className="inlineCode">post/02-oauth</code> to keep going, or read the full series at{" "}
+            <a href="https://arsdehnel.com/posts" target="_blank" rel="noreferrer" className="link">
+              arsdehnel.com/posts
+            </a>
+            .
           </p>
         </section>
 
         <section className="section">
-          <h2 className="sectionTitle">Getting started</h2>
+          <h2 className="sectionTitle">Run it yourself</h2>
           <div className="codeBlock">
             <span className="codePrompt">$</span>
             <code>git clone https://github.com/arsdehnel/rwsdk-atproto-starter</code>
           </div>
           <div className="codeBlock">
             <span className="codePrompt">$</span>
+            <code>git checkout post/01-first-read</code>
+          </div>
+          <div className="codeBlock">
+            <span className="codePrompt">$</span>
             <code>pnpm install && pnpm dev</code>
           </div>
           <p className="prose">
-            Then open{" "}
+            Open{" "}
             <a href="http://localhost:5173" className="link">
               localhost:5173
             </a>{" "}
-            — you're looking at it.
+            — the feed above is fetched live from <code className="inlineCode">bsky.social</code> on every request.
           </p>
         </section>
       </main>
