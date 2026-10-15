@@ -9,6 +9,8 @@ import { get as oauthCallback } from "@/app/api/oauth-callback";
 import { post as oauthLogout } from "@/app/api/oauth-logout";
 import { get as oauthClientMetadata } from "@/app/api/oauth-client-metadata";
 import { post as setStatus } from "@/app/api/status";
+import { post as tapWebhook } from "@/app/api/webhooks-tap";
+import { get as statusesSse } from "@/app/api/statuses-sse";
 import { sessionStore } from "@/lib/auth/session-store";
 
 export { UserSession } from "@/sessions/UserSession";
@@ -27,5 +29,7 @@ export default defineApp([
   route("/oauth/logout", { post: oauthLogout }),
   route("/client-metadata.json", { get: oauthClientMetadata }),
   route("/status", { post: setStatus }),
+  route("/webhooks/tap", { post: tapWebhook }),
+  route("/api/statuses/sse", { get: statusesSse }),
   render(Document, [route("/", Home)]),
 ]);
