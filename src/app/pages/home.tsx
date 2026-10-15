@@ -1,3 +1,4 @@
+import { env } from "cloudflare:workers";
 import type { RequestInfo } from "rwsdk/worker";
 import type { AppContext } from "@/worker";
 
@@ -6,22 +7,20 @@ import { LoginForm } from "@/components/login-form/login-form";
 
 export async function Home({ ctx }: RequestInfo<AppContext>) {
   const did = ctx.session?.did ?? null;
+  const { ATPROTO_PDS_URL: pdsUrl } = env;
 
-  let userRecords = null;
   let userHandle: string | null = null;
+  let repoDescription: unknown = null;
+  let repoDescriptionEndpoint: string | null = null;
 
   if (did) {
-    const [recordsRes, handleRes] = await Promise.all([
-      fetch(
-        `https://bsky.social/xrpc/com.atproto.repo.listRecords?repo=${did}&collection=app.bsky.feed.post&limit=5`
-      ),
-      fetch(
-        `https://bsky.social/xrpc/com.atproto.repo.describeRepo?repo=${did}`
-      ),
-    ]);
-    userRecords = await recordsRes.json();
-    const handleData = (await handleRes.json()) as { handle?: string };
-    userHandle = handleData.handle ?? null;
+    // Fetch from the local PDS. describeRepo returns the DID document
+    // (including serviceEndpoint) which proves the local stack works end-to-end.
+    repoDescriptionEndpoint = `${pdsUrl}/xrpc/com.atproto.repo.describeRepo?repo=${did}`;
+    const res = await fetch(repoDescriptionEndpoint);
+    const data = (await res.json()) as { handle?: string };
+    repoDescription = data;
+    userHandle = data.handle ?? null;
   }
 
   return (
@@ -63,20 +62,24 @@ export async function Home({ ctx }: RequestInfo<AppContext>) {
             </section>
 
             <section className="section">
-              <h2 className="sectionTitle">Your recent posts</h2>
+              <h2 className="sectionTitle">Your local PDS</h2>
+              <p className="prose">
+                Fetched live from your local PDS. The <code className="inlineCode">serviceEndpoint</code> in
+                the DID document confirms you're talking to the devnet, not production.
+              </p>
               <BlueskyFeed
-                endpoint={`https://bsky.social/xrpc/com.atproto.repo.listRecords?repo=${did}&collection=app.bsky.feed.post&limit=5`}
-                records={userRecords}
+                endpoint={repoDescriptionEndpoint ?? ""}
+                records={repoDescription}
               />
             </section>
           </>
         ) : (
           <>
             <section className="section">
-              <h2 className="sectionTitle">Sign in with Bluesky</h2>
+              <h2 className="sectionTitle">Sign in with AT Protocol</h2>
               <p className="prose">
-                Enter your Bluesky handle to authenticate via AT Protocol OAuth.
-                You'll be redirected to Bluesky to approve access, then back here.
+                Enter your handle to authenticate via AT Protocol OAuth.
+                You'll be redirected to your PDS to approve access, then back here.
               </p>
               <LoginForm />
             </section>
@@ -149,8 +152,8 @@ export async function Home({ ctx }: RequestInfo<AppContext>) {
           <h2 className="sectionTitle">The series</h2>
           <ol className="seriesList">
             <li><a href="https://arsdehnel.com/posts/rwsdk-atproto-01-first-read" target="_blank" rel="noreferrer" className="link">Your First AT Protocol Read</a></li>
-            <li><strong>AT Protocol OAuth with rwsdk and Cloudflare Workers</strong> — you are here</li>
-            <li>Local Development with Docker Compose</li>
+            <li>AT Protocol OAuth with rwsdk and Cloudflare Workers</li>
+            <li><strong>Local Development with Docker Compose</strong> — you are here</li>
             <li>Lexicons and Writing to Your PDS</li>
             <li>Reacting to Changes with Tap and Jetstream</li>
             <li>Persistence with D1 and Drizzle</li>
@@ -159,7 +162,7 @@ export async function Home({ ctx }: RequestInfo<AppContext>) {
           </ol>
           <p className="prose">
             Each post has a corresponding branch in this repo. Check out{" "}
-            <code className="inlineCode">post/03-devnet</code> to keep going, or read the full series at{" "}
+            <code className="inlineCode">post/04-lexicons</code> to keep going, or read the full series at{" "}
             <a href="https://arsdehnel.com/posts" target="_blank" rel="noreferrer" className="link">
               arsdehnel.com/posts
             </a>
@@ -175,22 +178,21 @@ export async function Home({ ctx }: RequestInfo<AppContext>) {
           </div>
           <div className="codeBlock">
             <span className="codePrompt">$</span>
-            <code>git checkout post/02-oauth</code>
+            <code>git checkout post/03-devnet</code>
           </div>
           <div className="codeBlock">
             <span className="codePrompt">$</span>
-            <code>pnpm install && pnpm dev</code>
+            <code>pnpm install && pnpm docker:up && pnpm dev</code>
           </div>
           <p className="prose">
+            Log in with <code className="inlineCode">alice.devnet.test</code> / <code className="inlineCode">alice-devnet-pass</code>.
             Open{" "}
             <a href="http://127.0.0.1:5173" className="link">
               127.0.0.1:5173
             </a>
             , not <code className="inlineCode">localhost:5173</code>. The OAuth
             redirect URI is registered as <code className="inlineCode">http://127.0.0.1:5173/oauth/callback</code> —
-            after Bluesky approves access it sends the browser back to that exact
-            address. If you have the app open at <code className="inlineCode">localhost</code> the
-            callback lands on a different origin and the session won't be established.
+            after the PDS approves access it sends the browser back to that exact address.
           </p>
         </section>
       </main>
