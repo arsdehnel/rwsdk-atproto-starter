@@ -40,5 +40,11 @@
     // Add your environment variables here.
     // AUTH_SECRET_KEY is auto-generated in dev. Set it as a secret for production:
     //   wrangler secret put AUTH_SECRET_KEY
+
+    // Local AT Protocol devnet. These point at the Docker Compose services
+    // defined in docker-compose.yml. Clear them (or override via .dev.vars)
+    // when deploying to production.
+    "ATPROTO_PDS_URL": "http://localhost:3000",
+    "ATPROTO_PLC_URL": "http://localhost:2582"
   }
 }

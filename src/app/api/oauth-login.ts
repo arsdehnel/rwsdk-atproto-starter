@@ -9,6 +9,16 @@ export async function post({ request }: RequestInfo) {
   }
 
   const client = await getOAuthClient();
-  const authUrl = await client.authorize(handle, { scope: SCOPE });
-  return Response.json({ redirectUrl: authUrl.toString() });
+
+  try {
+    const authUrl = await client.authorize(handle, { scope: SCOPE });
+    return Response.json({ redirectUrl: authUrl.toString() });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error(`[oauth-login] authorize failed for "${handle}": ${message}`);
+    return Response.json(
+      { error: "Handle not found. Make sure you're using a handle on this PDS." },
+      { status: 400 }
+    );
+  }
 }

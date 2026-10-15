@@ -33,6 +33,7 @@ Each branch represents the state of the code at the end of that post. `main` is 
 - [Node.js](https://nodejs.org) 26.x
 - [pnpm](https://pnpm.io)
 - A [Cloudflare account](https://dash.cloudflare.com/sign-up) (free tier is fine for development)
+- [Docker](https://docs.docker.com/get-docker) (Post 3 and later — for running a local PDS)
 
 ## Getting started
 
@@ -45,9 +46,35 @@ pnpm dev
 
 Point your browser to the URL shown in the terminal (typically `http://localhost:5173`).
 
+### Running with a local devnet (Post 3+)
+
+Posts 3 and later use a local AT Protocol PDS and PLC running in Docker rather than hitting production Bluesky infrastructure.
+
+```sh
+pnpm docker:up
+pnpm dev
+```
+
+`docker:up` starts postgres, plc, pds, maildev, and a one-shot init container that creates two test accounts. Once the worker is running, log in with `alice.devnet.test` / `alice-devnet-pass` or `bob.devnet.test` / `bob-devnet-pass`.
+
+To watch the init container seed the accounts:
+
+```sh
+docker compose logs -f init
+```
+
+**Stopping the devnet**
+
+```sh
+pnpm docker:down
+```
+
+> **Note:** `docker:down` uses `-v`, which removes the PDS data volume. Test accounts are recreated automatically on the next `pnpm docker:up`.
+
 ## Further reading
 
 - [RedwoodSDK docs](https://docs.rwsdk.com/)
 - [AT Protocol docs](https://atproto.com/docs)
 - [Cloudflare Workers docs](https://developers.cloudflare.com/workers)
 - [Statusphere tutorial](https://atproto.com/guides/statusphere-tutorial) — the AT Protocol tutorial this series builds on
+- [OpenMeet-Team docker compose setup](https://github.com/OpenMeet-Team/atproto-devnet) - the docker-compose for AT Proto this series also used as inspiration

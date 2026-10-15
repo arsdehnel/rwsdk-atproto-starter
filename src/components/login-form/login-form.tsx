@@ -35,7 +35,7 @@ export function LoginForm() {
           type="text"
           value={handle}
           onChange={(e) => setHandle(e.target.value)}
-          placeholder="your.bsky.social"
+          placeholder="your.handle.test"
           disabled={loading}
           className={styles.input}
           aria-label="Bluesky handle"
@@ -45,7 +45,7 @@ export function LoginForm() {
           disabled={loading || !handle.trim()}
           className={styles.button}
         >
-          {loading ? "Redirecting…" : "Sign in with Bluesky"}
+          {loading ? "Redirecting…" : "Sign in with AT Protocol"}
         </button>
       </div>
       {error && <p className={styles.error}>{error}</p>}

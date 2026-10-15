@@ -20,6 +20,11 @@ function patchAtprotoRedirectError(): Plugin {
 }
 
 export default defineConfig({
+  server: {
+    // Bind to 127.0.0.1 so the OAuth redirect URI (http://127.0.0.1:5173/oauth/callback)
+    // matches the address the dev server is actually listening on.
+    host: "127.0.0.1",
+  },
   plugins: [
     patchAtprotoRedirectError(),
     cloudflare({
