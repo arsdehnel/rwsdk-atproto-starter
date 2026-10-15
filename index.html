@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>rwsdk + AT Protocol Starter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,600;1,400&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-cream: #f4eedf;
+      --color-orange: #f47238;
+      --color-orange-light: #ffad48;
+      --font-playfair: "Playfair Display", serif;
+      --font-noto: "Noto Sans", sans-serif;
+      --text-color: #1a1a1a;
+      --code-bg: #1b1b1b;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      background-color: var(--color-cream);
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 5rem 2rem;
+      font-family: var(--font-noto);
+      color: var(--text-color);
+      min-height: 100vh;
+    }
+
+    h1 {
+      font-family: var(--font-playfair);
+      font-size: 4rem;
+      font-weight: bold;
+      line-height: 0.9;
+      margin: 0 0 0.75rem;
+    }
+
+    h2 {
+      font-family: var(--font-playfair);
+      font-size: 2rem;
+      font-weight: bold;
+      margin: 3.5rem 0 0.75rem;
+    }
+
+    h3 {
+      font-family: var(--font-playfair);
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin: 2rem 0 0.5rem;
+    }
+
+    p {
+      font-size: 1.125rem;
+      line-height: 1.7;
+      margin: 0.5rem 0 1rem;
+    }
+
+    a {
+      color: var(--color-orange);
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    a:hover {
+      color: var(--color-orange-light);
+    }
+
+    ul, ol {
+      padding-left: 1.5rem;
+      font-size: 1.125rem;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    li {
+      margin-bottom: 0.4rem;
+    }
+
+    code {
+      background-color: rgba(0, 0, 0, 0.08);
+      padding: 0.1em 0.35em;
+      border-radius: 3px;
+      font-family: monospace;
+      font-size: 0.9em;
+    }
+
+    pre {
+      background-color: var(--code-bg);
+      color: var(--color-orange-light);
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      font-family: monospace;
+      font-size: 1rem;
+      overflow-x: auto;
+      margin-bottom: 1rem;
+    }
+
+    pre code {
+      background: none;
+      padding: 0;
+      border-radius: 0;
+      font-size: inherit;
+      color: inherit;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>rwsdk + AT Protocol Starter</h1>
+<p>A starter kit for building <a href="https://atproto.com">AT Protocol</a> applications on <a href="https://rwsdk.dev">RedwoodSDK</a> and <a href="https://developers.cloudflare.com/workers">Cloudflare Workers</a>.</p>
+<p>This is the companion code for a blog series that walks through building a real AT Protocol app from scratch.</p>
+<h2>The series</h2>
+<p>Each branch is the complete, working state of the code at the end of that post.</p>
+<ol>
+<li><a href="#">Your First AT Protocol Read</a> — <a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/01-first-read"><code>post/01-first-read</code></a></li>
+<li><a href="#">AT Protocol OAuth with rwsdk</a> — <a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/02-oauth"><code>post/02-oauth</code></a></li>
+<li><a href="#">Local Development with Docker Compose</a> — <a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/03-devnet"><code>post/03-devnet</code></a></li>
+<li><a href="#">Lexicons and Writing to Your PDS</a> — <a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/04-lexicons"><code>post/04-lexicons</code></a></li>
+<li><a href="#">Reacting to Changes with Tap and Jetstream</a> — <a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/05-tap-sync"><code>post/05-tap-sync</code></a></li>
+<li><a href="#">Persistence with D1 and Drizzle</a> — <a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/06-d1-persistence"><code>post/06-d1-persistence</code></a></li>
+<li><a href="#">Building a Feed — You&#39;re an AppView Now</a> — <a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/07-appview"><code>post/07-appview</code></a></li>
+<li><a href="#">Where to Go From Here</a> — <a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/08-next-steps"><code>post/08-next-steps</code></a></li>
+</ol>
+<h2>What you&#39;ll end up with</h2>
+<ul>
+<li><a href="https://rwsdk.dev">rwsdk</a> app running on <a href="https://developers.cloudflare.com/workers">Cloudflare Workers</a> + <a href="https://vite.dev">Vite</a></li>
+<li>AT Protocol OAuth login against real <a href="https://bsky.app">Bluesky</a> accounts or a local devnet</li>
+<li>Typed record reads and writes via a <a href="https://atproto.com/specs/lexicon">lexicon</a> client</li>
+<li>Webhook-driven updates via <a href="https://www.npmjs.com/package/@atproto/tap">Tap</a> — no polling</li>
+<li>Data persistence with <a href="https://developers.cloudflare.com/d1">Cloudflare D1</a> and <a href="https://orm.drizzle.team">Drizzle ORM</a></li>
+<li>Full local devnet via <a href="https://docs.docker.com/compose">Docker Compose</a></li>
+</ul>
+<h2>Get started</h2>
+<pre><code class="language-sh">git clone https://github.com/arsdehnel/rwsdk-atproto-starter
+cd rwsdk-atproto-starter
+pnpm install
+pnpm dev
+</code></pre>
+
+  </div>
+</body>
+</html>

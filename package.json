@@ -1,0 +1,10 @@
+{
+  "name": "rwsdk-atproto-starter-site",
+  "private": true,
+  "scripts": {
+    "build": "node build.js"
+  },
+  "dependencies": {
+    "marked": "^13.0.0"
+  }
+}
