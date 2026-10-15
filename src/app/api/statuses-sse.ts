@@ -1,7 +1,12 @@
-import { sseClients, statusStore } from "@/lib/status-store";
+import { db } from "@/db/db";
+import { statuses } from "@/db/schema";
+import { sseClients } from "@/lib/status-store";
 
-export function get(): Response {
+export async function get(): Promise<Response> {
   const encoder = new TextEncoder();
+  // Fetch current state before opening the stream so the client gets an
+  // immediate snapshot without needing to wait for the next webhook.
+  const initialStatuses = await db.select().from(statuses);
 
   let ctrl: ReadableStreamDefaultController<Uint8Array>;
 
@@ -10,10 +15,8 @@ export function get(): Response {
       ctrl = controller;
       sseClients.add(ctrl);
 
-      // Send current state immediately so the client has something to render.
-      const all = Array.from(statusStore.values());
       ctrl.enqueue(
-        encoder.encode(`event: statuses\ndata: ${JSON.stringify(all)}\n\n`),
+        encoder.encode(`event: statuses\ndata: ${JSON.stringify(initialStatuses)}\n\n`),
       );
     },
     cancel() {

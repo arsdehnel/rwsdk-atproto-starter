@@ -11,6 +11,9 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite dev",
+    "migrate:new": "drizzle-kit generate",
+    "migrate:dev": "wrangler d1 migrations apply DB --local",
+    "migrate:prod": "wrangler d1 migrations apply DB --remote",
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down -v",
     "dev:init": "pnpm lex:install && pnpm lex:generate && rw-scripts dev-init",
@@ -29,6 +32,7 @@
     "@atproto/lex": "^0.3.14",
     "@atproto/oauth-client-node": "^0.5.9",
     "@atproto/tap": "^0.4.12",
+    "drizzle-orm": "^0.44.2",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "react-server-dom-webpack": "19.2.8",
@@ -40,6 +44,7 @@
     "@types/node": "~26.1.2",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.4",
+    "drizzle-kit": "^0.31.1",
     "typescript": "7.0.2",
     "vite": "~8.2.0",
     "wrangler": "4.118.0"
