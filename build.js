@@ -1,7 +1,7 @@
-const { marked } = require('marked');
-const fs = require('fs');
+const { marked } = require("marked");
+const fs = require("fs");
 
-const content = fs.readFileSync('index.md', 'utf-8');
+const content = fs.readFileSync("index.md", "utf-8");
 const body = marked(content);
 
 const html = `<!DOCTYPE html>
@@ -33,7 +33,7 @@ const html = `<!DOCTYPE html>
     }
 
     .container {
-      max-width: 860px;
+      max-width: 1200px;
       margin: 0 auto;
       padding: 5rem 2rem;
       font-family: var(--font-noto);
@@ -121,6 +121,7 @@ const html = `<!DOCTYPE html>
       padding: 0.5rem;
       border: 1px solid #999;
       border-width: 0 1px 1px 0;
+      font-size: 0.9rem;
     }
 
     table th {
@@ -148,5 +149,5 @@ const html = `<!DOCTYPE html>
 </body>
 </html>`;
 
-fs.writeFileSync('index.html', html);
-console.log('Built index.html');
+fs.writeFileSync("index.html", html);
+console.log("Built index.html");
