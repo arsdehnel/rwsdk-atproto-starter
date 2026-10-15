@@ -74,42 +74,36 @@ export async function Home({ ctx }: RequestInfo<AppContext>) {
                 then Tap picks it up from the firehose and delivers it to the
                 feed below — no PDS read required.
               </p>
-              <p className="prose">
-                Once you've picked one, try restarting the worker (<code className="inlineCode">pnpm dev</code>) and
-                refreshing the page. Your status survives — that's D1.
-              </p>
               <StatusPicker currentStatus={currentStatus} />
             </section>
 
-            <section className="section">
-              <h2 className="sectionTitle">Live from Tap</h2>
-              <p className="prose">
-                Each webhook write now goes to D1 instead of an in-memory Map.
-                On page load the worker reads from D1, so the feed is accurate
-                even after a restart — not just until the next deploy.
-              </p>
-              <StatusFeed initialStatuses={await db.select().from(statuses)} />
-            </section>
           </>
         ) : (
-          <>
-            <section className="section">
-              <h2 className="sectionTitle">Sign in with AT Protocol</h2>
-              <p className="prose">
-                Enter your handle to authenticate via AT Protocol OAuth.
-                You'll be redirected to your PDS to approve access, then back here.
-              </p>
-              <LoginForm />
-            </section>
-
-            <section className="section">
-              <h2 className="sectionTitle">Live from the AT Protocol</h2>
-              <p className="prose">
-                Sign in above to see your recent posts pulled live from your PDS.
-              </p>
-            </section>
-          </>
+          <section className="section">
+            <h2 className="sectionTitle">Sign in with AT Protocol</h2>
+            <p className="prose">
+              Enter your handle to authenticate via AT Protocol OAuth.
+              You'll be redirected to your PDS to approve access, then back here.
+            </p>
+            <LoginForm />
+          </section>
         )}
+
+        <section className="section">
+          <h2 className="sectionTitle">Status board</h2>
+          <p className="prose">
+            This feed is public — no login required. It shows every indexed status,
+            one row per user, sourced from D1. Tap delivers a webhook for each
+            record write; the worker upserts into D1; this page reads from D1.
+          </p>
+          <p className="prose">
+            That's the AppView pattern: subscribe to the firehose, index what you
+            care about, serve your own query interface. Bluesky's{" "}
+            <a href="https://bsky.app" target="_blank" rel="noreferrer" className="link">app.bsky.app</a>{" "}
+            does exactly this at scale — you just built a tiny version of it.
+          </p>
+          <StatusFeed initialStatuses={await db.select().from(statuses)} />
+        </section>
 
         <section className="section">
           <h2 className="sectionTitle">What you're building</h2>
@@ -174,8 +168,8 @@ export async function Home({ ctx }: RequestInfo<AppContext>) {
             <li>Local Development with Docker Compose</li>
             <li>Lexicons and Writing to Your PDS</li>
             <li>Reacting to Changes with Tap</li>
-            <li><strong>Persistence with D1 and Drizzle</strong> — you are here</li>
-            <li>Building a Feed — You're an AppView Now</li>
+            <li>Persistence with D1 and Drizzle</li>
+            <li><strong>Building a Feed — You're an AppView Now</strong> — you are here</li>
             <li>Where to Go From Here</li>
           </ol>
           <p className="prose">
@@ -196,22 +190,38 @@ export async function Home({ ctx }: RequestInfo<AppContext>) {
           </div>
           <div className="codeBlock">
             <span className="codePrompt">$</span>
-            <code>git checkout post/06-d1-drizzle</code>
+            <code>git checkout post/07-appview</code>
           </div>
           <div className="codeBlock">
             <span className="codePrompt">$</span>
             <code>pnpm install && pnpm docker:up && pnpm migrate:dev && pnpm dev</code>
           </div>
           <p className="prose">
-            Log in with <code className="inlineCode">alice.devnet.test</code> / <code className="inlineCode">alice-devnet-pass</code>.
             Open{" "}
             <a href="http://127.0.0.1:5173" className="link">
               127.0.0.1:5173
             </a>
             , not <code className="inlineCode">localhost:5173</code>. The OAuth
-            redirect URI is registered as <code className="inlineCode">http://127.0.0.1:5173/oauth/callback</code> —
-            after the PDS approves access it sends the browser back to that exact address.
+            redirect URI is registered as <code className="inlineCode">http://127.0.0.1:5173/oauth/callback</code>.
           </p>
+          <p className="prose">
+            To see the multi-user feed in action: sign in as{" "}
+            <code className="inlineCode">alice.devnet.test</code> / <code className="inlineCode">alice-devnet-pass</code>{" "}
+            in a normal window and set a status. Open an incognito window, sign in as{" "}
+            <code className="inlineCode">bob.devnet.test</code> / <code className="inlineCode">bob-devnet-pass</code>,
+            and set a different status. Then open a third window (no login) — both statuses
+            appear in the status board below.
+          </p>
+          <p className="prose">
+            If you see duplicate rows for the same user, the devnet was likely
+            restarted and recreated the account with a new DID. This only happens
+            in the local Docker devnet — real AT Protocol DIDs are permanent. Clear
+            the local database and re-run migrations:
+          </p>
+          <div className="codeBlock">
+            <span className="codePrompt">$</span>
+            <code>rm -rf .wrangler/state/v3/d1 && pnpm migrate:dev</code>
+          </div>
         </section>
       </main>
     </div>

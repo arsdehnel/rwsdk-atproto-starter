@@ -14,9 +14,9 @@ Each branch represents the state of the code at the end of that post. `main` is 
 | 2 | AT Protocol OAuth with rwsdk and Cloudflare Workers | `post/02-oauth` |
 | 3 | Local Development with Docker Compose | `post/03-devnet` |
 | 4 | Lexicons and Writing to Your PDS | `post/04-lexicons` |
-| 5 | Reacting to Changes with Tap and Jetstream | `post/05-tap-jetstream` |
-| 6 | Persistence with D1 and Drizzle | `post/06-d1-drizzle` |
-| 7 | Building a Feed — You're an AppView Now | `post/07-feed` |
+| 5 | Reacting to Changes with Tap and Jetstream | `post/05-tap-sync` |
+| 6 | Persistence with D1 and Drizzle | `post/06-d1-persistence` |
+| 7 | Building a Feed — You're an AppView Now | `post/07-appview` |
 | 8 | Where to Go From Here | `post/08-next-steps` |
 
 ## What you'll end up with
