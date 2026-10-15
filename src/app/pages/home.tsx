@@ -1,46 +1,29 @@
-import { Client, type DatetimeString } from "@atproto/lex";
 import { env } from "cloudflare:workers";
 import type { RequestInfo } from "rwsdk/worker";
 import type { AppContext } from "@/worker";
 
 import { LoginForm } from "@/components/login-form/login-form";
-import { StatusSection } from "@/components/status-section/status-section";
-import { getOAuthClient } from "@/lib/auth/client";
-import statusSchema from "@/lexicons/xyz/statusphere/status";
+import { StatusPicker } from "@/components/status-picker/status-picker";
+import { StatusFeed } from "@/components/status-feed/status-feed";
+import { statusStore } from "@/lib/status-store";
 
 export async function Home({ ctx }: RequestInfo<AppContext>) {
   const did = ctx.session?.did ?? null;
   const { ATPROTO_PDS_URL: pdsUrl } = env;
 
   let userHandle: string | null = null;
-  let currentStatus: string | null = null;
-  let statusRecords: unknown = null;
-  let statusRecordsEndpoint: string | null = null;
+  // Current status comes from the in-memory Tap store, not a direct PDS read.
+  // On a fresh worker start the store is empty, so this will be null until the
+  // first pick fires a webhook. Post 6 fixes that with D1.
+  const currentStatus = did ? (statusStore.get(did)?.status ?? null) : null;
 
   if (did) {
-    // Resolve the user's handle from the local PDS.
+    // Resolve the user's handle from the PDS — this is fine, it's identity
+    // metadata, not application data. Reading application data (statuses)
+    // directly from the PDS is the anti-pattern this post replaces.
     const res = await fetch(`${pdsUrl}/xrpc/com.atproto.repo.describeRepo?repo=${did}`);
     const data = (await res.json()) as { handle?: string };
     userHandle = data.handle ?? null;
-
-    // Fetch the status collection directly — listRecords is a public endpoint,
-    // no auth needed. This is what the raw record looks like in the PDS.
-    statusRecordsEndpoint = `${pdsUrl}/xrpc/com.atproto.repo.listRecords?repo=${did}&collection=xyz.statusphere.status`;
-    const listRes = await fetch(statusRecordsEndpoint);
-    statusRecords = await listRes.json();
-
-    // Read the current status record back from the PDS.
-    // This is the "read your own writes" anti-pattern — fine for a demo,
-    // but Post 5 covers how the real ecosystem handles this with AppViews.
-    try {
-      const oauthClient = await getOAuthClient();
-      const oauthSession = await oauthClient.restore(did);
-      const lexClient = new Client(oauthSession);
-      const record = await lexClient.get(statusSchema, { rkey: "self" });
-      currentStatus = (record.value.status as string) ?? null;
-    } catch {
-      // No status record yet, or session expired — start fresh.
-    }
   }
 
   return (
@@ -85,16 +68,25 @@ export async function Home({ ctx }: RequestInfo<AppContext>) {
               <h2 className="sectionTitle">Your status</h2>
               <p className="prose">
                 Pick an emoji. It gets written to your PDS as an{" "}
-                <code className="inlineCode">xyz.statusphere.status</code> record
-                using <code className="inlineCode">put</code> with{" "}
-                <code className="inlineCode">rkey: "self"</code> — one record per user,
-                replaced wholesale each time.
+                <code className="inlineCode">xyz.statusphere.status</code> record,
+                then Tap picks it up from the firehose and delivers it to the
+                feed below — no PDS read required.
               </p>
-              <StatusSection
-                currentStatus={currentStatus}
-                listRecordsEndpoint={statusRecordsEndpoint ?? ""}
-                initialRecords={statusRecords}
-              />
+              <StatusPicker currentStatus={currentStatus} />
+            </section>
+
+            <section className="section">
+              <h2 className="sectionTitle">Live from Tap</h2>
+              <p className="prose">
+                Pick a status above. The write goes to your PDS, which emits a
+                firehose event. Tap subscribes to the firehose, filters for{" "}
+                <code className="inlineCode">xyz.statusphere.status</code> records,
+                and delivers a webhook to{" "}
+                <code className="inlineCode">POST /webhooks/tap</code>. The worker
+                updates its in-memory store and pushes the new list to all open
+                SSE connections — no polling, no page reload.
+              </p>
+              <StatusFeed initialStatuses={Array.from(statusStore.values())} />
             </section>
           </>
         ) : (
@@ -178,8 +170,8 @@ export async function Home({ ctx }: RequestInfo<AppContext>) {
             <li><a href="https://arsdehnel.com/posts/rwsdk-atproto-01-first-read" target="_blank" rel="noreferrer" className="link">Your First AT Protocol Read</a></li>
             <li>AT Protocol OAuth with rwsdk and Cloudflare Workers</li>
             <li>Local Development with Docker Compose</li>
-            <li><strong>Lexicons and Writing to Your PDS</strong> — you are here</li>
-            <li>Reacting to Changes with Tap and Jetstream</li>
+            <li>Lexicons and Writing to Your PDS</li>
+            <li><strong>Reacting to Changes with Tap</strong> — you are here</li>
             <li>Persistence with D1 and Drizzle</li>
             <li>Building a Feed — You're an AppView Now</li>
             <li>Where to Go From Here</li>
@@ -202,7 +194,7 @@ export async function Home({ ctx }: RequestInfo<AppContext>) {
           </div>
           <div className="codeBlock">
             <span className="codePrompt">$</span>
-            <code>git checkout post/04-lexicons</code>
+            <code>git checkout post/05-tap-jetstream</code>
           </div>
           <div className="codeBlock">
             <span className="codePrompt">$</span>
