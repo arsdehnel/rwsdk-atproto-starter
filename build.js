@@ -109,6 +109,29 @@ const html = `<!DOCTYPE html>
       margin-bottom: 1rem;
     }
 
+    table {
+      border-collapse: separate;
+      border-spacing: 0;
+      border-top: 1px solid #999;
+      border-left: 1px solid #999;
+      margin-bottom: 1.5rem;
+    }
+
+    table td {
+      padding: 0.5rem;
+      border: 1px solid #999;
+      border-width: 0 1px 1px 0;
+    }
+
+    table th {
+      padding: 0.5rem;
+      border: 1px solid #999;
+      border-width: 0 1px 2px 0;
+      font-weight: bold;
+      background-color: rgba(0, 0, 0, 0.05);
+      text-align: left;
+    }
+
     pre code {
       background: none;
       padding: 0;
