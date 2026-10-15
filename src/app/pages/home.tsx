@@ -171,7 +171,7 @@ export async function Home({ ctx }: RequestInfo<AppContext>) {
             <li>AT Protocol OAuth with rwsdk and Cloudflare Workers</li>
             <li>Local Development with Docker Compose</li>
             <li>Lexicons and Writing to Your PDS</li>
-            <li><strong>Reacting to Changes with Tap and Jetstream</strong> — you are here</li>
+            <li><strong>Reacting to Changes with Tap</strong> — you are here</li>
             <li>Persistence with D1 and Drizzle</li>
             <li>Building a Feed — You're an AppView Now</li>
             <li>Where to Go From Here</li>
