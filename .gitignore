@@ -69,3 +69,7 @@ coverage
 # DevNet generated credentials (keep data/.gitkeep but not the outputs)
 data/*
 !data/.gitkeep
+
+# AT Protocol lexicons — run `pnpm lex:install && pnpm lex:generate` to rebuild
+lexicons/
+src/lexicons/

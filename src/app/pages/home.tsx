@@ -1,26 +1,46 @@
+import { Client, type DatetimeString } from "@atproto/lex";
 import { env } from "cloudflare:workers";
 import type { RequestInfo } from "rwsdk/worker";
 import type { AppContext } from "@/worker";
 
-import { BlueskyFeed } from "@/components/bluesky-feed/bluesky-feed";
 import { LoginForm } from "@/components/login-form/login-form";
+import { StatusSection } from "@/components/status-section/status-section";
+import { getOAuthClient } from "@/lib/auth/client";
+import statusSchema from "@/lexicons/xyz/statusphere/status";
 
 export async function Home({ ctx }: RequestInfo<AppContext>) {
   const did = ctx.session?.did ?? null;
   const { ATPROTO_PDS_URL: pdsUrl } = env;
 
   let userHandle: string | null = null;
-  let repoDescription: unknown = null;
-  let repoDescriptionEndpoint: string | null = null;
+  let currentStatus: string | null = null;
+  let statusRecords: unknown = null;
+  let statusRecordsEndpoint: string | null = null;
 
   if (did) {
-    // Fetch from the local PDS. describeRepo returns the DID document
-    // (including serviceEndpoint) which proves the local stack works end-to-end.
-    repoDescriptionEndpoint = `${pdsUrl}/xrpc/com.atproto.repo.describeRepo?repo=${did}`;
-    const res = await fetch(repoDescriptionEndpoint);
+    // Resolve the user's handle from the local PDS.
+    const res = await fetch(`${pdsUrl}/xrpc/com.atproto.repo.describeRepo?repo=${did}`);
     const data = (await res.json()) as { handle?: string };
-    repoDescription = data;
     userHandle = data.handle ?? null;
+
+    // Fetch the status collection directly — listRecords is a public endpoint,
+    // no auth needed. This is what the raw record looks like in the PDS.
+    statusRecordsEndpoint = `${pdsUrl}/xrpc/com.atproto.repo.listRecords?repo=${did}&collection=xyz.statusphere.status`;
+    const listRes = await fetch(statusRecordsEndpoint);
+    statusRecords = await listRes.json();
+
+    // Read the current status record back from the PDS.
+    // This is the "read your own writes" anti-pattern — fine for a demo,
+    // but Post 5 covers how the real ecosystem handles this with AppViews.
+    try {
+      const oauthClient = await getOAuthClient();
+      const oauthSession = await oauthClient.restore(did);
+      const lexClient = new Client(oauthSession);
+      const record = await lexClient.get(statusSchema, { rkey: "self" });
+      currentStatus = (record.value.status as string) ?? null;
+    } catch {
+      // No status record yet, or session expired — start fresh.
+    }
   }
 
   return (
@@ -62,14 +82,18 @@ export async function Home({ ctx }: RequestInfo<AppContext>) {
             </section>
 
             <section className="section">
-              <h2 className="sectionTitle">Your local PDS</h2>
+              <h2 className="sectionTitle">Your status</h2>
               <p className="prose">
-                Fetched live from your local PDS. The <code className="inlineCode">serviceEndpoint</code> in
-                the DID document confirms you're talking to the devnet, not production.
+                Pick an emoji. It gets written to your PDS as an{" "}
+                <code className="inlineCode">xyz.statusphere.status</code> record
+                using <code className="inlineCode">put</code> with{" "}
+                <code className="inlineCode">rkey: "self"</code> — one record per user,
+                replaced wholesale each time.
               </p>
-              <BlueskyFeed
-                endpoint={repoDescriptionEndpoint ?? ""}
-                records={repoDescription}
+              <StatusSection
+                currentStatus={currentStatus}
+                listRecordsEndpoint={statusRecordsEndpoint ?? ""}
+                initialRecords={statusRecords}
               />
             </section>
           </>
@@ -153,8 +177,8 @@ export async function Home({ ctx }: RequestInfo<AppContext>) {
           <ol className="seriesList">
             <li><a href="https://arsdehnel.com/posts/rwsdk-atproto-01-first-read" target="_blank" rel="noreferrer" className="link">Your First AT Protocol Read</a></li>
             <li>AT Protocol OAuth with rwsdk and Cloudflare Workers</li>
-            <li><strong>Local Development with Docker Compose</strong> — you are here</li>
-            <li>Lexicons and Writing to Your PDS</li>
+            <li>Local Development with Docker Compose</li>
+            <li><strong>Lexicons and Writing to Your PDS</strong> — you are here</li>
             <li>Reacting to Changes with Tap and Jetstream</li>
             <li>Persistence with D1 and Drizzle</li>
             <li>Building a Feed — You're an AppView Now</li>
@@ -162,7 +186,7 @@ export async function Home({ ctx }: RequestInfo<AppContext>) {
           </ol>
           <p className="prose">
             Each post has a corresponding branch in this repo. Check out{" "}
-            <code className="inlineCode">post/04-lexicons</code> to keep going, or read the full series at{" "}
+            <code className="inlineCode">post/05-tap-jetstream</code> to keep going, or read the full series at{" "}
             <a href="https://arsdehnel.com/posts" target="_blank" rel="noreferrer" className="link">
               arsdehnel.com/posts
             </a>
@@ -178,7 +202,7 @@ export async function Home({ ctx }: RequestInfo<AppContext>) {
           </div>
           <div className="codeBlock">
             <span className="codePrompt">$</span>
-            <code>git checkout post/03-devnet</code>
+            <code>git checkout post/04-lexicons</code>
           </div>
           <div className="codeBlock">
             <span className="codePrompt">$</span>

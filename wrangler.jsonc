@@ -22,6 +22,15 @@
     "enabled": true
   },
 
+  // KV for AT Protocol OAuth storage. Two namespaces with different lifecycles:
+  // - OAUTH_STATE_KV: ephemeral flow state (10-minute TTL per entry)
+  // - OAUTH_SESSION_KV: token storage keyed by DID (persists across restarts)
+  // For production: run `wrangler kv namespace create` for each and replace the ids.
+  "kv_namespaces": [
+    { "binding": "OAUTH_STATE_KV", "id": "OAUTH_STATE_KV_LOCAL" },
+    { "binding": "OAUTH_SESSION_KV", "id": "OAUTH_SESSION_KV_LOCAL" }
+  ],
+
   // Durable Object session storage
   "durable_objects": {
     "bindings": [
