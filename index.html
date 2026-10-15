@@ -119,26 +119,84 @@
 <p>This is the companion code for a blog series that walks through building a real AT Protocol app from scratch.</p>
 <h2>The series</h2>
 <p>Each branch is the complete, working state of the code at the end of that post.</p>
-<ol>
-<li><a href="#">Your First AT Protocol Read</a> — <a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/01-first-read"><code>post/01-first-read</code></a></li>
-<li><a href="#">AT Protocol OAuth with rwsdk</a> — <a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/02-oauth"><code>post/02-oauth</code></a></li>
-<li><a href="#">Local Development with Docker Compose</a> — <a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/03-devnet"><code>post/03-devnet</code></a></li>
-<li><a href="#">Lexicons and Writing to Your PDS</a> — <a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/04-lexicons"><code>post/04-lexicons</code></a></li>
-<li><a href="#">Reacting to Changes with Tap and Jetstream</a> — <a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/05-tap-sync"><code>post/05-tap-sync</code></a></li>
-<li><a href="#">Persistence with D1 and Drizzle</a> — <a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/06-d1-persistence"><code>post/06-d1-persistence</code></a></li>
-<li><a href="#">Building a Feed — You&#39;re an AppView Now</a> — <a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/07-appview"><code>post/07-appview</code></a></li>
-<li><a href="#">Where to Go From Here</a> — <a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/08-next-steps"><code>post/08-next-steps</code></a></li>
-</ol>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Title</th>
+<th>Intro</th>
+<th>Blog Post</th>
+<th>Git Branch</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>First Read</td>
+<td>Fetch and display public AT Protocol records without authenticating</td>
+<td><a href="https://arsdehnel.com/posts/rwsdk-atproto-01-first-read/">First Read</a></td>
+<td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/01-first-read"><code>post/01-first-read</code></a></td>
+</tr>
+<tr>
+<td>2</td>
+<td>AT Proto OAuth</td>
+<td>Wire up OAuth login against a real Bluesky account</td>
+<td><a href="https://arsdehnel.com/posts/rwsdk-atproto-02-atproto-oauth/">AT Proto OAuth</a></td>
+<td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/02-atproto-oauth"><code>post/02-atproto-oauth</code></a></td>
+</tr>
+<tr>
+<td>3</td>
+<td>Local Dev Setup</td>
+<td>Run a full AT Protocol PDS and PLC locally in Docker — no prod dependency</td>
+<td><a href="https://arsdehnel.com/posts/rwsdk-atproto-03-local-dev-setup/">Local Dev Setup</a></td>
+<td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/03-local-dev-setup"><code>post/03-local-dev-setup</code></a></td>
+</tr>
+<tr>
+<td>4</td>
+<td>AT Proto Writes</td>
+<td>Define a lexicon, codegen TypeScript types, and write records to your PDS</td>
+<td><a href="https://arsdehnel.com/posts/rwsdk-atproto-04-atproto-writes/">AT Proto Writes</a></td>
+<td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/04-atproto-writes"><code>post/04-atproto-writes</code></a></td>
+</tr>
+<tr>
+<td>5</td>
+<td>Tap Sync</td>
+<td>React to new records in real time using Tap webhooks and SSE</td>
+<td><a href="https://arsdehnel.com/posts/rwsdk-atproto-05-tap-sync/">Tap Sync</a></td>
+<td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/05-tap-sync"><code>post/05-tap-sync</code></a></td>
+</tr>
+<tr>
+<td>6</td>
+<td>D1 Persistence</td>
+<td>Swap in-memory state for D1 and Drizzle so data survives a restart</td>
+<td><a href="https://arsdehnel.com/posts/rwsdk-atproto-06-d1-persistence/">D1 Persistence</a></td>
+<td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/06-d1-persistence"><code>post/06-d1-persistence</code></a></td>
+</tr>
+<tr>
+<td>7</td>
+<td>AppView</td>
+<td>Index records from multiple users and serve a public status board</td>
+<td><a href="https://arsdehnel.com/posts/rwsdk-atproto-07-app-view/">AppView</a></td>
+<td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/07-appview"><code>post/07-appview</code></a></td>
+</tr>
+<tr>
+<td>8</td>
+<td>Next Steps</td>
+<td>What&#39;s left open, what to harden before going further, and where to take it</td>
+<td><a href="https://arsdehnel.com/posts/rwsdk-atproto-08-next-steps/">Next Steps</a></td>
+<td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/08-next-steps"><code>post/08-next-steps</code></a></td>
+</tr>
+</tbody></table>
 <h2>What you&#39;ll end up with</h2>
 <ul>
-<li><a href="https://rwsdk.dev">rwsdk</a> app running on <a href="https://developers.cloudflare.com/workers">Cloudflare Workers</a> + <a href="https://vite.dev">Vite</a></li>
-<li>AT Protocol OAuth login against real <a href="https://bsky.app">Bluesky</a> accounts or a local devnet</li>
+<li>A working <a href="https://rwsdk.dev">rwsdk</a> app built for <a href="https://developers.cloudflare.com/workers">Cloudflare Workers</a>, running locally via <a href="https://vite.dev">Vite</a></li>
+<li>AT Protocol OAuth login — against a local PDS in dev, or a real <a href="https://bsky.app">Bluesky</a> account when you point it there</li>
 <li>Typed record reads and writes via a <a href="https://atproto.com/specs/lexicon">lexicon</a> client</li>
-<li>Webhook-driven updates via <a href="https://www.npmjs.com/package/@atproto/tap">Tap</a> — no polling</li>
-<li>Data persistence with <a href="https://developers.cloudflare.com/d1">Cloudflare D1</a> and <a href="https://orm.drizzle.team">Drizzle ORM</a></li>
-<li>Full local devnet via <a href="https://docs.docker.com/compose">Docker Compose</a></li>
+<li>Real-time record updates via <a href="https://www.npmjs.com/package/@atproto/tap">Tap</a> webhooks and SSE</li>
+<li>State that survives a restart with <a href="https://developers.cloudflare.com/d1">Cloudflare D1</a> and <a href="https://orm.drizzle.team">Drizzle ORM</a></li>
+<li>A full local dev stack via <a href="https://docs.docker.com/compose">Docker Compose</a> so you never have to touch prod infrastructure</li>
 </ul>
 <h2>Get started</h2>
+<p>This will get you the end result.  Change to whatever branch you want for the step you&#39;re digging into. </p>
 <pre><code class="language-sh">git clone https://github.com/arsdehnel/rwsdk-atproto-starter
 cd rwsdk-atproto-starter
 pnpm install
