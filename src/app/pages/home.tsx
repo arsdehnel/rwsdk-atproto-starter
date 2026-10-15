@@ -1,21 +1,23 @@
 import { env } from "cloudflare:workers";
+import { eq } from "drizzle-orm";
 import type { RequestInfo } from "rwsdk/worker";
 import type { AppContext } from "@/worker";
+import { db } from "@/db/db";
+import { statuses } from "@/db/schema";
 
 import { LoginForm } from "@/components/login-form/login-form";
 import { StatusPicker } from "@/components/status-picker/status-picker";
 import { StatusFeed } from "@/components/status-feed/status-feed";
-import { statusStore } from "@/lib/status-store";
 
 export async function Home({ ctx }: RequestInfo<AppContext>) {
   const did = ctx.session?.did ?? null;
   const { ATPROTO_PDS_URL: pdsUrl } = env;
 
   let userHandle: string | null = null;
-  // Current status comes from the in-memory Tap store, not a direct PDS read.
-  // On a fresh worker start the store is empty, so this will be null until the
-  // first pick fires a webhook. Post 6 fixes that with D1.
-  const currentStatus = did ? (statusStore.get(did)?.status ?? null) : null;
+  const [currentEntry] = did
+    ? await db.select({ status: statuses.status }).from(statuses).where(eq(statuses.did, did))
+    : [];
+  const currentStatus = currentEntry?.status ?? null;
 
   if (did) {
     // Resolve the user's handle from the PDS — this is fine, it's identity
@@ -72,21 +74,21 @@ export async function Home({ ctx }: RequestInfo<AppContext>) {
                 then Tap picks it up from the firehose and delivers it to the
                 feed below — no PDS read required.
               </p>
+              <p className="prose">
+                Once you've picked one, try restarting the worker (<code className="inlineCode">pnpm dev</code>) and
+                refreshing the page. Your status survives — that's D1.
+              </p>
               <StatusPicker currentStatus={currentStatus} />
             </section>
 
             <section className="section">
               <h2 className="sectionTitle">Live from Tap</h2>
               <p className="prose">
-                Pick a status above. The write goes to your PDS, which emits a
-                firehose event. Tap subscribes to the firehose, filters for{" "}
-                <code className="inlineCode">xyz.statusphere.status</code> records,
-                and delivers a webhook to{" "}
-                <code className="inlineCode">POST /webhooks/tap</code>. The worker
-                updates its in-memory store and pushes the new list to all open
-                SSE connections — no polling, no page reload.
+                Each webhook write now goes to D1 instead of an in-memory Map.
+                On page load the worker reads from D1, so the feed is accurate
+                even after a restart — not just until the next deploy.
               </p>
-              <StatusFeed initialStatuses={Array.from(statusStore.values())} />
+              <StatusFeed initialStatuses={await db.select().from(statuses)} />
             </section>
           </>
         ) : (
@@ -171,14 +173,14 @@ export async function Home({ ctx }: RequestInfo<AppContext>) {
             <li>AT Protocol OAuth with rwsdk and Cloudflare Workers</li>
             <li>Local Development with Docker Compose</li>
             <li>Lexicons and Writing to Your PDS</li>
-            <li><strong>Reacting to Changes with Tap</strong> — you are here</li>
-            <li>Persistence with D1 and Drizzle</li>
+            <li>Reacting to Changes with Tap</li>
+            <li><strong>Persistence with D1 and Drizzle</strong> — you are here</li>
             <li>Building a Feed — You're an AppView Now</li>
             <li>Where to Go From Here</li>
           </ol>
           <p className="prose">
             Each post has a corresponding branch in this repo. Check out{" "}
-            <code className="inlineCode">post/05-tap-jetstream</code> to keep going, or read the full series at{" "}
+            <code className="inlineCode">post/06-d1-drizzle</code> to keep going, or read the full series at{" "}
             <a href="https://arsdehnel.com/posts" target="_blank" rel="noreferrer" className="link">
               arsdehnel.com/posts
             </a>
@@ -194,11 +196,11 @@ export async function Home({ ctx }: RequestInfo<AppContext>) {
           </div>
           <div className="codeBlock">
             <span className="codePrompt">$</span>
-            <code>git checkout post/05-tap-jetstream</code>
+            <code>git checkout post/06-d1-drizzle</code>
           </div>
           <div className="codeBlock">
             <span className="codePrompt">$</span>
-            <code>pnpm install && pnpm docker:up && pnpm dev</code>
+            <code>pnpm install && pnpm docker:up && pnpm migrate:dev && pnpm dev</code>
           </div>
           <p className="prose">
             Log in with <code className="inlineCode">alice.devnet.test</code> / <code className="inlineCode">alice-devnet-pass</code>.

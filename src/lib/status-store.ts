@@ -5,9 +5,5 @@ export type StatusEntry = {
   updatedAt: string;
 };
 
-// Module-level per-isolate state.
-// Production gap: state is lost on Worker restart. Post 6 adds D1.
-export const statusStore = new Map<string, StatusEntry>();
-
-// Active SSE client controllers. Same single-isolate caveat.
+// Active SSE client controllers. Per-isolate in-memory — ephemeral by design.
 export const sseClients = new Set<ReadableStreamDefaultController<Uint8Array>>();
