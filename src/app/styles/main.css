@@ -15,9 +15,9 @@ body {
 }
 
 .container {
-  max-width: 860px;
+  max-width: 1000px;
   margin: 0 auto;
-  padding: 5rem 2rem;
+  padding: 3rem 2rem 5rem;
   font-family: var(--font-noto);
   background-color: var(--color-cream);
   color: var(--text-color);
@@ -26,6 +26,7 @@ body {
 
 .header {
   margin-bottom: 4rem;
+  display: flex;
 }
 
 .title {
