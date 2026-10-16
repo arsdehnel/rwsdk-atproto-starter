@@ -118,6 +118,14 @@
       font-size: 0.9rem;
     }
 
+    table th,
+    table td:nth-child(2),
+    table td:nth-child(4),
+    table td:nth-child(5),
+    table td:nth-child(6) {
+      white-space: nowrap;
+    }
+
     table th {
       padding: 0.5rem;
       border: 1px solid #999;
@@ -152,74 +160,65 @@
 <thead>
 <tr>
 <th>Step</th>
-<th>Title</th>
+<th>Title / Blog Post</th>
 <th>Intro</th>
-<th>Blog Post</th>
 <th>Git Branch</th>
 <th>GitHub PR</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>1</td>
-<td>First Read</td>
-<td>Fetch and display public AT Protocol records without authenticating</td>
 <td><a href="https://arsdehnel.com/posts/rwsdk-atproto-01-first-read">First Read</a></td>
+<td>Fetch and display public AT Protocol records without authenticating</td>
 <td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/01-first-read"><code>post/01-first-read</code></a></td>
 <td>n/a (initial <code>rwsdk</code> create repo)</td>
 </tr>
 <tr>
 <td>2</td>
-<td>AT Proto OAuth</td>
-<td>Wire up OAuth login against a real Bluesky account</td>
 <td><a href="https://arsdehnel.com/posts/rwsdk-atproto-02-atproto-oauth">AT Proto OAuth</a></td>
+<td>Wire up OAuth login against a real Bluesky account</td>
 <td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/02-atproto-oauth"><code>post/02-atproto-oauth</code></a></td>
 <td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/pull/9">Step 2 Additions</a></td>
 </tr>
 <tr>
 <td>3</td>
-<td>Local Dev Setup</td>
-<td>Run a full AT Protocol PDS and PLC locally in Docker — no prod dependency</td>
 <td><a href="https://arsdehnel.com/posts/rwsdk-atproto-03-local-dev-setup">Local Dev Setup</a></td>
+<td>Run a full AT Protocol PDS and PLC locally in Docker — no prod dependency</td>
 <td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/03-local-dev-setup"><code>post/03-local-dev-setup</code></a></td>
 <td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/pull/10">Step 3 Additions</a></td>
 </tr>
 <tr>
 <td>4</td>
-<td>AT Proto Writes</td>
-<td>Define a lexicon, codegen TypeScript types, and write records to your PDS</td>
 <td><a href="https://arsdehnel.com/posts/rwsdk-atproto-04-atproto-writes">AT Proto Writes</a></td>
+<td>Define a lexicon, codegen TypeScript types, and write records to your PDS</td>
 <td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/04-atproto-writes"><code>post/04-atproto-writes</code></a></td>
 <td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/pull/11">Step 4 Additions</a></td>
 </tr>
 <tr>
 <td>5</td>
-<td>Tap Sync</td>
-<td>React to new records in real time using Tap webhooks and SSE</td>
 <td><a href="https://arsdehnel.com/posts/rwsdk-atproto-05-tap-sync">Tap Sync</a></td>
+<td>React to new records in real time using Tap webhooks and SSE</td>
 <td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/05-tap-sync"><code>post/05-tap-sync</code></a></td>
 <td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/pull/12">Step 5 Additions</a></td>
 </tr>
 <tr>
 <td>6</td>
-<td>D1 Persistence</td>
-<td>Swap in-memory state for D1 and Drizzle so data survives a restart</td>
 <td><a href="https://arsdehnel.com/posts/rwsdk-atproto-06-d1-persistence">D1 Persistence</a></td>
+<td>Swap in-memory state for D1 and Drizzle so data survives a restart</td>
 <td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/06-d1-persistence"><code>post/06-d1-persistence</code></a></td>
 <td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/pull/13">Step 6 Additions</a></td>
 </tr>
 <tr>
 <td>7</td>
-<td>AppView</td>
-<td>Index records from multiple users and serve a public status board</td>
 <td><a href="https://arsdehnel.com/posts/rwsdk-atproto-07-appview">AppView</a></td>
+<td>Index records from multiple users and serve a public status board</td>
 <td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/07-appview"><code>post/07-appview</code></a></td>
 <td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/pull/14">Step 7 Additions</a></td>
 </tr>
 <tr>
 <td>8</td>
-<td>Next Steps</td>
-<td>What&#39;s left open, what to harden before going further, and where to take it</td>
 <td><a href="https://arsdehnel.com/posts/rwsdk-atproto-08-next-steps">Next Steps</a></td>
+<td>What&#39;s left open, what to harden before going further, and where to take it</td>
 <td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/08-next-steps"><code>post/08-next-steps</code></a></td>
 <td>n/a (no code changes in Step 8)</td>
 </tr>

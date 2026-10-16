@@ -124,6 +124,14 @@ const html = `<!DOCTYPE html>
       font-size: 0.9rem;
     }
 
+    table th,
+    table td:nth-child(2),
+    table td:nth-child(4),
+    table td:nth-child(5),
+    table td:nth-child(6) {
+      white-space: nowrap;
+    }
+
     table th {
       padding: 0.5rem;
       border: 1px solid #999;
