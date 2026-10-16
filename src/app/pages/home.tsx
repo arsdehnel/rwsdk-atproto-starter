@@ -83,8 +83,27 @@ export async function Home(_: RequestInfo) {
 
 			<main>
 				<section className="section">
-					<h2 className="sectionTitle">Live from the AT Protocol</h2>
+					<h2 className="sectionTitle">Live reads from the AT Protocol</h2>
 					<BlueskyFeed endpoint={ENDPOINT} records={records} />
+					<h2 className="sectionTitle">Up Next</h2>
+					<p className="prose">
+						Now that we've established a basic ATP interaction we're ready to
+						dive into <strong>Step 2: AT Proto OAuth</strong> (
+						<a
+							className="link-inline"
+							href="https://arsdehnel.com/posts/rwsdk-atproto-02-atproto-oauth"
+						>
+							Blog Post
+						</a>{" "}
+						|{" "}
+						<a
+							className="link-inline"
+							href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/02-atproto-oauth"
+						>
+							Git Branch
+						</a>
+						).
+					</p>
 				</section>
 			</main>
 		</div>
