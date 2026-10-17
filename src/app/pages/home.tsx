@@ -75,28 +75,27 @@ export async function Home({ ctx, request }: RequestInfo<AppContext>) {
 				<HeaderNav
 					buildingContent={
 						<BuildingContent
-							currentStep={1}
-							postUrl="https://arsdehnel.com/posts/rwsdk-atproto-01-first-read"
+							currentStep={2}
+							postUrl="https://arsdehnel.com/posts/rwsdk-atproto-02-atproto-oauth"
 						/>
 					}
-					seriesContent={<SeriesList currentStep={1} />}
+					seriesContent={<SeriesList currentStep={2} />}
 					runItContent={
 						<RunItContent
 							commandLines={[
 								"git clone https://github.com/arsdehnel/rwsdk-atproto-starter",
-								"git checkout post/01-first-read",
+								"git checkout post/02-atproto-oauth",
 								"pnpm install",
 								"pnpm dev",
 							]}
 							explanation={
 								<p className="prose">
 									Open{" "}
-									<a href="http://localhost:5173" className="link">
-										localhost:5173
+									<a href="http://127.0.0.1:5173" className="link">
+										127.0.0.1:5173
 									</a>{" "}
-									— the feed is fetched live from{" "}
-									<code className="inlineCode">bsky.social</code> on every
-									request.
+									, log into your own AT Protocol account, and see your latest
+									Bluesky posts.
 								</p>
 							}
 						/>
@@ -111,30 +110,58 @@ export async function Home({ ctx, request }: RequestInfo<AppContext>) {
 
 						<section className="section">
 							<h2 className="sectionTitle">Your recent posts</h2>
+							<p className="prose">
+								While technically you don't need to have logged in for us to
+								fetch your posts this does help show we used the login flow to
+								figure out who you are and your DID so we can go fetch your
+								posts.
+							</p>
 							<BlueskyFeed
 								endpoint={`https://bsky.social/xrpc/com.atproto.repo.listRecords?repo=${did}&collection=app.bsky.feed.post&limit=5`}
 								records={userRecords}
 							/>
 						</section>
+
+						<section className="section">
+							<h2 className="sectionTitle">Up next</h2>
+							<p className="prose">
+								With Auth handled we need to take a post to get a{" "}
+								<strong>Local Dev Setup</strong> established (
+								<a
+									className="link-inline"
+									href="https://arsdehnel.com/posts/rwsdk-atproto-03-local-dev-setup"
+								>
+									Blog Post
+								</a>{" "}
+								|{" "}
+								<a
+									className="link-inline"
+									href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/03-local-dev-setup"
+								>
+									Git Branch
+								</a>
+								). If you want to see the code we added here in Step 2 take a
+								look at{" "}
+								<a
+									className="link-inline"
+									href="https://github.com/arsdehnel/rwsdk-atproto-starter/pull/9"
+								>
+									the PR for these changes
+								</a>
+								.
+							</p>
+						</section>
 					</>
 				) : (
 					<>
 						<section className="section">
-							<h2 className="sectionTitle">Sign in with Bluesky</h2>
+							<h2 className="sectionTitle">Log in with Atmosphere</h2>
 							<p className="prose">
-								Enter your Bluesky handle to authenticate via AT Protocol OAuth.
-								You'll be redirected to Bluesky to approve access, then back
-								here.
+								Enter your ATP handle to authenticate via OAuth. You'll be
+								redirected to the OAuth provider indicated by your PDS. Log in
+								and/or approve access, then you'll be sent back here.
 							</p>
 							<LoginForm />
-						</section>
-
-						<section className="section">
-							<h2 className="sectionTitle">Live from the AT Protocol</h2>
-							<p className="prose">
-								Sign in above to see your recent posts pulled live from your
-								PDS.
-							</p>
 						</section>
 					</>
 				)}
