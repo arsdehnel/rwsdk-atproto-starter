@@ -1,86 +1,86 @@
 .drawer {
-	/* Zero-size, invisible — dialog provides focus trap, Escape key, and ::backdrop only.
+  /* Zero-size, invisible — dialog provides focus trap, Escape key, and ::backdrop only.
      Keeping the dialog out of the layout avoids the browser UA modal-centering styles
      fighting the panel's position during the slide animation. */
-	border: none;
-	padding: 0;
-	background: transparent;
-	width: 0;
-	height: 0;
-	max-width: none;
-	max-height: none;
-	margin: 0;
-	overflow: visible;
+  border: none;
+  padding: 0;
+  background: transparent;
+  width: 0;
+  height: 0;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  overflow: visible;
 }
 
 .drawer::backdrop {
-	background: rgba(0, 0, 0, 0.45);
+  background: rgba(0, 0, 0, 0.45);
 }
 
 .drawerPanel {
-	/* Positioned independently from the dialog so it's always viewport-anchored */
-	position: fixed;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	width: min(600px, 90vw);
-	background: var(--color-cream);
-	display: flex;
-	flex-direction: column;
-	overflow: hidden;
-	box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
-	animation: slideIn 0.25s ease-out;
+  /* Positioned independently from the dialog so it's always viewport-anchored */
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(600px, 90vw);
+  background: var(--color-cream);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
+  animation: slideIn 0.25s ease-out;
 }
 
 @keyframes slideIn {
-	from {
-		transform: translateX(100%);
-	}
-	to {
-		transform: translateX(0);
-	}
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
 }
 
 .drawerHeader {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	padding: 1.5rem 1.5rem 1rem;
-	border-bottom: 2px solid var(--color-orange);
-	flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 1.5rem 1rem;
+  border-bottom: 2px solid var(--color-orange);
+  flex-shrink: 0;
 }
 
 .drawerTitle {
-	font-family: var(--font-playfair);
-	font-size: 1.75rem;
-	font-weight: bold;
-	margin: 0;
-	color: var(--text-color);
+  font-family: var(--font-playfair);
+  font-size: 1.75rem;
+  font-weight: bold;
+  margin: 0;
+  color: var(--text-color);
 }
 
 .drawerClose {
-	background: none;
-	border: none;
-	cursor: pointer;
-	font-size: 1.25rem;
-	padding: 0.35rem 0.5rem;
-	border-radius: 0.25rem;
-	color: var(--text-color);
-	line-height: 1;
-	transition: background 0.15s ease;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.25rem;
+  padding: 0.35rem 0.5rem;
+  border-radius: 0.25rem;
+  color: var(--text-color);
+  line-height: 1;
+  transition: background 0.15s ease;
 }
 
 .drawerClose:hover {
-	background: rgba(0, 0, 0, 0.08);
+  background: rgba(0, 0, 0, 0.08);
 }
 
 .drawerClose:focus-visible {
-	outline: 2px solid var(--color-orange);
-	outline-offset: 2px;
+  outline: 2px solid var(--color-orange);
+  outline-offset: 2px;
 }
 
 .drawerContent {
-	padding: 1.5rem;
-	overflow-y: auto;
-	flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+  flex: 1;
 }
