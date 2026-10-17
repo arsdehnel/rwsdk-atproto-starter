@@ -163,6 +163,22 @@ body {
   font-size: 0.9em;
 }
 
+.signOutButton {
+  background: none;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  padding: 0.375rem 0.875rem;
+  font-size: 0.875rem;
+  font-family: var(--font-noto);
+  color: var(--text-color);
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.signOutButton:hover {
+  border-color: rgba(0, 0, 0, 0.4);
+}
+
 .localhost-warning {
   position: fixed;
   top: 0;

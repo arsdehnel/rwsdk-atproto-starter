@@ -6,6 +6,7 @@ import { LoginForm } from "@/components/login-form/login-form";
 import { RunItContent } from "@/components/run-it-content/run-it-content";
 import { SeriesList } from "@/components/series-list/series-list";
 import type { AppContext } from "@/worker";
+import { LoggedInUser } from "@/components/logged-in-user/logged-in-user";
 
 export async function Home({ ctx, request }: RequestInfo<AppContext>) {
 	const did = ctx.session?.did ?? null;
@@ -106,27 +107,7 @@ export async function Home({ ctx, request }: RequestInfo<AppContext>) {
 			<main>
 				{did ? (
 					<>
-						<section className="section">
-							<div
-								style={{
-									display: "flex",
-									justifyContent: "space-between",
-									alignItems: "baseline",
-								}}
-							>
-								<h2 className="sectionTitle">
-									Signed in{userHandle ? ` as @${userHandle}` : ""}
-								</h2>
-								<form method="post" action="/oauth/logout">
-									<button type="submit" className="signOutButton">
-										Sign out
-									</button>
-								</form>
-							</div>
-							<p className="prose">
-								<code className="inlineCode">{did}</code>
-							</p>
-						</section>
+						<LoggedInUser did={did} userHandle={userHandle} />
 
 						<section className="section">
 							<h2 className="sectionTitle">Your recent posts</h2>
