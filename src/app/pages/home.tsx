@@ -7,8 +7,9 @@ import { RunItContent } from "@/components/run-it-content/run-it-content";
 import { SeriesList } from "@/components/series-list/series-list";
 import type { AppContext } from "@/worker";
 
-export async function Home({ ctx }: RequestInfo<AppContext>) {
+export async function Home({ ctx, request }: RequestInfo<AppContext>) {
 	const did = ctx.session?.did ?? null;
+	const { hostname, port } = new URL(request.url);
 
 	let userRecords = null;
 	let userHandle: string | null = null;
@@ -29,6 +30,13 @@ export async function Home({ ctx }: RequestInfo<AppContext>) {
 
 	return (
 		<div className="container">
+			{hostname.includes("localhost") && (
+				<div className="localhost-warning">
+					Warning, you should be using{" "}
+					<a href={`http://127.0.0.1:${port}/`}>http://127.0.0.1:{port}/</a>{" "}
+					instead of locahost.
+				</div>
+			)}
 			<header className="header">
 				<div className="header-content">
 					<h1 className="title">rwsdk + AT Protocol</h1>
