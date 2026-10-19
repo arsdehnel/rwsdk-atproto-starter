@@ -1,137 +1,137 @@
 :root {
-  --color-cream: #f4eedf;
-  --color-orange: #f47238;
-  --color-orange-light: #ffad48;
-  --font-playfair: "Playfair Display", serif;
-  --font-noto: "Noto Sans", sans-serif;
-  --text-color: #1a1a1a;
-  --code-bg: #1b1b1b;
+	--color-cream: #f4eedf;
+	--color-orange: #f47238;
+	--color-orange-light: #ffad48;
+	--font-playfair: "Playfair Display", serif;
+	--font-noto: "Noto Sans", sans-serif;
+	--text-color: #1a1a1a;
+	--code-bg: #1b1b1b;
 }
 
 body {
-  background-color: var(--color-cream);
-  margin: 0;
-  padding: 0;
+	background-color: var(--color-cream);
+	margin: 0;
+	padding: 0;
 }
 
 .container {
-  max-width: 860px;
-  margin: 0 auto;
-  padding: 5rem 2rem;
-  font-family: var(--font-noto);
-  background-color: var(--color-cream);
-  color: var(--text-color);
-  min-height: 100vh;
+	max-width: 860px;
+	margin: 0 auto;
+	padding: 5rem 2rem;
+	font-family: var(--font-noto);
+	background-color: var(--color-cream);
+	color: var(--text-color);
+	min-height: 100vh;
 }
 
 .header {
-  margin-bottom: 4rem;
+	margin-bottom: 4rem;
 }
 
 .title {
-  font-family: var(--font-playfair);
-  font-size: 4rem;
-  font-weight: bold;
-  line-height: 0.9;
-  margin: 0;
+	font-family: var(--font-playfair);
+	font-size: 4rem;
+	font-weight: bold;
+	line-height: 0.9;
+	margin: 0;
 }
 
 .subtitle {
-  font-size: 1.375rem;
-  margin-top: 0.75rem;
-  color: #444;
+	font-size: 1.375rem;
+	margin-top: 0.75rem;
+	color: #444;
 }
 
 .section {
-  margin-bottom: 3.5rem;
+	margin-bottom: 3.5rem;
 }
 
 .sectionTitle {
-  font-family: var(--font-playfair);
-  font-size: 2rem;
-  font-weight: bold;
-  margin-bottom: 0.75rem;
+	font-family: var(--font-playfair);
+	font-size: 2rem;
+	font-weight: bold;
+	margin-bottom: 0.75rem;
 }
 
 .prose {
-  font-size: 1.125rem;
-  line-height: 1.7;
-  margin: 0.5rem 0 1rem;
+	font-size: 1.125rem;
+	line-height: 1.7;
+	margin: 0.5rem 0 1rem;
 }
 
 .featureList {
-  list-style: disc;
-  list-style-position: inside;
-  padding-left: 0;
-  font-size: 1.125rem;
-  line-height: 1.6;
+	list-style: disc;
+	list-style-position: inside;
+	padding-left: 0;
+	font-size: 1.125rem;
+	line-height: 1.6;
 }
 
 .featureList li {
-  margin-bottom: 0.5rem;
+	margin-bottom: 0.5rem;
 }
 
 .seriesList {
-  list-style: decimal;
-  list-style-position: inside;
-  padding-left: 0;
-  font-size: 1.125rem;
-  line-height: 1.6;
-  margin-bottom: 1rem;
+	list-style: decimal;
+	list-style-position: inside;
+	padding-left: 0;
+	font-size: 1.125rem;
+	line-height: 1.6;
+	margin-bottom: 1rem;
 }
 
 .seriesList li {
-  margin-bottom: 0.4rem;
+	margin-bottom: 0.4rem;
 }
 
 .link {
-  color: var(--color-orange);
-  font-weight: bold;
-  text-decoration: none;
+	color: var(--color-orange);
+	font-weight: bold;
+	text-decoration: none;
 }
 
 .link:hover {
-  color: var(--color-orange-light);
+	color: var(--color-orange-light);
 }
 
 .codeBlock {
-  background-color: var(--code-bg);
-  color: var(--color-orange-light);
-  padding: 0.75rem 1rem;
-  border-radius: 0.5rem;
-  font-family: monospace;
-  font-size: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
+	background-color: var(--code-bg);
+	color: var(--color-orange-light);
+	padding: 0.75rem 1rem;
+	border-radius: 0.5rem;
+	font-family: monospace;
+	font-size: 1rem;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	margin-bottom: 0.5rem;
 }
 
 .codePrompt {
-  color: var(--color-orange);
-  user-select: none;
+	color: var(--color-orange);
+	user-select: none;
 }
 
 .inlineCode {
-  background-color: rgba(0, 0, 0, 0.08);
-  padding: 0.1em 0.35em;
-  border-radius: 3px;
-  font-family: monospace;
-  font-size: 0.9em;
+	background-color: rgba(0, 0, 0, 0.08);
+	padding: 0.1em 0.35em;
+	border-radius: 3px;
+	font-family: monospace;
+	font-size: 0.9em;
 }
 
 .signOutButton {
-  background: none;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  border-radius: 6px;
-  padding: 0.375rem 0.875rem;
-  font-size: 0.875rem;
-  font-family: var(--font-noto);
-  color: var(--text-color);
-  cursor: pointer;
-  transition: border-color 0.15s;
+	background: none;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	border-radius: 6px;
+	padding: 0.375rem 0.875rem;
+	font-size: 0.875rem;
+	font-family: var(--font-noto);
+	color: var(--text-color);
+	cursor: pointer;
+	transition: border-color 0.15s;
 }
 
 .signOutButton:hover {
-  border-color: rgba(0, 0, 0, 0.4);
+	border-color: rgba(0, 0, 0, 0.4);
 }

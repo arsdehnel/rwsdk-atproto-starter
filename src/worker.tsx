@@ -16,20 +16,20 @@ import { sessionStore } from "@/lib/auth/session-store";
 export { UserSession } from "@/sessions/UserSession";
 
 export type AppContext = {
-  session: { did: string | null } | null;
+	session: { did: string | null } | null;
 };
 
 export default defineApp([
-  setCommonHeaders(),
-  async ({ ctx, request }) => {
-    ctx.session = await sessionStore.load(request);
-  },
-  route("/oauth/login", { post: oauthLogin }),
-  route("/oauth/callback", { get: oauthCallback }),
-  route("/oauth/logout", { post: oauthLogout }),
-  route("/client-metadata.json", { get: oauthClientMetadata }),
-  route("/status", { post: setStatus }),
-  route("/webhooks/tap", { post: tapWebhook }),
-  route("/api/statuses/sse", { get: statusesSse }),
-  render(Document, [route("/", Home)]),
+	setCommonHeaders(),
+	async ({ ctx, request }) => {
+		ctx.session = await sessionStore.load(request);
+	},
+	route("/oauth/login", { post: oauthLogin }),
+	route("/oauth/callback", { get: oauthCallback }),
+	route("/oauth/logout", { post: oauthLogout }),
+	route("/client-metadata.json", { get: oauthClientMetadata }),
+	route("/status", { post: setStatus }),
+	route("/webhooks/tap", { post: tapWebhook }),
+	route("/api/statuses/sse", { get: statusesSse }),
+	render(Document, [route("/", Home)]),
 ]);

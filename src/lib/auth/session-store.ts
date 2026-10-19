@@ -8,5 +8,6 @@ import type { UserSession } from "@/sessions/UserSession";
 // wrangler types generates DurableObjectNamespace without the type parameter.
 // The cast tells TypeScript the namespace holds UserSession instances.
 export const sessionStore = defineDurableSession({
-  sessionDurableObject: env.USER_SESSION_DO as DurableObjectNamespace<UserSession>,
+	sessionDurableObject:
+		env.USER_SESSION_DO as DurableObjectNamespace<UserSession>,
 });

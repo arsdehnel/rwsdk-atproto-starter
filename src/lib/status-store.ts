@@ -1,8 +1,8 @@
 export type StatusEntry = {
-  did: string;
-  handle: string | null;
-  status: string;
-  updatedAt: string;
+	did: string;
+	handle: string | null;
+	status: string;
+	updatedAt: string;
 };
 
 // Module-level per-isolate state.
@@ -10,4 +10,6 @@ export type StatusEntry = {
 export const statusStore = new Map<string, StatusEntry>();
 
 // Active SSE client controllers. Same single-isolate caveat.
-export const sseClients = new Set<ReadableStreamDefaultController<Uint8Array>>();
+export const sseClients = new Set<
+	ReadableStreamDefaultController<Uint8Array>
+>();
