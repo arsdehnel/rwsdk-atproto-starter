@@ -6,196 +6,286 @@ import { BlueskyFeed } from "@/components/bluesky-feed/bluesky-feed";
 import { LoginForm } from "@/components/login-form/login-form";
 
 export async function Home({ ctx }: RequestInfo<AppContext>) {
-  const did = ctx.session?.did ?? null;
-  const { ATPROTO_PDS_URL: pdsUrl } = env;
+	const did = ctx.session?.did ?? null;
+	const { ATPROTO_PDS_URL: pdsUrl } = env;
 
-  let userHandle: string | null = null;
-  let repoDescription: unknown = null;
-  let repoDescriptionEndpoint: string | null = null;
+	let userHandle: string | null = null;
+	let repoDescription: unknown = null;
+	let repoDescriptionEndpoint: string | null = null;
 
-  if (did) {
-    // Fetch from the local PDS. describeRepo returns the DID document
-    // (including serviceEndpoint) which proves the local stack works end-to-end.
-    repoDescriptionEndpoint = `${pdsUrl}/xrpc/com.atproto.repo.describeRepo?repo=${did}`;
-    const res = await fetch(repoDescriptionEndpoint);
-    const data = (await res.json()) as { handle?: string };
-    repoDescription = data;
-    userHandle = data.handle ?? null;
-  }
+	if (did) {
+		// Fetch from the local PDS. describeRepo returns the DID document
+		// (including serviceEndpoint) which proves the local stack works end-to-end.
+		repoDescriptionEndpoint = `${pdsUrl}/xrpc/com.atproto.repo.describeRepo?repo=${did}`;
+		const res = await fetch(repoDescriptionEndpoint);
+		const data = (await res.json()) as { handle?: string };
+		repoDescription = data;
+		userHandle = data.handle ?? null;
+	}
 
-  return (
-    <div className="container">
-      <header className="header">
-        <h1 className="title">rwsdk + AT Protocol</h1>
-        <p className="subtitle">
-          A starter kit for building{" "}
-          <a href="https://atproto.com" target="_blank" rel="noreferrer" className="link">
-            AT Protocol
-          </a>{" "}
-          apps on{" "}
-          <a href="https://rwsdk.dev" target="_blank" rel="noreferrer" className="link">
-            RedwoodSDK
-          </a>{" "}
-          and{" "}
-          <a href="https://developers.cloudflare.com/workers" target="_blank" rel="noreferrer" className="link">
-            Cloudflare Workers
-          </a>
-          .
-        </p>
-      </header>
+	return (
+		<div className="container">
+			<header className="header">
+				<h1 className="title">rwsdk + AT Protocol</h1>
+				<p className="subtitle">
+					A starter kit for building{" "}
+					<a
+						href="https://atproto.com"
+						target="_blank"
+						rel="noreferrer"
+						className="link"
+					>
+						AT Protocol
+					</a>{" "}
+					apps on{" "}
+					<a
+						href="https://rwsdk.dev"
+						target="_blank"
+						rel="noreferrer"
+						className="link"
+					>
+						RedwoodSDK
+					</a>{" "}
+					and{" "}
+					<a
+						href="https://developers.cloudflare.com/workers"
+						target="_blank"
+						rel="noreferrer"
+						className="link"
+					>
+						Cloudflare Workers
+					</a>
+					.
+				</p>
+			</header>
 
-      <main>
-        {did ? (
-          <>
-            <section className="section">
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-                <h2 className="sectionTitle">
-                  Signed in{userHandle ? ` as @${userHandle}` : ""}
-                </h2>
-                <form method="post" action="/oauth/logout">
-                  <button type="submit" className="signOutButton">Sign out</button>
-                </form>
-              </div>
-              <p className="prose">
-                <code className="inlineCode">{did}</code>
-              </p>
-            </section>
+			<main>
+				{did ? (
+					<>
+						<section className="section">
+							<div
+								style={{
+									display: "flex",
+									justifyContent: "space-between",
+									alignItems: "baseline",
+								}}
+							>
+								<h2 className="sectionTitle">
+									Signed in{userHandle ? ` as @${userHandle}` : ""}
+								</h2>
+								<form method="post" action="/oauth/logout">
+									<button type="submit" className="signOutButton">
+										Sign out
+									</button>
+								</form>
+							</div>
+							<p className="prose">
+								<code className="inlineCode">{did}</code>
+							</p>
+						</section>
 
-            <section className="section">
-              <h2 className="sectionTitle">Your local PDS</h2>
-              <p className="prose">
-                Fetched live from your local PDS. The <code className="inlineCode">serviceEndpoint</code> in
-                the DID document confirms you're talking to the devnet, not production.
-              </p>
-              <BlueskyFeed
-                endpoint={repoDescriptionEndpoint ?? ""}
-                records={repoDescription}
-              />
-            </section>
-          </>
-        ) : (
-          <>
-            <section className="section">
-              <h2 className="sectionTitle">Sign in with AT Protocol</h2>
-              <p className="prose">
-                Enter your handle to authenticate via AT Protocol OAuth.
-                You'll be redirected to your PDS to approve access, then back here.
-              </p>
-              <LoginForm />
-            </section>
+						<section className="section">
+							<h2 className="sectionTitle">Your local PDS</h2>
+							<p className="prose">
+								Fetched live from your local PDS. The{" "}
+								<code className="inlineCode">serviceEndpoint</code> in the DID
+								document confirms you're talking to the devnet, not production.
+							</p>
+							<BlueskyFeed
+								endpoint={repoDescriptionEndpoint ?? ""}
+								records={repoDescription}
+							/>
+						</section>
+					</>
+				) : (
+					<>
+						<section className="section">
+							<h2 className="sectionTitle">Sign in with AT Protocol</h2>
+							<p className="prose">
+								Enter your handle to authenticate via AT Protocol OAuth. You'll
+								be redirected to your PDS to approve access, then back here.
+							</p>
+							<LoginForm />
+						</section>
 
-            <section className="section">
-              <h2 className="sectionTitle">Live from the AT Protocol</h2>
-              <p className="prose">
-                Sign in above to see your recent posts pulled live from your PDS.
-              </p>
-            </section>
-          </>
-        )}
+						<section className="section">
+							<h2 className="sectionTitle">Live from the AT Protocol</h2>
+							<p className="prose">
+								Sign in above to see your recent posts pulled live from your
+								PDS.
+							</p>
+						</section>
+					</>
+				)}
 
-        <section className="section">
-          <h2 className="sectionTitle">What you're building</h2>
-          <p className="prose">
-            You're on Post 2 of a{" "}
-            <a href="https://arsdehnel.com/posts" target="_blank" rel="noreferrer" className="link">
-              blog series
-            </a>{" "}
-            that builds a real AT Protocol app from scratch — one step at a time. By the end the series covers:
-          </p>
-          <ul className="featureList">
-            <li>
-              AT Protocol OAuth login against real{" "}
-              <a href="https://bsky.app" target="_blank" rel="noreferrer" className="link">
-                Bluesky
-              </a>{" "}
-              accounts or a local devnet
-            </li>
-            <li>
-              Read and write records using a typed{" "}
-              <a href="https://atproto.com/specs/lexicon" target="_blank" rel="noreferrer" className="link">
-                lexicon
-              </a>{" "}
-              client
-            </li>
-            <li>
-              React to record changes with{" "}
-              <a href="https://www.npmjs.com/package/@atproto/tap" target="_blank" rel="noreferrer" className="link">
-                Tap
-              </a>{" "}
-              and{" "}
-              <a href="https://github.com/bluesky-social/jetstream" target="_blank" rel="noreferrer" className="link">
-                Jetstream
-              </a>{" "}
-              — no polling
-            </li>
-            <li>
-              Persist indexed data with{" "}
-              <a href="https://developers.cloudflare.com/d1" target="_blank" rel="noreferrer" className="link">
-                Cloudflare D1
-              </a>{" "}
-              and{" "}
-              <a href="https://orm.drizzle.team" target="_blank" rel="noreferrer" className="link">
-                Drizzle
-              </a>
-            </li>
-            <li>
-              Full local devnet via{" "}
-              <a href="https://docs.docker.com/compose" target="_blank" rel="noreferrer" className="link">
-                Docker Compose
-           </a>{" "}
-              so you never test against production
-            </li>
-          </ul>
-        </section>
+				<section className="section">
+					<h2 className="sectionTitle">What you're building</h2>
+					<p className="prose">
+						You're on Post 2 of a{" "}
+						<a
+							href="https://arsdehnel.com/posts"
+							target="_blank"
+							rel="noreferrer"
+							className="link"
+						>
+							blog series
+						</a>{" "}
+						that builds a real AT Protocol app from scratch — one step at a
+						time. By the end the series covers:
+					</p>
+					<ul className="featureList">
+						<li>
+							AT Protocol OAuth login against real{" "}
+							<a
+								href="https://bsky.app"
+								target="_blank"
+								rel="noreferrer"
+								className="link"
+							>
+								Bluesky
+							</a>{" "}
+							accounts or a local devnet
+						</li>
+						<li>
+							Read and write records using a typed{" "}
+							<a
+								href="https://atproto.com/specs/lexicon"
+								target="_blank"
+								rel="noreferrer"
+								className="link"
+							>
+								lexicon
+							</a>{" "}
+							client
+						</li>
+						<li>
+							React to record changes with{" "}
+							<a
+								href="https://www.npmjs.com/package/@atproto/tap"
+								target="_blank"
+								rel="noreferrer"
+								className="link"
+							>
+								Tap
+							</a>{" "}
+							and{" "}
+							<a
+								href="https://github.com/bluesky-social/jetstream"
+								target="_blank"
+								rel="noreferrer"
+								className="link"
+							>
+								Jetstream
+							</a>{" "}
+							— no polling
+						</li>
+						<li>
+							Persist indexed data with{" "}
+							<a
+								href="https://developers.cloudflare.com/d1"
+								target="_blank"
+								rel="noreferrer"
+								className="link"
+							>
+								Cloudflare D1
+							</a>{" "}
+							and{" "}
+							<a
+								href="https://orm.drizzle.team"
+								target="_blank"
+								rel="noreferrer"
+								className="link"
+							>
+								Drizzle
+							</a>
+						</li>
+						<li>
+							Full local devnet via{" "}
+							<a
+								href="https://docs.docker.com/compose"
+								target="_blank"
+								rel="noreferrer"
+								className="link"
+							>
+								Docker Compose
+							</a>{" "}
+							so you never test against production
+						</li>
+					</ul>
+				</section>
 
-        <section className="section">
-          <h2 className="sectionTitle">The series</h2>
-          <ol className="seriesList">
-            <li><a href="https://arsdehnel.com/posts/rwsdk-atproto-01-first-read" target="_blank" rel="noreferrer" className="link">Your First AT Protocol Read</a></li>
-            <li>AT Protocol OAuth with rwsdk and Cloudflare Workers</li>
-            <li><strong>Local Development with Docker Compose</strong> — you are here</li>
-            <li>Lexicons and Writing to Your PDS</li>
-            <li>Reacting to Changes with Tap and Jetstream</li>
-            <li>Persistence with D1 and Drizzle</li>
-            <li>Building a Feed — You're an AppView Now</li>
-            <li>Where to Go From Here</li>
-          </ol>
-          <p className="prose">
-            Each post has a corresponding branch in this repo. Check out{" "}
-            <code className="inlineCode">post/04-lexicons</code> to keep going, or read the full series at{" "}
-            <a href="https://arsdehnel.com/posts" target="_blank" rel="noreferrer" className="link">
-              arsdehnel.com/posts
-            </a>
-            .
-          </p>
-        </section>
+				<section className="section">
+					<h2 className="sectionTitle">The series</h2>
+					<ol className="seriesList">
+						<li>
+							<a
+								href="https://arsdehnel.com/posts/rwsdk-atproto-01-first-read"
+								target="_blank"
+								rel="noreferrer"
+								className="link"
+							>
+								Your First AT Protocol Read
+							</a>
+						</li>
+						<li>AT Protocol OAuth with rwsdk and Cloudflare Workers</li>
+						<li>
+							<strong>Local Development with Docker Compose</strong> — you are
+							here
+						</li>
+						<li>Lexicons and Writing to Your PDS</li>
+						<li>Reacting to Changes with Tap and Jetstream</li>
+						<li>Persistence with D1 and Drizzle</li>
+						<li>Building a Feed — You're an AppView Now</li>
+						<li>Where to Go From Here</li>
+					</ol>
+					<p className="prose">
+						Each post has a corresponding branch in this repo. Check out{" "}
+						<code className="inlineCode">post/04-lexicons</code> to keep going,
+						or read the full series at{" "}
+						<a
+							href="https://arsdehnel.com/posts"
+							target="_blank"
+							rel="noreferrer"
+							className="link"
+						>
+							arsdehnel.com/posts
+						</a>
+						.
+					</p>
+				</section>
 
-        <section className="section">
-          <h2 className="sectionTitle">Run it yourself</h2>
-          <div className="codeBlock">
-            <span className="codePrompt">$</span>
-            <code>git clone https://github.com/arsdehnel/rwsdk-atproto-starter</code>
-          </div>
-          <div className="codeBlock">
-            <span className="codePrompt">$</span>
-            <code>git checkout post/03-devnet</code>
-          </div>
-          <div className="codeBlock">
-            <span className="codePrompt">$</span>
-            <code>pnpm install && pnpm docker:up && pnpm dev</code>
-          </div>
-          <p className="prose">
-            Log in with <code className="inlineCode">alice.devnet.test</code> / <code className="inlineCode">alice-devnet-pass</code>.
-            Open{" "}
-            <a href="http://127.0.0.1:5173" className="link">
-              127.0.0.1:5173
-            </a>
-            , not <code className="inlineCode">localhost:5173</code>. The OAuth
-            redirect URI is registered as <code className="inlineCode">http://127.0.0.1:5173/oauth/callback</code> —
-            after the PDS approves access it sends the browser back to that exact address.
-          </p>
-        </section>
-      </main>
-    </div>
-  );
+				<section className="section">
+					<h2 className="sectionTitle">Run it yourself</h2>
+					<div className="codeBlock">
+						<span className="codePrompt">$</span>
+						<code>
+							git clone https://github.com/arsdehnel/rwsdk-atproto-starter
+						</code>
+					</div>
+					<div className="codeBlock">
+						<span className="codePrompt">$</span>
+						<code>git checkout post/03-devnet</code>
+					</div>
+					<div className="codeBlock">
+						<span className="codePrompt">$</span>
+						<code>pnpm install && pnpm docker:up && pnpm dev</code>
+					</div>
+					<p className="prose">
+						Log in with <code className="inlineCode">alice.devnet.test</code> /{" "}
+						<code className="inlineCode">alice-devnet-pass</code>. Open{" "}
+						<a href="http://127.0.0.1:5173" className="link">
+							127.0.0.1:5173
+						</a>
+						, not <code className="inlineCode">localhost:5173</code>. The OAuth
+						redirect URI is registered as{" "}
+						<code className="inlineCode">
+							http://127.0.0.1:5173/oauth/callback
+						</code>{" "}
+						— after the PDS approves access it sends the browser back to that
+						exact address.
+					</p>
+				</section>
+			</main>
+		</div>
+	);
 }

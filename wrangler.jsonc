@@ -1,50 +1,48 @@
 {
-  // Schema reference for wrangler configuration
-  "$schema": "node_modules/wrangler/config-schema.json",
+	// Schema reference for wrangler configuration
+	"$schema": "node_modules/wrangler/config-schema.json",
 
-  // Name of your worker
-  "name": "rwsdk-atproto-starter",
+	// Name of your worker
+	"name": "rwsdk-atproto-starter",
 
-  // Entry point for your worker
-  "main": "src/worker.tsx",
+	// Entry point for your worker
+	"main": "src/worker.tsx",
 
-  // Compatibility settings
-  "compatibility_date": "2025-08-21",
-  "compatibility_flags": ["nodejs_compat"],
+	// Compatibility settings
+	"compatibility_date": "2025-08-21",
+	"compatibility_flags": ["nodejs_compat"],
 
-  // Assets configuration
-  "assets": {
-    "binding": "ASSETS"
-  },
+	// Assets configuration
+	"assets": {
+		"binding": "ASSETS"
+	},
 
-  // Observability settings
-  "observability": {
-    "enabled": true
-  },
+	// Observability settings
+	"observability": {
+		"enabled": true
+	},
 
-  // Durable Object session storage
-  "durable_objects": {
-    "bindings": [
-      { "name": "USER_SESSION_DO", "class_name": "UserSession" }
-    ]
-  },
+	// Durable Object session storage
+	"durable_objects": {
+		"bindings": [{ "name": "USER_SESSION_DO", "class_name": "UserSession" }]
+	},
 
-  // Declarative export registration for Durable Object classes.
-  // Mutually exclusive with the older "migrations" array.
-  "exports": {
-    "UserSession": { "type": "durable-object", "storage": "sqlite" }
-  },
+	// Declarative export registration for Durable Object classes.
+	// Mutually exclusive with the older "migrations" array.
+	"exports": {
+		"UserSession": { "type": "durable-object", "storage": "sqlite" }
+	},
 
-  // Environment variables
-  "vars": {
-    // Add your environment variables here.
-    // AUTH_SECRET_KEY is auto-generated in dev. Set it as a secret for production:
-    //   wrangler secret put AUTH_SECRET_KEY
+	// Environment variables
+	"vars": {
+		// Add your environment variables here.
+		// AUTH_SECRET_KEY is auto-generated in dev. Set it as a secret for production:
+		//   wrangler secret put AUTH_SECRET_KEY
 
-    // Local AT Protocol devnet. These point at the Docker Compose services
-    // defined in docker-compose.yml. Clear them (or override via .dev.vars)
-    // when deploying to production.
-    "ATPROTO_PDS_URL": "http://localhost:3000",
-    "ATPROTO_PLC_URL": "http://localhost:2582"
-  }
+		// Local AT Protocol devnet. These point at the Docker Compose services
+		// defined in docker-compose.yml. Clear them (or override via .dev.vars)
+		// when deploying to production.
+		"ATPROTO_PDS_URL": "http://localhost:3000",
+		"ATPROTO_PLC_URL": "http://localhost:2582"
+	}
 }
