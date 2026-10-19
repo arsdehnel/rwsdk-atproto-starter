@@ -7,6 +7,7 @@ import { LoggedInUser } from "@/components/logged-in-user/logged-in-user";
 import { LoginForm } from "@/components/login-form/login-form";
 import { RunItContent } from "@/components/run-it-content/run-it-content";
 import { SeriesList } from "@/components/series-list/series-list";
+import { StatusFeed } from "@/components/status-feed/status-feed";
 import { StatusPicker } from "@/components/status-picker/status-picker";
 import { statusStore } from "@/lib/status-store";
 import type { AppContext } from "@/worker";
@@ -92,13 +93,41 @@ export async function Home({ ctx }: RequestInfo<AppContext>) {
 							</p>
 							<StatusPicker currentStatus={currentStatus} />
 						</section>
+
+						<section className="section">
+							<h2 className="sectionTitle">Live from Tap</h2>
+							<p className="prose">
+								As the event flows through from PDS to Relay to Tap back to your
+								local host this will updated via server-side events.
+								<ol>
+									<li>
+										The write goes to your PDS, which emits a firehose event
+									</li>
+									<li>
+										Tap subscribes to the firehose, filters for{" "}
+										<code className="inlineCode">xyz.statusphere.status</code>{" "}
+										records
+									</li>
+									<li>
+										Tap delivers the events to{" "}
+										<code className="inlineCode">POST /webhooks/tap</code>
+									</li>
+									<li>The worker updates its in-memory store</li>
+									<li>
+										The worker pushes the new list to all open SSE connections
+									</li>
+								</ol>
+							</p>
+							<StatusFeed initialStatuses={Array.from(statusStore.values())} />
+						</section>
 					</>
 				) : (
 					<section className="section">
 						<h2 className="sectionTitle">Sign in with AT Protocol</h2>
 						<p className="prose">
-							Enter your handle to authenticate via AT Protocol OAuth. You'll be
-							redirected to your PDS to approve access, then back here.
+							Enter your handle to authenticate via AT Protocol OAuth. Once
+							authenticated you'll come back here and be able to select your
+							status and view the demo.
 						</p>
 						<LoginForm />
 					</section>
