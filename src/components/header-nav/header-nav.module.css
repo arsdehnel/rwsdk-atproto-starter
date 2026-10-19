@@ -1,0 +1,21 @@
+.headerNav {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	flex: 0 0 200px;
+}
+.headerNavButton {
+	flex: 1;
+	border-radius: 0.5rem;
+	outline: 0;
+	background: white;
+	border: 2px solid var(--color-orange);
+	font-size: 1.2rem;
+	padding: 0.5rem;
+	text-align: right;
+	cursor: pointer;
+	transition: all 0.3s linear;
+}
+.headerNavButton:hover {
+	background: var(--color-orange);
+}
