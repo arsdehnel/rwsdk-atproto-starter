@@ -80,7 +80,8 @@ export async function Home({ ctx }: RequestInfo<AppContext>) {
 							<p className="prose">
 								Fetched live from your local PDS. The{" "}
 								<code className="inlineCode">serviceEndpoint</code> in the DID
-								document confirms you're talking to the devnet, not production.
+								document confirms you're talking to the local docker
+								compose-hosted PDS and not production.
 							</p>
 							<BlueskyFeed
 								endpoint={repoDescriptionEndpoint ?? ""}
