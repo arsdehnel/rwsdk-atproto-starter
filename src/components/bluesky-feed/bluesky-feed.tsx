@@ -11,11 +11,6 @@ export function BlueskyFeed({
 }) {
 	return (
 		<>
-			<p className="prose">
-				This data was fetched server-side with a single{" "}
-				<code className="inlineCode">fetch</code> call — no auth, no SDK, no
-				secrets. Open the URL in a browser and you'll see the same thing.
-			</p>
 			<a
 				href={endpoint}
 				target="_blank"
