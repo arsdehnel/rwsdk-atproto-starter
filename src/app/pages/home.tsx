@@ -1,211 +1,125 @@
-import { Client, type DatetimeString } from "@atproto/lex";
+import { Client } from "@atproto/lex";
 import { env } from "cloudflare:workers";
 import type { RequestInfo } from "rwsdk/worker";
-import type { AppContext } from "@/worker";
-
-import { LoginForm } from "@/components/login-form/login-form";
 import { StatusSection } from "@/components/status-section/status-section";
 import { getOAuthClient } from "@/lib/auth/client";
 import statusSchema from "@/lexicons/xyz/statusphere/status";
 import { HeaderContent } from "@/components/header-content/header-content";
+import { BuildingContent } from "@/components/building-content/building-content";
+import { HeaderNav } from "@/components/header-nav/header-nav";
+import { LoginForm } from "@/components/login-form/login-form";
+import { RunItContent } from "@/components/run-it-content/run-it-content";
+import { SeriesList } from "@/components/series-list/series-list";
+import type { AppContext } from "@/worker";
+import { LoggedInUser } from "@/components/logged-in-user/logged-in-user";
 
 export async function Home({ ctx }: RequestInfo<AppContext>) {
-  const did = ctx.session?.did ?? null;
-  const { ATPROTO_PDS_URL: pdsUrl } = env;
+	const did = ctx.session?.did ?? null;
+	const { ATPROTO_PDS_URL: pdsUrl } = env;
 
-  let userHandle: string | null = null;
-  let currentStatus: string | null = null;
-  let statusRecords: unknown = null;
-  let statusRecordsEndpoint: string | null = null;
+	let userHandle: string | null = null;
+	let currentStatus: string | null = null;
+	let statusRecords: unknown = null;
+	let statusRecordsEndpoint: string | null = null;
 
-  if (did) {
-    // Resolve the user's handle from the local PDS.
-    const res = await fetch(`${pdsUrl}/xrpc/com.atproto.repo.describeRepo?repo=${did}`);
-    const data = (await res.json()) as { handle?: string };
-    userHandle = data.handle ?? null;
+	if (did) {
+		// Resolve the user's handle from the local PDS.
+		const res = await fetch(
+			`${pdsUrl}/xrpc/com.atproto.repo.describeRepo?repo=${did}`,
+		);
+		const data = (await res.json()) as { handle?: string };
+		userHandle = data.handle ?? null;
 
-    // Fetch the status collection directly — listRecords is a public endpoint,
-    // no auth needed. This is what the raw record looks like in the PDS.
-    statusRecordsEndpoint = `${pdsUrl}/xrpc/com.atproto.repo.listRecords?repo=${did}&collection=xyz.statusphere.status`;
-    const listRes = await fetch(statusRecordsEndpoint);
-    statusRecords = await listRes.json();
+		// Fetch the status collection directly — listRecords is a public endpoint,
+		// no auth needed. This is what the raw record looks like in the PDS.
+		statusRecordsEndpoint = `${pdsUrl}/xrpc/com.atproto.repo.listRecords?repo=${did}&collection=xyz.statusphere.status`;
+		const listRes = await fetch(statusRecordsEndpoint);
+		statusRecords = await listRes.json();
 
-    // Read the current status record back from the PDS.
-    // This is the "read your own writes" anti-pattern — fine for a demo,
-    // but Post 5 covers how the real ecosystem handles this with AppViews.
-    try {
-      const oauthClient = await getOAuthClient();
-      const oauthSession = await oauthClient.restore(did);
-      const lexClient = new Client(oauthSession);
-      const record = await lexClient.get(statusSchema, { rkey: "self" });
-      currentStatus = (record.value.status as string) ?? null;
-    } catch {
-      // No status record yet, or session expired — start fresh.
-    }
-  }
+		// Read the current status record back from the PDS.
+		// This is the "read your own writes" anti-pattern — fine for a demo,
+		// but Post 5 covers how the real ecosystem handles this with AppViews.
+		try {
+			const oauthClient = await getOAuthClient();
+			const oauthSession = await oauthClient.restore(did);
+			const lexClient = new Client(oauthSession);
+			const record = await lexClient.get(statusSchema, { rkey: "self" });
+			currentStatus = (record.value.status as string) ?? null;
+		} catch {
+			// No status record yet, or session expired — start fresh.
+		}
+	}
 
-  return (
-    <div className="container">
-      <header className="header">
-        <HeaderContent />
-      </header>
+	return (
+		<div className="container">
+			<header className="header">
+				<HeaderContent />
+				<HeaderNav
+					buildingContent={
+						<BuildingContent
+							currentStep={4}
+							postUrl="https://arsdehnel.com/posts/rwsdk-atproto-04-atproto-writes"
+						/>
+					}
+					seriesContent={<SeriesList currentStep={4} />}
+					runItContent={
+						<RunItContent
+							commandLines={[
+								"git clone https://github.com/arsdehnel/rwsdk-atproto-starter",
+								"git checkout post/04-atproto-writes",
+								"pnpm install",
+								"pnpm docker:up",
+								"pnpm dev",
+							]}
+							explanation={
+								<p className="prose">
+									Log in with{" "}
+									<code className="inlineCode">alice.devnet.test</code> /{" "}
+									<code className="inlineCode">alice-devnet-pass</code> on{" "}
+									<a href="http://127.0.0.1:5173" className="link">
+										127.0.0.1:5173
+									</a>{" "}
+									again. Then set your status and see the UI update and the
+									PDS-fetched data show the result.
+								</p>
+							}
+						/>
+					}
+				/>
+			</header>
 
-      <main>
-        {did ? (
-          <>
-            <section className="section">
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-                <h2 className="sectionTitle">
-                  Signed in{userHandle ? ` as @${userHandle}` : ""}
-                </h2>
-                <form method="post" action="/oauth/logout">
-                  <button type="submit" className="signOutButton">Sign out</button>
-                </form>
-              </div>
-              <p className="prose">
-                <code className="inlineCode">{did}</code>
-              </p>
-            </section>
+			<main>
+				{did ? (
+					<>
+						<LoggedInUser did={did} userHandle={userHandle} />
 
-            <section className="section">
-              <h2 className="sectionTitle">Your status</h2>
-              <p className="prose">
-                Pick an emoji. It gets written to your PDS as an{" "}
-                <code className="inlineCode">xyz.statusphere.status</code> record
-                using <code className="inlineCode">put</code> with{" "}
-                <code className="inlineCode">rkey: "self"</code> — one record per user,
-                replaced wholesale each time.
-              </p>
-              <StatusSection
-                currentStatus={currentStatus}
-                listRecordsEndpoint={statusRecordsEndpoint ?? ""}
-                initialRecords={statusRecords}
-              />
-            </section>
-          </>
-        ) : (
-          <>
-            <section className="section">
-              <h2 className="sectionTitle">Sign in with AT Protocol</h2>
-              <p className="prose">
-                Enter your handle to authenticate via AT Protocol OAuth.
-                You'll be redirected to your PDS to approve access, then back here.
-              </p>
-              <LoginForm />
-            </section>
-
-            <section className="section">
-              <h2 className="sectionTitle">Live from the AT Protocol</h2>
-              <p className="prose">
-                Sign in above to see your recent posts pulled live from your PDS.
-              </p>
-            </section>
-          </>
-        )}
-
-        <section className="section">
-          <h2 className="sectionTitle">What you're building</h2>
-          <p className="prose">
-            You're on Post 2 of a{" "}
-            <a href="https://arsdehnel.com/posts" target="_blank" rel="noreferrer" className="link">
-              blog series
-            </a>{" "}
-            that builds a real AT Protocol app from scratch — one step at a time. By the end the series covers:
-          </p>
-          <ul className="featureList">
-            <li>
-              AT Protocol OAuth login against real{" "}
-              <a href="https://bsky.app" target="_blank" rel="noreferrer" className="link">
-                Bluesky
-              </a>{" "}
-              accounts or a local devnet
-            </li>
-            <li>
-              Read and write records using a typed{" "}
-              <a href="https://atproto.com/specs/lexicon" target="_blank" rel="noreferrer" className="link">
-                lexicon
-              </a>{" "}
-              client
-            </li>
-            <li>
-              React to record changes with{" "}
-              <a href="https://www.npmjs.com/package/@atproto/tap" target="_blank" rel="noreferrer" className="link">
-                Tap
-              </a>{" "}
-              and{" "}
-              <a href="https://github.com/bluesky-social/jetstream" target="_blank" rel="noreferrer" className="link">
-                Jetstream
-              </a>{" "}
-              — no polling
-            </li>
-            <li>
-              Persist indexed data with{" "}
-              <a href="https://developers.cloudflare.com/d1" target="_blank" rel="noreferrer" className="link">
-                Cloudflare D1
-              </a>{" "}
-              and{" "}
-              <a href="https://orm.drizzle.team" target="_blank" rel="noreferrer" className="link">
-                Drizzle
-              </a>
-            </li>
-            <li>
-              Full local devnet via{" "}
-              <a href="https://docs.docker.com/compose" target="_blank" rel="noreferrer" className="link">
-                Docker Compose
-           </a>{" "}
-              so you never test against production
-            </li>
-          </ul>
-        </section>
-
-        <section className="section">
-          <h2 className="sectionTitle">The series</h2>
-          <ol className="seriesList">
-            <li><a href="https://arsdehnel.com/posts/rwsdk-atproto-01-first-read" target="_blank" rel="noreferrer" className="link">Your First AT Protocol Read</a></li>
-            <li>AT Protocol OAuth with rwsdk and Cloudflare Workers</li>
-            <li>Local Development with Docker Compose</li>
-            <li><strong>Lexicons and Writing to Your PDS</strong> — you are here</li>
-            <li>Reacting to Changes with Tap and Jetstream</li>
-            <li>Persistence with D1 and Drizzle</li>
-            <li>Building a Feed — You're an AppView Now</li>
-            <li>Where to Go From Here</li>
-          </ol>
-          <p className="prose">
-            Each post has a corresponding branch in this repo. Check out{" "}
-            <code className="inlineCode">post/05-tap-jetstream</code> to keep going, or read the full series at{" "}
-            <a href="https://arsdehnel.com/posts" target="_blank" rel="noreferrer" className="link">
-              arsdehnel.com/posts
-            </a>
-            .
-          </p>
-        </section>
-
-        <section className="section">
-          <h2 className="sectionTitle">Run it yourself</h2>
-          <div className="codeBlock">
-            <span className="codePrompt">$</span>
-            <code>git clone https://github.com/arsdehnel/rwsdk-atproto-starter</code>
-          </div>
-          <div className="codeBlock">
-            <span className="codePrompt">$</span>
-            <code>git checkout post/04-lexicons</code>
-          </div>
-          <div className="codeBlock">
-            <span className="codePrompt">$</span>
-            <code>pnpm install && pnpm docker:up && pnpm dev</code>
-          </div>
-          <p className="prose">
-            Log in with <code className="inlineCode">alice.devnet.test</code> / <code className="inlineCode">alice-devnet-pass</code>.
-            Open{" "}
-            <a href="http://127.0.0.1:5173" className="link">
-              127.0.0.1:5173
-            </a>
-            , not <code className="inlineCode">localhost:5173</code>. The OAuth
-            redirect URI is registered as <code className="inlineCode">http://127.0.0.1:5173/oauth/callback</code> —
-            after the PDS approves access it sends the browser back to that exact address.
-          </p>
-        </section>
-      </main>
-    </div>
-  );
+						<section className="section">
+							<h2 className="sectionTitle">Your status</h2>
+							<p className="prose">
+								Pick an emoji. It gets written to your local PDS as an{" "}
+								<code className="inlineCode">xyz.statusphere.status</code>{" "}
+								record using <code className="inlineCode">put</code> with{" "}
+								<code className="inlineCode">rkey: "self"</code>. One record per
+								user, replaced wholesale each time.
+							</p>
+							<StatusSection
+								currentStatus={currentStatus}
+								listRecordsEndpoint={statusRecordsEndpoint ?? ""}
+								initialRecords={statusRecords}
+							/>
+						</section>
+					</>
+				) : (
+					<section className="section">
+						<h2 className="sectionTitle">Sign in with AT Protocol</h2>
+						<p className="prose">
+							Enter your handle to authenticate via AT Protocol OAuth. You'll be
+							redirected to your local PDS to approve access, then back here.
+						</p>
+						<LoginForm />
+					</section>
+				)}
+			</main>
+		</div>
+	);
 }
