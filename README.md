@@ -71,6 +71,14 @@ pnpm docker:down
 
 > **Note:** `docker:down` uses `-v`, which removes the PDS data volume. Test accounts are recreated automatically on the next `pnpm docker:up`.
 
+**Resetting the local D1 database**
+
+Each `pnpm docker:up` run recreates the local ATP accounts with new DIDs. Since the D1 statuses table is keyed by DID, restarting the docker setup leaves stale rows behind. Clear the local Miniflare state and re-run migrations to start fresh:
+
+```sh
+rm -rf .wrangler/state/v3/d1 && pnpm migrate:dev
+```
+
 ## Further reading
 
 - [RedwoodSDK docs](https://docs.rwsdk.com/)
