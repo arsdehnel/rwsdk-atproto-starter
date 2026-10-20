@@ -4,10 +4,6 @@ A step-by-step walkthrough of creating a starter kit for building  [AT Protocol]
 
 This is the companion code for a [blog series](https://arsdehnel.com/posts) that walks through building a local development environment for an AT Protocol app from scratch — reading public records, authenticating with OAuth, writing to your PDS, and eventually running your own AppView that indexes records from other users.
 
-## Where this branch is at
-
-Take a look [the series overview](https://arsdehnel.github.io/rwsdk-atproto-starter/) for a complete picture of things.  Right now you're on code for [Step 7: AppView](https://arsdehnel.com/posts/rwsdk-atproto-07-appview).
-
 ## Prerequisites
 
 - [Node.js](https://nodejs.org) 26.x
@@ -16,6 +12,28 @@ Take a look [the series overview](https://arsdehnel.github.io/rwsdk-atproto-star
 - [Docker](https://docs.docker.com/get-docker) (Post 3 and later — for running a local PDS)
 
 ## Getting started
+
+How you get started is up to you but there are really two options.
+
+### Option 1: Follow the series
+
+If you're not super familiar with the [AT Protocol](https://atproto.com), [RedwoodSDK](https://rwsdk.dev), or [Cloudflare Workers](https://developers.cloudflare.com/workers) I'd suggest this path.  It'll start with a basic RWSDK starter app and layer on features of each of these three tools as they are needed.  
+
+For this path I'd say take a look at [the project homepage](https://arsdehnel.github.io/rwsdk-atproto-starter/) for context and guidance on the series.  And then to get started these commands should do the trick.
+
+```sh
+git clone https://github.com/arsdehnel/rwsdk-atproto-starter
+cd rwsdk-atproto-starter
+git checkout post/01-first-read
+pnpm install
+pnpm dev
+```
+
+From there the blog posts and branches should walk you through things!
+
+### Option 2: Run the final product
+
+If you're ready to just run it or you want to see the final product before you invest the time to walk through things just pull this down and get started.
 
 ```sh
 git clone https://github.com/arsdehnel/rwsdk-atproto-starter
@@ -34,7 +52,7 @@ To watch the init container seed the accounts:
 docker compose logs -f init
 ```
 
-**Stopping the local docker setup**
+**Stopping the devnet**
 
 ```sh
 pnpm docker:down
