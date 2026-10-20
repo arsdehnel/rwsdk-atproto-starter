@@ -66,7 +66,6 @@ export async function post({
 
 		return Response.json({ success: true, uri: res.uri });
 	} catch {
-		// Token expired or revoked after restore() succeeded — treat same as session_expired.
-		return Response.json({ error: "session_expired" }, { status: 401 });
+		return Response.json({ error: "db_write_failed" }, { status: 500 });
 	}
 }
