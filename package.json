@@ -1,59 +1,61 @@
 {
-  "name": "rwsdk-atproto-starter",
-  "version": "1.0.0",
-  "description": "Starter kit for building AT Protocol apps on RedwoodSDK and Cloudflare Workers",
-  "main": "index.js",
-  "type": "module",
-  "keywords": [],
-  "author": "",
-  "license": "MIT",
-  "private": true,
-  "scripts": {
-    "build": "vite build",
-    "dev": "vite dev",
-    "migrate:new": "drizzle-kit generate",
-    "migrate:dev": "wrangler d1 migrations apply DB --local",
-    "migrate:prod": "wrangler d1 migrations apply DB --remote",
-    "docker:up": "docker compose up -d",
-    "docker:down": "docker compose down -v",
-    "dev:init": "pnpm lex:install && pnpm lex:generate && rw-scripts dev-init",
-    "lex:install": "lex install --ci",
-    "lex:generate": "lex build --import-ext \"\"",
-    "preview": "vite preview",
-    "worker:run": "rw-scripts worker-run",
-    "clean": "npm run clean:vite",
-    "clean:vite": "rm -rf ./node_modules/.vite",
-    "release": "rw-scripts ensure-deploy-env && npm run clean && npm run build && wrangler deploy",
-    "generate": "rw-scripts ensure-env && wrangler types --include-runtime false",
-    "check": "npm run generate && npm run types",
-    "types": "tsc"
-  },
-  "dependencies": {
-    "@atproto/lex": "^0.3.14",
-    "@atproto/oauth-client-node": "^0.5.9",
-    "@atproto/tap": "^0.4.12",
-    "drizzle-orm": "^0.44.2",
-    "react": "19.2.8",
-    "react-dom": "19.2.8",
-    "react-server-dom-webpack": "19.2.8",
-    "rwsdk": "1.7.4"
-  },
-  "devDependencies": {
-    "@cloudflare/vite-plugin": "1.50.0",
-    "@cloudflare/workers-types": "5.20260922.1",
-    "@types/node": "~26.1.2",
-    "@types/react": "19.2.18",
-    "@types/react-dom": "19.2.4",
-    "drizzle-kit": "^0.31.1",
-    "typescript": "7.0.2",
-    "vite": "~8.2.0",
-    "wrangler": "4.118.0"
-  },
-  "devEngines": {
-    "runtime": {
-      "name": "node",
-      "version": "26.x",
-      "onFail": "download"
-    }
-  }
+	"name": "rwsdk-atproto-starter",
+	"version": "1.0.0",
+	"description": "Starter kit for building AT Protocol apps on RedwoodSDK and Cloudflare Workers",
+	"main": "index.js",
+	"type": "module",
+	"keywords": [],
+	"author": "",
+	"license": "MIT",
+	"private": true,
+	"scripts": {
+		"build": "vite build",
+		"dev": "vite dev",
+		"migrate:new": "drizzle-kit generate",
+		"migrate:dev": "wrangler d1 migrations apply DB --local",
+		"migrate:prod": "wrangler d1 migrations apply DB --remote",
+		"docker:up": "docker compose up -d",
+		"docker:down": "docker compose down -v",
+		"dev:init": "pnpm lex:install && pnpm lex:generate && rw-scripts dev-init",
+		"lex:install": "lex install --ci",
+		"lex:generate": "lex build --import-ext \"\"",
+		"preview": "vite preview",
+		"worker:run": "rw-scripts worker-run",
+		"clean": "npm run clean:vite",
+		"clean:vite": "rm -rf ./node_modules/.vite",
+		"release": "rw-scripts ensure-deploy-env && npm run clean && npm run build && wrangler deploy",
+		"generate": "rw-scripts ensure-env && wrangler types --include-runtime false",
+		"check": "npm run generate && npm run types",
+		"types": "tsc",
+		"write-status": "tsx scripts/write-status.ts"
+	},
+	"dependencies": {
+		"@atproto/lex": "^0.3.14",
+		"@atproto/oauth-client-node": "^0.5.9",
+		"@atproto/tap": "^0.4.12",
+		"drizzle-orm": "^0.44.2",
+		"react": "19.2.8",
+		"react-dom": "19.2.8",
+		"react-server-dom-webpack": "19.2.8",
+		"rwsdk": "1.7.4"
+	},
+	"devDependencies": {
+		"@cloudflare/vite-plugin": "1.50.0",
+		"@cloudflare/workers-types": "5.20260922.1",
+		"@types/node": "~26.1.2",
+		"@types/react": "19.2.18",
+		"@types/react-dom": "19.2.4",
+		"drizzle-kit": "^0.31.1",
+		"typescript": "7.0.2",
+		"vite": "~8.2.0",
+		"tsx": "^4.0.0",
+		"wrangler": "4.118.0"
+	},
+	"devEngines": {
+		"runtime": {
+			"name": "node",
+			"version": "26.x",
+			"onFail": "download"
+		}
+	}
 }

@@ -6,6 +6,6 @@ import { getOAuthClient } from "@/lib/auth/client";
 // bsky.social), so this endpoint isn't strictly required — but it's good
 // practice and will be needed when you deploy with a published client_id.
 export async function get() {
-  const client = await getOAuthClient();
-  return Response.json(client.clientMetadata);
+	const client = await getOAuthClient();
+	return Response.json(client.clientMetadata);
 }
