@@ -3,7 +3,10 @@
 # Usage:  pnpm docker:up && pnpm dev
 #
 # After first startup, test account credentials are written to data/accounts.env.
-# Log in with:  alice.devnet.test  (password: alice-devnet-pass)
+# Log in with:  
+#   alice.devnet.test  (password: alice-devnet-pass)
+#   bob.devnet.test  (password: bob-devnet-pass)
+#   carol.devnet.test  (password: carol-devnet-pass)
 #
 # Services adapted from https://github.com/OpenMeet-Team/atproto-devnet
 
