@@ -1,13 +1,13 @@
 import { env } from "cloudflare:workers";
 import { eq } from "drizzle-orm";
 import type { RequestInfo } from "rwsdk/worker";
-import type { AppContext } from "@/worker";
+import { HeaderContent } from "@/components/header-content/header-content";
+import { LoginForm } from "@/components/login-form/login-form";
+import { StatusFeed } from "@/components/status-feed/status-feed";
+import { StatusPicker } from "@/components/status-picker/status-picker";
 import { db } from "@/db/db";
 import { statuses } from "@/db/schema";
-
-import { LoginForm } from "@/components/login-form/login-form";
-import { StatusPicker } from "@/components/status-picker/status-picker";
-import { StatusFeed } from "@/components/status-feed/status-feed";
+import type { AppContext } from "@/worker";
 
 export async function Home({ ctx }: RequestInfo<AppContext>) {
 	const did = ctx.session?.did ?? null;
@@ -36,37 +36,7 @@ export async function Home({ ctx }: RequestInfo<AppContext>) {
 	return (
 		<div className="container">
 			<header className="header">
-				<h1 className="title">rwsdk + AT Protocol</h1>
-				<p className="subtitle">
-					A starter kit for building{" "}
-					<a
-						href="https://atproto.com"
-						target="_blank"
-						rel="noreferrer"
-						className="link"
-					>
-						AT Protocol
-					</a>{" "}
-					apps on{" "}
-					<a
-						href="https://rwsdk.dev"
-						target="_blank"
-						rel="noreferrer"
-						className="link"
-					>
-						RedwoodSDK
-					</a>{" "}
-					and{" "}
-					<a
-						href="https://developers.cloudflare.com/workers"
-						target="_blank"
-						rel="noreferrer"
-						className="link"
-					>
-						Cloudflare Workers
-					</a>
-					.
-				</p>
+				<HeaderContent />
 			</header>
 
 			<main>
