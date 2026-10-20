@@ -7,7 +7,9 @@ const PDS_URL = "http://localhost:3000";
 const TAP_URL = "http://localhost:2480";
 const HANDLE = "carol.devnet.test";
 const PASSWORD = "carol-devnet-pass";
-const STATUS = "🌊";
+
+const EMOJIS = ["👍","👎","💙","🔥","😆","😢","🤔","😴","🎉","🤩","😭","🥳","😤","💀","✨","👀","🙏","📚","💻","🍕"];
+const STATUS = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
 
 async function main() {
 	// Step 1: Authenticate directly with the PDS (no local app involved)
