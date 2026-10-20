@@ -31,7 +31,7 @@ export async function post({ request }: RequestInfo): Promise<Response> {
 	try {
 		event = parseTapEvent(body as LexValue);
 	} catch {
-		// Malformed event — Tap will retry, but we don't want to block on bad data.
+		// Malformed event — Tap will retry in production, locally it shouldn't fail since we control the sources, but we don't want to block on bad data.
 		return new Response("Unrecognized event", { status: 400 });
 	}
 
@@ -47,7 +47,7 @@ export async function post({ request }: RequestInfo): Promise<Response> {
 	} else {
 		const status = (event.record?.status as string) ?? "";
 
-		// Resolve the handle — listRecords is public, no auth needed.
+		// Resolve the handle — describeRepo is public, no auth needed.
 		let handle: string | null = null;
 		try {
 			const res = await fetch(
