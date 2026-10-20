@@ -1,8 +1,13 @@
 import { env } from "cloudflare:workers";
 import { eq } from "drizzle-orm";
 import type { RequestInfo } from "rwsdk/worker";
+import { BuildingContent } from "@/components/building-content/building-content";
 import { HeaderContent } from "@/components/header-content/header-content";
+import { HeaderNav } from "@/components/header-nav/header-nav";
+import { LoggedInUser } from "@/components/logged-in-user/logged-in-user";
 import { LoginForm } from "@/components/login-form/login-form";
+import { RunItContent } from "@/components/run-it-content/run-it-content";
+import { SeriesList } from "@/components/series-list/series-list";
 import { StatusFeed } from "@/components/status-feed/status-feed";
 import { StatusPicker } from "@/components/status-picker/status-picker";
 import { db } from "@/db/db";
@@ -37,40 +42,69 @@ export async function Home({ ctx }: RequestInfo<AppContext>) {
 		<div className="container">
 			<header className="header">
 				<HeaderContent />
+				<HeaderNav
+					buildingContent={
+						<BuildingContent
+							currentStep={7}
+							postUrl="https://arsdehnel.com/posts/rwsdk-atproto-07-appview"
+						/>
+					}
+					seriesContent={<SeriesList currentStep={7} />}
+					runItContent={
+						<RunItContent
+							commandLines={[
+								"git clone https://github.com/arsdehnel/rwsdk-atproto-starter",
+								"git checkout post/07-appview",
+								"pnpm install",
+								"pnpm docker:up",
+								"pnpm dev",
+							]}
+							explanation={
+								<>
+									<p className="prose">
+										To see the multi-user feed in action: sign in as{" "}
+										<code className="inlineCode">alice.devnet.test</code> /{" "}
+										<code className="inlineCode">alice-devnet-pass</code> in a
+										normal window and set a status. Open an incognito window,
+										sign in as{" "}
+										<code className="inlineCode">bob.devnet.test</code> /{" "}
+										<code className="inlineCode">bob-devnet-pass</code>, and set
+										a different status. Then open a third window (no login) —
+										both statuses appear in the status board below.
+									</p>
+									<p className="prose">
+										Taking it a step further open a second terminal window and
+										run <code className="inlineCode">pnpm write-status</code> to
+										mimic a PDS write from someone using a different UI to
+										select their status. This is one of the powerful things
+										about the Atmosphere: people can use their own apps and
+										custom build UIs to consume and produce data for existing
+										apps. Once you've done this Carol's status will show on all
+										your browser tabs within a second or two.
+									</p>
+								</>
+							}
+						/>
+					}
+				/>
 			</header>
 
 			<main>
 				{did ? (
 					<>
-						<section className="section">
-							<div
-								style={{
-									display: "flex",
-									justifyContent: "space-between",
-									alignItems: "baseline",
-								}}
-							>
-								<h2 className="sectionTitle">
-									Signed in{userHandle ? ` as @${userHandle}` : ""}
-								</h2>
-								<form method="post" action="/oauth/logout">
-									<button type="submit" className="signOutButton">
-										Sign out
-									</button>
-								</form>
-							</div>
-							<p className="prose">
-								<code className="inlineCode">{did}</code>
-							</p>
-						</section>
+						<LoggedInUser did={did} userHandle={userHandle} />
 
 						<section className="section">
 							<h2 className="sectionTitle">Your status</h2>
 							<p className="prose">
 								Pick an emoji. It gets written to your PDS as an{" "}
 								<code className="inlineCode">xyz.statusphere.status</code>{" "}
-								record, then Tap picks it up from the firehose and delivers it
-								to the feed below — no PDS read required.
+								record and then replicated to our D1 AppView database.
+							</p>
+							<p className="prose">
+								Then to make the demo more meaningful open another window and
+								log in as Bob to see how two users can see each others'
+								statuses.
 							</p>
 							<StatusPicker currentStatus={currentStatus} />
 						</section>
@@ -89,7 +123,7 @@ export async function Home({ ctx }: RequestInfo<AppContext>) {
 				<section className="section">
 					<h2 className="sectionTitle">Status board</h2>
 					<p className="prose">
-						This feed is public — no login required. It shows every indexed
+						This feed is public (no login required). It shows every indexed
 						status, one row per user, sourced from D1. Tap delivers a webhook
 						for each record write; the worker upserts into D1; this page reads
 						from D1.
@@ -105,197 +139,9 @@ export async function Home({ ctx }: RequestInfo<AppContext>) {
 						>
 							app.bsky.app
 						</a>{" "}
-						does exactly this at scale — you just built a tiny version of it.
+						does exactly this at scale. And you just built a tiny version of it!
 					</p>
 					<StatusFeed initialStatuses={await db.select().from(statuses)} />
-				</section>
-
-				<section className="section">
-					<h2 className="sectionTitle">What you're building</h2>
-					<p className="prose">
-						You're on Post 2 of a{" "}
-						<a
-							href="https://arsdehnel.com/posts"
-							target="_blank"
-							rel="noreferrer"
-							className="link"
-						>
-							blog series
-						</a>{" "}
-						that builds a real AT Protocol app from scratch — one step at a
-						time. By the end the series covers:
-					</p>
-					<ul className="featureList">
-						<li>
-							AT Protocol OAuth login against real{" "}
-							<a
-								href="https://bsky.app"
-								target="_blank"
-								rel="noreferrer"
-								className="link"
-							>
-								Bluesky
-							</a>{" "}
-							accounts or a local devnet
-						</li>
-						<li>
-							Read and write records using a typed{" "}
-							<a
-								href="https://atproto.com/specs/lexicon"
-								target="_blank"
-								rel="noreferrer"
-								className="link"
-							>
-								lexicon
-							</a>{" "}
-							client
-						</li>
-						<li>
-							React to record changes with{" "}
-							<a
-								href="https://www.npmjs.com/package/@atproto/tap"
-								target="_blank"
-								rel="noreferrer"
-								className="link"
-							>
-								Tap
-							</a>{" "}
-							and{" "}
-							<a
-								href="https://github.com/bluesky-social/jetstream"
-								target="_blank"
-								rel="noreferrer"
-								className="link"
-							>
-								Jetstream
-							</a>{" "}
-							— no polling
-						</li>
-						<li>
-							Persist indexed data with{" "}
-							<a
-								href="https://developers.cloudflare.com/d1"
-								target="_blank"
-								rel="noreferrer"
-								className="link"
-							>
-								Cloudflare D1
-							</a>{" "}
-							and{" "}
-							<a
-								href="https://orm.drizzle.team"
-								target="_blank"
-								rel="noreferrer"
-								className="link"
-							>
-								Drizzle
-							</a>
-						</li>
-						<li>
-							Full local devnet via{" "}
-							<a
-								href="https://docs.docker.com/compose"
-								target="_blank"
-								rel="noreferrer"
-								className="link"
-							>
-								Docker Compose
-							</a>{" "}
-							so you never test against production
-						</li>
-					</ul>
-				</section>
-
-				<section className="section">
-					<h2 className="sectionTitle">The series</h2>
-					<ol className="seriesList">
-						<li>
-							<a
-								href="https://arsdehnel.com/posts/rwsdk-atproto-01-first-read"
-								target="_blank"
-								rel="noreferrer"
-								className="link"
-							>
-								Your First AT Protocol Read
-							</a>
-						</li>
-						<li>AT Protocol OAuth with rwsdk and Cloudflare Workers</li>
-						<li>Local Development with Docker Compose</li>
-						<li>Lexicons and Writing to Your PDS</li>
-						<li>Reacting to Changes with Tap</li>
-						<li>Persistence with D1 and Drizzle</li>
-						<li>
-							<strong>Building a Feed — You're an AppView Now</strong> — you are
-							here
-						</li>
-						<li>Where to Go From Here</li>
-					</ol>
-					<p className="prose">
-						Each post has a corresponding branch in this repo. Check out{" "}
-						<code className="inlineCode">post/06-d1-drizzle</code> to keep
-						going, or read the full series at{" "}
-						<a
-							href="https://arsdehnel.com/posts"
-							target="_blank"
-							rel="noreferrer"
-							className="link"
-						>
-							arsdehnel.com/posts
-						</a>
-						.
-					</p>
-				</section>
-
-				<section className="section">
-					<h2 className="sectionTitle">Run it yourself</h2>
-					<div className="codeBlock">
-						<span className="codePrompt">$</span>
-						<code>
-							git clone https://github.com/arsdehnel/rwsdk-atproto-starter
-						</code>
-					</div>
-					<div className="codeBlock">
-						<span className="codePrompt">$</span>
-						<code>git checkout post/07-appview</code>
-					</div>
-					<div className="codeBlock">
-						<span className="codePrompt">$</span>
-						<code>
-							pnpm install && pnpm docker:up && pnpm migrate:dev && pnpm dev
-						</code>
-					</div>
-					<p className="prose">
-						Open{" "}
-						<a href="http://127.0.0.1:5173" className="link">
-							127.0.0.1:5173
-						</a>
-						, not <code className="inlineCode">localhost:5173</code>. The OAuth
-						redirect URI is registered as{" "}
-						<code className="inlineCode">
-							http://127.0.0.1:5173/oauth/callback
-						</code>
-						.
-					</p>
-					<p className="prose">
-						To see the multi-user feed in action: sign in as{" "}
-						<code className="inlineCode">alice.devnet.test</code> /{" "}
-						<code className="inlineCode">alice-devnet-pass</code> in a normal
-						window and set a status. Open an incognito window, sign in as{" "}
-						<code className="inlineCode">bob.devnet.test</code> /{" "}
-						<code className="inlineCode">bob-devnet-pass</code>, and set a
-						different status. Then open a third window (no login) — both
-						statuses appear in the status board below.
-					</p>
-					<p className="prose">
-						If you see duplicate rows for the same user, the devnet was likely
-						restarted and recreated the account with a new DID. This only
-						happens in the local Docker devnet — real AT Protocol DIDs are
-						permanent. Clear the local database and re-run migrations:
-					</p>
-					<div className="codeBlock">
-						<span className="codePrompt">$</span>
-						<code>rm -rf .wrangler/state/v3/d1 && pnpm migrate:dev</code>
-					</div>
 				</section>
 			</main>
 		</div>
