@@ -61,7 +61,7 @@ async function main() {
 		body: JSON.stringify({ dids: [session.did] }),
 	});
 	if (!repoRes.ok) {
-		console.error("Repo registration failed:", await sessionRes.text());
+		console.error("Repo registration failed:", await repoRes.text());
 		process.exit(1);
 	}
 	console.log(`Repo registered`);
