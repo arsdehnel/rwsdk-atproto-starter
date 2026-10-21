@@ -6,7 +6,6 @@ set -euo pipefail
 # Stops at the first conflict and tells you exactly what to do next.
 
 BRANCHES=(
-  main
   post/01-first-read
   post/02-atproto-oauth
   post/03-local-dev-setup
@@ -14,6 +13,7 @@ BRANCHES=(
   post/05-tap-sync
   post/06-d1-persistence
   post/07-appview
+  main
 )
 
 START_BRANCH="${1:-}"
