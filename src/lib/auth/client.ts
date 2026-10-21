@@ -1,3 +1,4 @@
+import { env } from "cloudflare:workers";
 import type {
 	NodeSavedSession,
 	NodeSavedState,
@@ -25,10 +26,21 @@ export const SCOPE = "atproto";
 export async function getOAuthClient(): Promise<NodeOAuthClient> {
 	if (globalAuth.atprotoClient) return globalAuth.atprotoClient;
 
+	const { ATPROTO_PDS_URL: pdsUrl, ATPROTO_PLC_URL: plcUrl } = env;
+
 	globalAuth.atprotoClient = new NodeOAuthClient({
 		// Passing a string URL instead of AtprotoHandleResolverNode avoids
 		// pulling in undici, which is not available in the workerd runtime.
-		handleResolver: "https://bsky.social",
+		// In devnet, point at the local PDS so it can resolve .test handles.
+		handleResolver: pdsUrl || "https://bsky.social",
+
+		// Override the default plc.directory with the local PLC so did:plc:* DIDs
+		// issued by the devnet resolve correctly instead of 404ing on plc.directory.
+		...(plcUrl ? { plcDirectoryUrl: plcUrl } : {}),
+
+		// Allow http:// OAuth metadata and token endpoints. Required when running
+		// against a local PDS with PDS_DEV_MODE=true (which serves over plain HTTP).
+		...(pdsUrl.startsWith("http:") ? { allowHttp: true } : {}),
 
 		clientMetadata: buildAtprotoLoopbackClientMetadata({
 			scope: SCOPE,
