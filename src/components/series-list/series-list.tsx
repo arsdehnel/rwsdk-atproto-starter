@@ -1,11 +1,11 @@
 const STEPS = [
 	"Your First AT Protocol Read",
-	"AT Protocol OAuth with rwsdk and Cloudflare Workers",
+	"AT Protocol OAuth",
 	"Local Development with Docker Compose",
 	"Lexicons and Writing to Your PDS",
-	"Reacting to Changes with Tap and Jetstream",
+	"Reacting to Changes with Tap",
 	"Persistence with D1 and Drizzle",
-	"Building a Feed — You're an AppView Now",
+	"Making it into an AppView",
 	"Where to Go From Here",
 ];
 

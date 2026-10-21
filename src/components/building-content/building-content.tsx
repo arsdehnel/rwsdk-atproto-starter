@@ -51,16 +51,7 @@ export function BuildingContent({
 						className="link"
 					>
 						Tap
-					</a>{" "}
-					and{" "}
-					<a
-						href="https://github.com/bluesky-social/jetstream"
-						target="_blank"
-						rel="noreferrer"
-						className="link"
-					>
-						Jetstream
-					</a>{" "}
+					</a>
 					— no polling
 				</li>
 				<li>
