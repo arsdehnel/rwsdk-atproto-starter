@@ -11,17 +11,14 @@ export function BlueskyFeed({
 }) {
 	return (
 		<>
-			<p className="prose">
-				<strong>View in your browser:</strong>
-				<a
-					href={endpoint}
-					target="_blank"
-					rel="noreferrer"
-					className={styles.endpointLink}
-				>
-					{endpoint}
-				</a>
-			</p>
+			<a
+				href={endpoint}
+				target="_blank"
+				rel="noreferrer"
+				className={styles.endpointLink}
+			>
+				{endpoint}
+			</a>
 			<pre className={styles.jsonBlock}>{JSON.stringify(records, null, 2)}</pre>
 		</>
 	);

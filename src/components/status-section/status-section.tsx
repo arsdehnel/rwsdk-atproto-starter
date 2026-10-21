@@ -40,7 +40,7 @@ export function StatusSection({
 						marginBottom: "0.75rem",
 					}}
 				>
-					The write used OAuth and the lex client. The read doesn't since{" "}
+					The write used OAuth and the lex client. The read doesn't —{" "}
 					<code style={{ fontSize: "0.8rem" }}>
 						com.atproto.repo.listRecords
 					</code>{" "}

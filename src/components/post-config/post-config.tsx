@@ -1,9 +1,9 @@
 export const postConfig = {
-	step: 4,
-	postUrl: "https://arsdehnel.com/posts/rwsdk-atproto-04-atproto-writes",
+	step: 5,
+	postUrl: "https://arsdehnel.com/posts/rwsdk-atproto-05-tap-sync",
 	commandLines: [
 		"git clone https://github.com/arsdehnel/rwsdk-atproto-starter",
-		"git checkout post/04-atproto-writes",
+		"git checkout post/05-tap-sync",
 		"pnpm install",
 		"cp .dev.vars.example .dev.vars",
 		"pnpm docker:up",
@@ -11,16 +11,16 @@ export const postConfig = {
 	],
 	explanation: (
 		<p className="prose">
-			The <code className="inlineCode">cp</code> step copies the local dev
-			secrets file — it includes a pre-filled{" "}
-			<code className="inlineCode">OAUTH_KV_ENCRYPTION_KEY</code> that's fine
-			for local dev. Then log in with{" "}
-			<code className="inlineCode">alice.devnet.test</code> /{" "}
-			<code className="inlineCode">alice-devnet-pass</code> on{" "}
+			Log in with <code className="inlineCode">alice.devnet.test</code> /{" "}
+			<code className="inlineCode">alice-devnet-pass</code>. Open{" "}
 			<a href="http://127.0.0.1:5173" className="link">
 				127.0.0.1:5173
-			</a>{" "}
-			and set your status.
+			</a>
+			, not <code className="inlineCode">localhost:5173</code>. The OAuth
+			redirect URI is registered as{" "}
+			<code className="inlineCode">http://127.0.0.1:5173/oauth/callback</code> —
+			after the PDS approves access it sends the browser back to that exact
+			address.
 		</p>
 	),
 };

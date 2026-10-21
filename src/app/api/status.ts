@@ -36,10 +36,14 @@ export async function post({
 
 	const lexClient = new Client(oauthSession);
 	const createdAt = new Date().toISOString() as DatetimeString;
-	const res = await lexClient.create(
-		statusSchema,
-		{ status, createdAt },
-	);
-
-	return Response.json({ success: true, uri: res.uri });
+	try {
+		const res = await lexClient.create(
+			statusSchema,
+			{ status, createdAt },
+		);
+		return Response.json({ success: true, uri: res.uri });
+	} catch {
+		// Token expired or revoked after restore() succeeded — treat same as session_expired.
+		return Response.json({ error: "session_expired" }, { status: 401 });
+	}
 }
