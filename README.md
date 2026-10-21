@@ -25,7 +25,10 @@ pnpm docker:up
 pnpm dev
 ```
 
-`docker:up` starts postgres, plc, pds, maildev, and a one-shot init container that creates two test accounts. Once the worker is running, log in with `alice.devnet.test` / `alice-devnet-pass` or `bob.devnet.test` / `bob-devnet-pass`.
+`docker:up` starts postgres, plc, pds, maildev, and a one-shot init container that creates three test accounts. Once the worker is running, log in with any one of them:
+    - `alice.devnet.test` / `alice-devnet-pass` 
+    - `bob.devnet.test` / `bob-devnet-pass`
+    - `carol.devnet.test` / `carol-devnet-pass`
 
 To watch the init container seed the accounts:
 
