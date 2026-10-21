@@ -153,17 +153,15 @@ export async function Home({ ctx, request }: RequestInfo<AppContext>) {
 						</section>
 					</>
 				) : (
-					<>
-						<section className="section">
-							<h2 className="sectionTitle">Log in with Atmosphere</h2>
-							<p className="prose">
-								Enter your ATP handle to authenticate via OAuth. You'll be
-								redirected to the OAuth provider indicated by your PDS. Log in
-								and/or approve access, then you'll be sent back here.
-							</p>
-							<LoginForm />
-						</section>
-					</>
+					<section className="section">
+						<h2 className="sectionTitle">Log in with Atmosphere</h2>
+						<p className="prose">
+							Enter your ATP handle to authenticate via OAuth. You'll be
+							redirected to the OAuth provider indicated by your PDS. Log in
+							and/or approve access, then you'll be sent back here.
+						</p>
+						<LoginForm />
+					</section>
 				)}
 			</main>
 		</div>
