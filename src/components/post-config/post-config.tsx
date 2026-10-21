@@ -1,12 +1,13 @@
 export const postConfig = {
-	step: 5,
-	postUrl: "https://arsdehnel.com/posts/rwsdk-atproto-05-tap-sync",
+	step: 6,
+	postUrl: "https://arsdehnel.com/posts/rwsdk-atproto-06-d1-persistence",
 	commandLines: [
 		"git clone https://github.com/arsdehnel/rwsdk-atproto-starter",
-		"git checkout post/05-tap-sync",
+		"git checkout post/06-d1-persistence",
 		"pnpm install",
 		"cp .dev.vars.example .dev.vars",
 		"pnpm docker:up",
+		"pnpm migrate:dev",
 		"pnpm dev",
 	],
 	explanation: (
