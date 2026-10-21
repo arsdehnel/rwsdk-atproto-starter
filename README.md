@@ -6,7 +6,7 @@ This is the companion code for a [blog series](https://arsdehnel.com/posts) that
 
 ## Where this branch is at
 
-Take a look [the series overview](https://arsdehnel.github.io/rwsdk-atproto-starter/) for a complete picture of things.  Right now you're on code for [Step 6: D1 Persistence](https://arsdehnel.com/posts/rwsdk-atproto-06-d1-persistence).
+Take a look [the series overview](https://arsdehnel.github.io/rwsdk-atproto-starter/) for a complete picture of things.  Right now you're on code for [Step 7: AppView](https://arsdehnel.com/posts/rwsdk-atproto-07-appview).
 
 ## Prerequisites
 
@@ -34,7 +34,7 @@ To watch the init container seed the accounts:
 docker compose logs -f init
 ```
 
-**Stopping the devnet**
+**Stopping the local docker setup**
 
 ```sh
 pnpm docker:down
