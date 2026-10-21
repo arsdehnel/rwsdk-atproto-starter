@@ -43,63 +43,51 @@ export async function PostContent({ ctx }: RequestInfo<AppContext>) {
 					<section className="section">
 						<h2 className="sectionTitle">Your status</h2>
 						<p className="prose">
-							Pick an emoji again, it still gets written to your PDS as an{" "}
-							<code className="inlineCode">xyz.statusphere.status</code> record,
-							and Tap still picks it up from the firehose and delivers it to the
-							worker and your browser.
+							Pick an emoji. It gets written to your PDS as an{" "}
+							<code className="inlineCode">xyz.statusphere.status</code> record
+							and then replicated to our D1 AppView database.
 						</p>
 						<p className="prose">
-							Once you've picked one, try restarting the worker (
-							<code className="inlineCode">pnpm dev</code>) and refreshing the
-							page. Your status survives now as it's written to D1.
+							Then to make the demo more meaningful open another window and log
+							in as Bob to see how two users can see each others' statuses.
 						</p>
 						<StatusPicker currentStatus={currentStatus} />
-					</section>
-
-					<section className="section">
-						<h2 className="sectionTitle">
-							Live from Tap but with D1 persistence
-						</h2>
-						<p className="prose">
-							Just like Step 5's architecture, the event flows through from PDS
-							to Relay to Tap back to your local host but now that data will be
-							saved to D1 while also being pushed to this UI via server-side
-							events.
-							<ol>
-								<li>
-									The write goes to your PDS, which emits a firehose event
-								</li>
-								<li>
-									Tap subscribes to the firehose, filters for{" "}
-									<code className="inlineCode">xyz.statusphere.status</code>{" "}
-									records
-								</li>
-								<li>
-									Tap delivers the events to{" "}
-									<code className="inlineCode">POST /webhooks/tap</code>
-								</li>
-								<li>
-									The worker upserts into D1 and updates the in-memory store
-								</li>
-								<li>
-									The worker pushes the new list to all open SSE connections
-								</li>
-							</ol>
-						</p>
-						<StatusFeed initialStatuses={await db.select().from(statuses)} />
 					</section>
 				</>
 			) : (
 				<section className="section">
 					<h2 className="sectionTitle">Sign in with AT Protocol</h2>
 					<p className="prose">
-						Enter your handle to authenticate via AT Protocol OAuth. Once
-						authenticated you'll come back here and be able to select your
-						status and view the demo.
+						Enter your handle to authenticate via AT Protocol OAuth. You'll be
+						redirected to your PDS to approve access, then back here.
 					</p>
 					<LoginForm />
 				</section>
 			)}
+
+			<section className="section">
+				<h2 className="sectionTitle">Status board</h2>
+				<p className="prose">
+					This feed is public (no login required). It shows every indexed
+					status, one row per user, sourced from D1. Tap delivers a webhook for
+					each record write; the worker upserts into D1; this page reads from
+					D1.
+				</p>
+				<p className="prose">
+					That's the AppView pattern: subscribe to the firehose, index what you
+					care about, serve your own query interface. Bluesky's{" "}
+					<a
+						href="https://bsky.app"
+						target="_blank"
+						rel="noreferrer"
+						className="link"
+					>
+						app.bsky.app
+					</a>{" "}
+					does exactly this at scale. And you just built a tiny version of it!
+				</p>
+				<StatusFeed initialStatuses={await db.select().from(statuses)} />
+			</section>
 		</>
 	);
 }

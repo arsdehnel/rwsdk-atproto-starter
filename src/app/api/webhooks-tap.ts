@@ -5,22 +5,7 @@ import { eq } from "drizzle-orm";
 import type { RequestInfo } from "rwsdk/worker";
 import { db } from "@/db/db";
 import { statuses } from "@/db/schema";
-import { sseClients, type StatusEntry } from "@/lib/status-store";
-
-function pushToSseClients(allStatuses: StatusEntry[]) {
-	const encoder = new TextEncoder();
-	const msg = encoder.encode(
-		`event: statuses\ndata: ${JSON.stringify(allStatuses)}\n\n`,
-	);
-	for (const ctrl of [...sseClients]) {
-		try {
-			ctrl.enqueue(msg);
-		} catch {
-			// Client disconnected
-			sseClients.delete(ctrl);
-		}
-	}
-}
+import { pushToSseClients } from "@/lib/status-store";
 
 export async function post({ request }: RequestInfo): Promise<Response> {
 	let body: unknown;
