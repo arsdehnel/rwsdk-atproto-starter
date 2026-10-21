@@ -1,18 +1,21 @@
-import { Client } from "@atproto/lex";
 import type { RequestInfo } from "rwsdk/worker";
 import { LoggedInUser } from "@/components/logged-in-user/logged-in-user";
 import { LoginForm } from "@/components/login-form/login-form";
-import { StatusSection } from "@/components/status-section/status-section";
-import statusSchema from "@/lexicons/xyz/statusphere/status";
+import { StatusFeed } from "@/components/status-feed/status-feed";
+import { StatusPicker } from "@/components/status-picker/status-picker";
 import { getOAuthClient } from "@/lib/auth/client";
+import { statusStore } from "@/lib/status-store";
 import type { AppContext } from "@/worker";
 
 export async function PostContent({ ctx }: RequestInfo<AppContext>) {
-	let did = ctx.session?.did ?? null;
+	const did = ctx.session?.did ?? null;
+	const { ATPROTO_PDS_URL: pdsUrl } = env;
+
 	let userHandle: string | null = null;
-	let currentStatus: string | null = null;
-	let statusRecords: unknown = null;
-	let statusRecordsEndpoint: string | null = null;
+	// Current status comes from the in-memory Tap store, not a direct PDS read.
+	// On a fresh worker start the store is empty, so this will be null until the
+	// first pick fires a webhook. Post 6 fixes that with D1.
+	const currentStatus = did ? (statusStore.get(did)?.status ?? null) : null;
 
 	if (did) {
 		try {
@@ -24,24 +27,8 @@ export async function PostContent({ ctx }: RequestInfo<AppContext>) {
 			);
 			const data = (await res.json()) as { handle?: string };
 			userHandle = data.handle ?? null;
-
-			statusRecordsEndpoint = `${userPdsUrl}/xrpc/com.atproto.repo.listRecords?repo=${did}&collection=xyz.statusphere.status`;
-			const listRes = await fetch(statusRecordsEndpoint);
-			statusRecords = await listRes.json();
-
-			// Read the current status record back from the PDS.
-			// This is the "read your own writes" anti-pattern — fine for a demo,
-			// but Post 5 covers how the real ecosystem handles this with AppViews.
-			try {
-				const lexClient = new Client(oauthSession);
-				const result = await lexClient.list(statusSchema, { limit: 1, reverse: true });
-				currentStatus = (result.records[0]?.value.status as string) ?? null;
-			} catch {
-				// No status record yet so we can start fresh.
-			}
-
-		} catch( err ) {
-			console.log( `Error fetching session for did ${ did }: ${ err }`)
+		} catch (err) {
+			console.log(`Error fetching session for did ${did}: ${err}`);
 			// this will force the user to re-login which might not be great but is better than an error
 			did = null;
 		}
@@ -56,24 +43,50 @@ export async function PostContent({ ctx }: RequestInfo<AppContext>) {
 					<section className="section">
 						<h2 className="sectionTitle">Your status</h2>
 						<p className="prose">
-							Pick an emoji. It gets written to your local PDS as a new{" "}
-							<code className="inlineCode">xyz.statusphere.status</code> record
-							using <code className="inlineCode">create</code>. Each pick appends
-							a new TID-keyed record — matching how the lexicon is declared.
+							Pick an emoji. Just like the last step's version it gets written
+							to your PDS as an{" "}
+							<code className="inlineCode">xyz.statusphere.status</code> record.
+							Unlike that version, though, we've got Tap setup now to pick it up
+							from the firehose and delivers it to the feed below — no PDS read
+							involved.
 						</p>
-						<StatusSection
-							currentStatus={currentStatus}
-							listRecordsEndpoint={statusRecordsEndpoint ?? ""}
-							initialRecords={statusRecords}
-						/>
+						<StatusPicker currentStatus={currentStatus} />
+					</section>
+
+					<section className="section">
+						<h2 className="sectionTitle">Live from Tap</h2>
+						<p className="prose">
+							As the event flows through from PDS to Relay to Tap back to your
+							local host this will updated via server-side events.
+							<ol>
+								<li>
+									The write goes to your PDS, which emits a firehose event
+								</li>
+								<li>
+									Tap subscribes to the firehose, filters for{" "}
+									<code className="inlineCode">xyz.statusphere.status</code>{" "}
+									records
+								</li>
+								<li>
+									Tap delivers the events to{" "}
+									<code className="inlineCode">POST /webhooks/tap</code>
+								</li>
+								<li>The worker updates its in-memory store</li>
+								<li>
+									The worker pushes the new list to all open SSE connections
+								</li>
+							</ol>
+						</p>
+						<StatusFeed initialStatuses={Array.from(statusStore.values())} />
 					</section>
 				</>
 			) : (
 				<section className="section">
 					<h2 className="sectionTitle">Sign in with AT Protocol</h2>
 					<p className="prose">
-						Enter your handle to authenticate via AT Protocol OAuth. You'll be
-						redirected to your local PDS to approve access, then back here.
+						Enter your handle to authenticate via AT Protocol OAuth. Once
+						authenticated you'll come back here and be able to select your
+						status and view the demo.
 					</p>
 					<LoginForm />
 				</section>
