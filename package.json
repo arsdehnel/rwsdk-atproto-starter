@@ -11,6 +11,8 @@
 	"scripts": {
 		"build": "vite build",
 		"dev": "vite dev",
+		"docker:up": "docker compose up -d",
+		"docker:down": "docker compose down -v",
 		"dev:init": "rw-scripts dev-init",
 		"preview": "vite preview",
 		"worker:run": "rw-scripts worker-run",

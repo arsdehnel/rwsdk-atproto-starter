@@ -1,7 +1,7 @@
-import { cloudflare } from "@cloudflare/vite-plugin";
-import { redwood } from "rwsdk/vite";
-import type { Plugin } from "vite";
 import { defineConfig } from "vite";
+import { redwood } from "rwsdk/vite";
+import { cloudflare } from "@cloudflare/vite-plugin";
+import type { Plugin } from "vite";
 
 // Cloudflare Workers (workerd) rejects `redirect: "error"` in both fetch()
 // and the Request() constructor. The @atproto packages use this option
