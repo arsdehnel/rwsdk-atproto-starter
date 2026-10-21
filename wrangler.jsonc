@@ -10,7 +10,14 @@
 
 	// Compatibility settings
 	"compatibility_date": "2025-08-21",
-	"compatibility_flags": ["nodejs_compat"],
+	// nodejs_compat: enables Node.js built-in APIs in the worker
+	// no_handle_cross_request_promise_resolution: allows SSE push from a webhook
+	//   handler into a streaming response held open in a different request context.
+	//   Without this, workerd cancels the cross-request enqueue() calls.
+	"compatibility_flags": [
+		"nodejs_compat",
+		"no_handle_cross_request_promise_resolution"
+	],
 
 	// Assets configuration
 	"assets": {
@@ -52,6 +59,7 @@
 		// defined in docker-compose.yml. Clear them (or override via .dev.vars)
 		// when deploying to production.
 		"ATPROTO_PDS_URL": "http://localhost:3000",
-		"ATPROTO_PLC_URL": "http://localhost:2582"
+		"ATPROTO_PLC_URL": "http://localhost:2582",
+		"ATPROTO_TAP_URL": "http://localhost:2480"
 	}
 }
