@@ -5,6 +5,7 @@ import { BuildingContent } from "@/components/building-content/building-content"
 import { HeaderNav } from "@/components/header-nav/header-nav";
 import { RunItContent } from "@/components/run-it-content/run-it-content";
 import { SeriesList } from "@/components/series-list/series-list";
+import { HeaderContent } from "@/components/header-content/header-content";
 
 const ENDPOINT =
 	"https://bsky.social/xrpc/com.atproto.repo.listRecords?repo=bsky.app&collection=app.bsky.feed.post&limit=3";
@@ -16,39 +17,7 @@ export async function Home(_: RequestInfo) {
 	return (
 		<div className="container">
 			<header className="header">
-				<div className="header-content">
-					<h1 className="title">rwsdk + AT Protocol</h1>
-					<p className="subtitle">
-						A step-by-step walkthrough of creating a starter kit for building{" "}
-						<a
-							href="https://atproto.com"
-							target="_blank"
-							rel="noreferrer"
-							className="link"
-						>
-							AT Protocol
-						</a>{" "}
-						apps on{" "}
-						<a
-							href="https://rwsdk.dev"
-							target="_blank"
-							rel="noreferrer"
-							className="link"
-						>
-							RedwoodSDK
-						</a>{" "}
-						and{" "}
-						<a
-							href="https://developers.cloudflare.com/workers"
-							target="_blank"
-							rel="noreferrer"
-							className="link"
-						>
-							Cloudflare Workers
-						</a>
-						.
-					</p>
-				</div>
+				<HeaderContent />
 				<HeaderNav
 					buildingContent={
 						<BuildingContent
