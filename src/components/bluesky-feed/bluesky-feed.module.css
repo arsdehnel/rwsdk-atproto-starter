@@ -1,25 +1,25 @@
 .endpointLink {
-  display: block;
-  font-family: monospace;
-  font-size: 0.9rem;
-  color: var(--color-orange);
-  word-break: break-all;
-  margin-bottom: 1rem;
+	display: block;
+	font-family: monospace;
+	font-size: 0.9rem;
+	color: var(--color-orange);
+	word-break: break-all;
+	margin-bottom: 1rem;
 }
 
 .endpointLink:hover {
-  color: var(--color-orange-light);
+	color: var(--color-orange-light);
 }
 
 .jsonBlock {
-  background-color: var(--code-bg);
-  color: #d4d4d4;
-  padding: 1.25rem;
-  border-radius: 0.5rem;
-  font-family: monospace;
-  font-size: 0.85rem;
-  line-height: 1.6;
-  overflow-x: auto;
-  white-space: pre;
-  margin: 0;
+	background-color: var(--code-bg);
+	color: #d4d4d4;
+	padding: 1.25rem;
+	border-radius: 0.5rem;
+	font-family: monospace;
+	font-size: 0.85rem;
+	line-height: 1.6;
+	overflow-x: auto;
+	white-space: pre;
+	margin: 0;
 }

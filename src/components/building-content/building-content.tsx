@@ -3,17 +3,15 @@ interface BuildingContentProps {
 	postUrl: string;
 }
 
-export function BuildingContent({ currentStep, postUrl }: BuildingContentProps) {
+export function BuildingContent({
+	currentStep,
+	postUrl,
+}: BuildingContentProps) {
 	return (
 		<>
 			<p className="prose">
 				You're on{" "}
-				<a
-					href={postUrl}
-					target="_blank"
-					rel="noreferrer"
-					className="link"
-				>
+				<a href={postUrl} target="_blank" rel="noreferrer" className="link">
 					Post {currentStep}
 				</a>{" "}
 				of a blog series that builds a real AT Protocol app from scratch — one
