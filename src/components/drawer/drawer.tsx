@@ -26,9 +26,18 @@ export function Drawer({ id, title, onClose, children }: DrawerProps) {
 		return () => dialog.removeEventListener("close", handleClose);
 	}, []);
 
-	// Clicking the backdrop (the dialog element itself, not its children) closes
+	// Clicking the backdrop (the dialog element itself, not its children) closes.
+	// onKeyDown pairs with onClick per accessibility requirements — Escape is the
+	// keyboard equivalent, and is also handled natively by <dialog>, but we make
+	// it explicit here so the two handlers are clearly a matched pair.
 	const handleDialogClick = (e: React.MouseEvent<HTMLDialogElement>) => {
 		if (e.target === dialogRef.current) {
+			dialogRef.current?.close();
+		}
+	};
+
+	const handleDialogKeyDown = (e: React.KeyboardEvent<HTMLDialogElement>) => {
+		if (e.key === "Escape") {
 			dialogRef.current?.close();
 		}
 	};
@@ -43,6 +52,7 @@ export function Drawer({ id, title, onClose, children }: DrawerProps) {
 			aria-labelledby={titleId}
 			aria-modal="true"
 			onClick={handleDialogClick}
+			onKeyDown={handleDialogKeyDown}
 		>
 			<div className={styles.drawerPanel}>
 				<div className={styles.drawerHeader}>

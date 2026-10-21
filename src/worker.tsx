@@ -5,13 +5,14 @@ import { Document } from "@/app/document";
 import { setCommonHeaders } from "@/app/headers";
 import { Home } from "@/app/pages/home";
 
+// biome-ignore lint/complexity/noBannedTypes: just for the initial getting started we're doing this
 export type AppContext = {};
 
 export default defineApp([
-  setCommonHeaders(),
-  ({ ctx }) => {
-    // setup ctx here
-    ctx;
-  },
-  render(Document, [route("/", Home)]),
+	setCommonHeaders(),
+	({ ctx }) => {
+		// setup ctx here
+		ctx;
+	},
+	render(Document, [route("/", Home)]),
 ]);
