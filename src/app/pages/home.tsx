@@ -1,19 +1,15 @@
 import type { RequestInfo } from "rwsdk/worker";
 
-import { BlueskyFeed } from "@/components/bluesky-feed/bluesky-feed";
 import { BuildingContent } from "@/components/building-content/building-content";
+import { HeaderContent } from "@/components/header-content/header-content";
 import { HeaderNav } from "@/components/header-nav/header-nav";
 import { RunItContent } from "@/components/run-it-content/run-it-content";
 import { SeriesList } from "@/components/series-list/series-list";
-import { HeaderContent } from "@/components/header-content/header-content";
+import type { AppContext } from "@/worker";
+import { postConfig } from "@/components/post-config/post-config";
+import { PostContent } from "@/components/post-content/post-content";
 
-const ENDPOINT =
-	"https://bsky.social/xrpc/com.atproto.repo.listRecords?repo=bsky.app&collection=app.bsky.feed.post&limit=3";
-
-export async function Home(_: RequestInfo) {
-	const response = await fetch(ENDPOINT);
-	const records = await response.json();
-
+export async function Home(requestInfo: RequestInfo<AppContext>) {
 	return (
 		<div className="container">
 			<header className="header">
@@ -21,59 +17,22 @@ export async function Home(_: RequestInfo) {
 				<HeaderNav
 					buildingContent={
 						<BuildingContent
-							currentStep={1}
-							postUrl="https://arsdehnel.com/posts/rwsdk-atproto-01-first-read"
+							currentStep={postConfig.step}
+							postUrl={postConfig.postUrl}
 						/>
 					}
-					seriesContent={<SeriesList currentStep={1} />}
+					seriesContent={<SeriesList currentStep={postConfig.step} />}
 					runItContent={
 						<RunItContent
-							commandLines={[
-								"git clone https://github.com/arsdehnel/rwsdk-atproto-starter",
-								"git checkout post/01-first-read",
-								"pnpm install",
-								"pnpm dev",
-							]}
-							explanation={
-								<p className="prose">
-									Open{" "}
-									<a href="http://localhost:5173" className="link">
-										localhost:5173
-									</a>{" "}
-									— the feed is fetched live from{" "}
-									<code className="inlineCode">bsky.social</code> on every
-									request.
-								</p>
-							}
+							commandLines={postConfig.commandLines}
+							explanation={postConfig.explanation}
 						/>
 					}
 				/>
 			</header>
 
 			<main>
-				<section className="section">
-					<h2 className="sectionTitle">Live reads from the AT Protocol</h2>
-					<BlueskyFeed endpoint={ENDPOINT} records={records} />
-					<h2 className="sectionTitle">Up Next</h2>
-					<p className="prose">
-						Now that we've established a basic ATP interaction we're ready to
-						dive into <strong>Step 2: AT Proto OAuth</strong> (
-						<a
-							className="link-inline"
-							href="https://arsdehnel.com/posts/rwsdk-atproto-02-atproto-oauth"
-						>
-							Blog Post
-						</a>{" "}
-						|{" "}
-						<a
-							className="link-inline"
-							href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/02-atproto-oauth"
-						>
-							Git Branch
-						</a>
-						).
-					</p>
-				</section>
+				<PostContent {...requestInfo} />
 			</main>
 		</div>
 	);
