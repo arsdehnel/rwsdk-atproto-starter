@@ -67,7 +67,7 @@ async function main() {
 	console.log(`Repo registered`);
 
 	// Step 3: Write the status record directly to carol's PDS repo
-	const writeRes = await fetch(`${PDS_URL}/xrpc/com.atproto.repo.putRecord`, {
+	const writeRes = await fetch(`${PDS_URL}/xrpc/com.atproto.repo.createRecord`, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
@@ -76,7 +76,6 @@ async function main() {
 		body: JSON.stringify({
 			repo: session.did,
 			collection: "xyz.statusphere.status",
-			rkey: "self",
 			record: {
 				$type: "xyz.statusphere.status",
 				status: STATUS,
