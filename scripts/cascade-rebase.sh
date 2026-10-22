@@ -85,3 +85,10 @@ trap - EXIT
 
 echo ""
 echo "Cascade complete."
+echo ""
+
+# Run the health check to catch any spurious commit buildup early.
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [[ -x "$SCRIPT_DIR/check-cascade.sh" ]]; then
+  "$SCRIPT_DIR/check-cascade.sh"
+fi
