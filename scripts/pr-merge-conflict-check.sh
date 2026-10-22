@@ -24,9 +24,18 @@ for branch in "${BRANCHES[@]}"; do
   fi
 
   PR=$(gh api "repos/$REPO/pulls/$number")
+  mergeable=$(echo "$PR" | jq -r '.mergeable')
+
+  # GitHub computes mergeability lazily — poll until it resolves.
+  attempts=0
+  while [[ "$mergeable" == "null" && $attempts -lt 10 ]]; do
+    sleep 2
+    PR=$(gh api "repos/$REPO/pulls/$number")
+    mergeable=$(echo "$PR" | jq -r '.mergeable')
+    (( attempts++ )) || true
+  done
 
   title=$(echo "$PR" | jq -r '.title')
-  mergeable=$(echo "$PR" | jq -r '.mergeable')
   url=$(echo "$PR" | jq -r '.html_url')
 
   case "$mergeable" in
