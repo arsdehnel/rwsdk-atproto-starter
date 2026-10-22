@@ -1,6 +1,7 @@
-import { cloudflare } from "@cloudflare/vite-plugin";
+import { defineConfig } from "vite";
 import { redwood } from "rwsdk/vite";
-import { defineConfig, type Plugin } from "vite";
+import { cloudflare } from "@cloudflare/vite-plugin";
+import type { Plugin } from "vite";
 
 // Cloudflare Workers (workerd) does not support `redirect: "error"` — it
 // throws a TypeError at Request construction time. The @atproto packages use

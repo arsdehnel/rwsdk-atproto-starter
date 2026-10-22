@@ -1,0 +1,7 @@
+# Copy this file to .dev.vars to override wrangler.jsonc vars locally.
+# .dev.vars is gitignored — wrangler reads it automatically during `pnpm dev`.
+
+# The devnet URLs below are already set in wrangler.jsonc for this branch.
+# Override here if your ports differ, or clear them to target production bsky.social.
+# ATPROTO_PDS_URL=http://localhost:3000
+# ATPROTO_PLC_URL=http://localhost:2582
