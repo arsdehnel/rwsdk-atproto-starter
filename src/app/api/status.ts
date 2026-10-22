@@ -4,6 +4,7 @@ import type { AppContext } from "@/worker";
 import statusSchema from "@/lexicons/xyz/statusphere/status";
 import { getOAuthClient } from "@/lib/auth/client";
 import type { OAuthSession } from "@atproto/oauth-client-node";
+import { upsertStatus } from "@/lib/upsert-status";
 
 type SetStatusRequest = {
 	status: string;
@@ -41,9 +42,13 @@ export async function post({
 			statusSchema,
 			{ status, createdAt },
 		);
+
+		// Write immediately — don't wait for the Tap relay.
+		// No handle: Tap resolves and maintains it; omitting here preserves whatever it last set.
+		await upsertStatus({ did, status, rev: res.commit?.rev ?? null });
+
 		return Response.json({ success: true, uri: res.uri });
 	} catch {
-		// Token expired or revoked after restore() succeeded — treat same as session_expired.
-		return Response.json({ error: "session_expired" }, { status: 401 });
+		return Response.json({ error: "db_write_failed" }, { status: 500 });
 	}
 }

@@ -26,7 +26,8 @@
 		"release": "rw-scripts ensure-deploy-env && npm run clean && npm run build && wrangler deploy",
 		"generate": "rw-scripts ensure-env && wrangler types --include-runtime false",
 		"check": "npm run generate && npm run types",
-		"types": "tsc"
+		"types": "tsc",
+		"write-status": "tsx scripts/write-status.ts"
 	},
 	"dependencies": {
 		"@atproto/lex": "^0.3.14",
@@ -47,6 +48,7 @@
 		"drizzle-kit": "^0.31.1",
 		"typescript": "7.0.2",
 		"vite": "~8.2.0",
+		"tsx": "^4.0.0",
 		"wrangler": "4.118.0"
 	},
 	"devEngines": {
