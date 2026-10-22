@@ -51,9 +51,10 @@ ORIGINAL_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 # Used with --onto so each rebase only replays the branch's own unique commits,
 # not the entire upstream history (which causes spurious conflicts after any
 # intermediate branch is modified and gets new SHAs).
-declare -A OLD_TIPS
-for b in "${BRANCHES[@]}"; do
-  OLD_TIPS[$b]=$(git rev-parse "$b" 2>/dev/null) || true
+# Uses a plain indexed array (bash 3.2-compatible; no declare -A needed).
+OLD_TIPS=()
+for i in "${!BRANCHES[@]}"; do
+  OLD_TIPS[$i]=$(git rev-parse "${BRANCHES[$i]}" 2>/dev/null) || true
 done
 
 # Only restore if we're not mid-rebase
@@ -67,7 +68,7 @@ trap restore_branch EXIT
 for (( i=start_idx+1; i<${#BRANCHES[@]}; i++ )); do
   onto="${BRANCHES[$i-1]}"
   branch="${BRANCHES[$i]}"
-  old_onto_tip="${OLD_TIPS[$onto]}"
+  old_onto_tip="${OLD_TIPS[$((i-1))]}"
 
   echo "[$i/${#BRANCHES[@]}] Rebasing $branch onto $onto..."
   git checkout "$branch" --quiet
