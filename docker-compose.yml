@@ -126,16 +126,16 @@ services:
       TAP_PLC_URL: http://plc:2582
       TAP_DATABASE_URL: sqlite:///data/tap.db
       TAP_DISABLE_ACKS: "true"
-      # On macOS with Docker Desktop, host.docker.internal reaches the host machine.
-      # If you're on Linux, override this with your Docker bridge IP (e.g. http://172.17.0.1:5173/webhooks/tap).
       TAP_WEBHOOK_URL: ${TAP_WEBHOOK_URL:-http://host.docker.internal:5173/webhooks/tap}
       TAP_COLLECTION_FILTERS: xyz.statusphere.status
       TAP_LOG_LEVEL: info
     # PDS DID documents record serviceEndpoint as http://localhost:3000 (because PDS_HOSTNAME=localhost).
-    # Inside the Tap container, "localhost" is the container itself. host-gateway maps it to the
-    # host machine, where the PDS is exposed on port 3000.
+    # Inside the Tap container, "localhost" resolves to the container itself, not the host.
+    # host-gateway maps both "localhost" and "host.docker.internal" to the host machine,
+    # making the PDS reachable on port 3000 and the webhook URL work on Linux and macOS.
     extra_hosts:
       - "localhost:host-gateway"
+      - "host.docker.internal:host-gateway"
     volumes:
       - tap-data:/data
     ports:
