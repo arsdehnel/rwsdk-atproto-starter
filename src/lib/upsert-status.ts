@@ -24,12 +24,22 @@ export async function upsertStatus({
 }: UpsertStatusInput): Promise<boolean> {
 	if (rev !== null) {
 		const existing = await db
-			.select({ rev: statuses.rev })
+			.select({ rev: statuses.rev, handle: statuses.handle })
 			.from(statuses)
 			.where(eq(statuses.did, did))
 			.get();
 		// TIDs are lexicographically ordered by timestamp — string comparison is correct.
 		if (existing?.rev != null && existing.rev >= rev) {
+			// Same or newer rev — skip the full upsert. But if the caller is providing a
+			// handle that the record is currently missing, patch just that field.
+			if (handle != null && existing.handle == null) {
+				await db
+					.update(statuses)
+					.set({ handle, updatedAt: new Date().toISOString() })
+					.where(eq(statuses.did, did));
+				const allStatuses = await db.select().from(statuses);
+				pushToSseClients(allStatuses);
+			}
 			return false;
 		}
 	}
