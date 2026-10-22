@@ -8,9 +8,7 @@ import { getOAuthClient } from "@/lib/auth/client";
 import type { AppContext } from "@/worker";
 
 export async function PostContent({ ctx }: RequestInfo<AppContext>) {
-	const did = ctx.session?.did ?? null;
-	const { ATPROTO_PDS_URL: pdsUrl } = env;
-
+	let did = ctx.session?.did ?? null;
 	let userHandle: string | null = null;
 	let currentStatus: string | null = null;
 	let statusRecords: unknown = null;
