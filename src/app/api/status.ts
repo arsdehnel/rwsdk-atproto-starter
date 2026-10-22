@@ -4,9 +4,7 @@ import type { AppContext } from "@/worker";
 import statusSchema from "@/lexicons/xyz/statusphere/status";
 import { getOAuthClient } from "@/lib/auth/client";
 import type { OAuthSession } from "@atproto/oauth-client-node";
-import { db } from "@/db/db";
-import { statuses } from "@/db/schema";
-import { pushToSseClients } from "@/lib/status-store";
+import { upsertStatus } from "@/lib/upsert-status";
 
 type SetStatusRequest = {
 	status: string;
@@ -45,23 +43,9 @@ export async function post({
 			{ status, createdAt },
 		);
 
-		// We already have the data — don't wait for the relay.
-		// On conflict, preserve the existing handle (Tap maintains it); only update status.
-		await db
-			.insert(statuses)
-			.values({
-				did,
-				handle: null,
-				status,
-				updatedAt: new Date().toISOString(),
-			})
-			.onConflictDoUpdate({
-				target: statuses.did,
-				set: { status, updatedAt: new Date().toISOString() },
-			});
-
-		const allStatuses = await db.select().from(statuses);
-		pushToSseClients(allStatuses);
+		// Write immediately — don't wait for the Tap relay.
+		// No handle: Tap resolves and maintains it; omitting here preserves whatever it last set.
+		await upsertStatus({ did, status, rev: res.commit?.rev ?? null });
 
 		return Response.json({ success: true, uri: res.uri });
 	} catch {

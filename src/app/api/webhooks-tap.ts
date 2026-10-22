@@ -6,6 +6,7 @@ import type { RequestInfo } from "rwsdk/worker";
 import { db } from "@/db/db";
 import { statuses } from "@/db/schema";
 import { pushToSseClients } from "@/lib/status-store";
+import { upsertStatus } from "@/lib/upsert-status";
 
 export async function post({ request }: RequestInfo): Promise<Response> {
 	let body: unknown;
@@ -32,6 +33,8 @@ export async function post({ request }: RequestInfo): Promise<Response> {
 
 	if (event.action === "delete") {
 		await db.delete(statuses).where(eq(statuses.did, event.did));
+		const allStatuses = await db.select().from(statuses);
+		pushToSseClients(allStatuses);
 	} else {
 		const status = (event.record?.status as string) ?? "";
 
@@ -47,21 +50,9 @@ export async function post({ request }: RequestInfo): Promise<Response> {
 			// Handle resolution is best-effort; fall back to null.
 		}
 
-		await db
-			.insert(statuses)
-			.values({
-				did: event.did,
-				handle,
-				status,
-				updatedAt: new Date().toISOString(),
-			})
-			.onConflictDoUpdate({
-				target: statuses.did,
-				set: { handle, status, updatedAt: new Date().toISOString() },
-			});
+		// upsertStatus handles the SSE push if it writes; skips both if rev is stale.
+		await upsertStatus({ did: event.did, handle, status, rev: event.rev });
 	}
 
-	const allStatuses = await db.select().from(statuses);
-	pushToSseClients(allStatuses);
 	return new Response("ok");
 }
