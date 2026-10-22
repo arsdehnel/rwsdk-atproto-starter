@@ -115,6 +115,39 @@ services:
       timeout: 3s
       retries: 10
 
+  tap:
+    image: ghcr.io/bluesky-social/indigo/tap:latest
+    restart: unless-stopped
+    depends_on:
+      pds:
+        condition: service_healthy
+    environment:
+      TAP_RELAY_URL: http://pds:3000
+      TAP_PLC_URL: http://plc:2582
+      TAP_DATABASE_URL: sqlite:///data/tap.db
+      TAP_DISABLE_ACKS: "true"
+      TAP_WEBHOOK_URL: ${TAP_WEBHOOK_URL:-http://host.docker.internal:5173/webhooks/tap}
+      TAP_COLLECTION_FILTERS: xyz.statusphere.status
+      TAP_LOG_LEVEL: info
+    # PDS DID documents record serviceEndpoint as http://localhost:3000 (because PDS_HOSTNAME=localhost).
+    # Inside the Tap container, "localhost" resolves to the container itself, not the host.
+    # host-gateway maps both "localhost" and "host.docker.internal" to the host machine,
+    # making the PDS reachable on port 3000 and the webhook URL work on Linux and macOS.
+    extra_hosts:
+      - "localhost:host-gateway"
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - tap-data:/data
+    ports:
+      - "2480:2480"
+    networks:
+      - atproto-devnet
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:2480/health"]
+      interval: 60s
+      timeout: 5s
+      retries: 5
+
   init:
     image: alpine:3.20
     depends_on:
@@ -136,6 +169,7 @@ services:
 
 volumes:
   pds-data:
+  tap-data:
 
 networks:
   atproto-devnet:

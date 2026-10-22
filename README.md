@@ -6,7 +6,7 @@ This is the companion code for a [blog series](https://arsdehnel.com/posts) that
 
 ## Where this branch is at
 
-Take a look [the series overview](https://arsdehnel.github.io/rwsdk-atproto-starter/) for a complete picture of things.  Right now you're on code for [Step 4: AT Protocol Writes](https://arsdehnel.com/posts/rwsdk-atproto-04-atproto-writes).
+Take a look [the series overview](https://arsdehnel.github.io/rwsdk-atproto-starter/) for a complete picture of things.  Right now you're on code for [Step 5: Tap Sync](https://arsdehnel.com/posts/rwsdk-atproto-05-tap-sync).
 
 ## Prerequisites
 
