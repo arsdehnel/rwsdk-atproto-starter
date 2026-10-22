@@ -1,25 +1,31 @@
-import { env } from "cloudflare:workers";
 import type { RequestInfo } from "rwsdk/worker";
-
 import { BlueskyFeed } from "@/components/bluesky-feed/bluesky-feed";
 import { LoggedInUser } from "@/components/logged-in-user/logged-in-user";
 import { LoginForm } from "@/components/login-form/login-form";
+import { getOAuthClient } from "@/lib/auth/client";
 import type { AppContext } from "@/worker";
 
 export async function PostContent({ ctx }: RequestInfo<AppContext>) {
-	const did = ctx.session?.did ?? null;
-	const { ATPROTO_PDS_URL: pdsUrl } = env;
-
+	let did = ctx.session?.did ?? null;
 	let userHandle: string | null = null;
 	let repoDescription: unknown = null;
 	let repoDescriptionEndpoint: string | null = null;
 
 	if (did) {
-		repoDescriptionEndpoint = `${pdsUrl}/xrpc/com.atproto.repo.describeRepo?repo=${did}`;
+		try {
+		const oauthClient = await getOAuthClient();
+		const oauthSession = await oauthClient.restore(did);
+		const userPdsUrl = oauthSession.serverMetadata.issuer;
+		repoDescriptionEndpoint = `${userPdsUrl}/xrpc/com.atproto.repo.describeRepo?repo=${did}`;
 		const res = await fetch(repoDescriptionEndpoint);
 		const data = (await res.json()) as { handle?: string };
 		repoDescription = data;
 		userHandle = data.handle ?? null;
+		} catch( err ) {
+			console.log( `Error fetching session for did ${ did }: ${ err }`)
+			// this will force the user to re-login which might not be great but is better than an error
+			did = null;
+		}
 	}
 
 	return (
