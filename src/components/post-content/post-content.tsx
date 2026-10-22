@@ -1,13 +1,12 @@
-import { env } from "cloudflare:workers";
 import { eq } from "drizzle-orm";
 import type { RequestInfo } from "rwsdk/worker";
-
 import { LoggedInUser } from "@/components/logged-in-user/logged-in-user";
 import { LoginForm } from "@/components/login-form/login-form";
 import { StatusFeed } from "@/components/status-feed/status-feed";
 import { StatusPicker } from "@/components/status-picker/status-picker";
 import { db } from "@/db/db";
 import { statuses } from "@/db/schema";
+import { getOAuthClient } from "@/lib/auth/client";
 import type { AppContext } from "@/worker";
 
 export async function PostContent({ ctx }: RequestInfo<AppContext>) {
@@ -22,14 +21,20 @@ export async function PostContent({ ctx }: RequestInfo<AppContext>) {
 	const currentStatus = currentEntry?.status ?? null;
 
 	if (did) {
-		// Resolve the user's handle from the PDS — this is fine, it's identity
-		// metadata, not application data. Reading application data (statuses)
-		// directly from the PDS is the anti-pattern this post replaces.
-		const res = await fetch(
-			`${pdsUrl}/xrpc/com.atproto.repo.describeRepo?repo=${did}`,
-		);
-		const data = (await res.json()) as { handle?: string };
-		userHandle = data.handle ?? null;
+		try {
+			const oauthClient = await getOAuthClient();
+			const oauthSession = await oauthClient.restore(did);
+			const userPdsUrl = oauthSession.serverMetadata.issuer;
+			const res = await fetch(
+				`${userPdsUrl}/xrpc/com.atproto.repo.describeRepo?repo=${did}`,
+			);
+			const data = (await res.json()) as { handle?: string };
+			userHandle = data.handle ?? null;
+		} catch (err) {
+			console.log(`Error fetching session for did ${did}: ${err}`);
+			// this will force the user to re-login which might not be great but is better than an error
+			did = null;
+		}
 	}
 
 	return (
