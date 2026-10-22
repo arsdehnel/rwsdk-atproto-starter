@@ -1,9 +1,9 @@
 export const postConfig = {
-	step: 1,
-	postUrl: "https://arsdehnel.com/posts/rwsdk-atproto-01-first-read",
+	step: 2,
+	postUrl: "https://arsdehnel.com/posts/rwsdk-atproto-02-atproto-oauth",
 	commandLines: [
 		"git clone https://github.com/arsdehnel/rwsdk-atproto-starter",
-		"git checkout post/01-first-read",
+		"git checkout post/02-atproto-oauth",
 		"pnpm install",
 		"pnpm dev",
 	],

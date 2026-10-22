@@ -22,8 +22,21 @@
 		"enabled": true
 	},
 
+	// Durable Object session storage
+	"durable_objects": {
+		"bindings": [{ "name": "USER_SESSION_DO", "class_name": "UserSession" }]
+	},
+
+	// Declarative export registration for Durable Object classes.
+	// Mutually exclusive with the older "migrations" array.
+	"exports": {
+		"UserSession": { "type": "durable-object", "storage": "sqlite" }
+	},
+
 	// Environment variables
 	"vars": {
-		// Add your environment variables here
+		// Add your environment variables here.
+		// AUTH_SECRET_KEY is auto-generated in dev. Set it as a secret for production:
+		//   wrangler secret put AUTH_SECRET_KEY
 	}
 }

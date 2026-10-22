@@ -6,7 +6,7 @@ This is the companion code for a [blog series](https://arsdehnel.com/posts) that
 
 ## Where this branch is at
 
-Take a look [the series overview](https://arsdehnel.github.io/rwsdk-atproto-starter/) for a complete picture of things.  Right now you're on code for [Step 1: First ATP Read](https://arsdehnel.com/posts/rwsdk-atproto-01-first-read).
+Take a look [the series overview](https://arsdehnel.github.io/rwsdk-atproto-starter/) for a complete picture of things.  Right now you're on code for [Step 2: AT Protocol OAuth](https://arsdehnel.com/posts/rwsdk-atproto-02-atproto-oauth).
 
 ## Prerequisites
 
