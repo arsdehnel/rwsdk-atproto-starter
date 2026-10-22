@@ -34,8 +34,8 @@ export async function PostContent({ ctx }: RequestInfo<AppContext>) {
 			// but Post 5 covers how the real ecosystem handles this with AppViews.
 			try {
 				const lexClient = new Client(oauthSession);
-				const record = await lexClient.get(statusSchema, { rkey: "self" });
-				currentStatus = (record.value.status as string) ?? null;
+				const result = await lexClient.list(statusSchema, { limit: 1, reverse: true });
+				currentStatus = (result.records[0]?.value.status as string) ?? null;
 			} catch {
 				// No status record yet so we can start fresh.
 			}
@@ -56,11 +56,10 @@ export async function PostContent({ ctx }: RequestInfo<AppContext>) {
 					<section className="section">
 						<h2 className="sectionTitle">Your status</h2>
 						<p className="prose">
-							Pick an emoji. It gets written to your local PDS as an{" "}
+							Pick an emoji. It gets written to your local PDS as a new{" "}
 							<code className="inlineCode">xyz.statusphere.status</code> record
-							using <code className="inlineCode">put</code> with{" "}
-							<code className="inlineCode">rkey: "self"</code>. One record per
-							user, replaced wholesale each time.
+							using <code className="inlineCode">create</code>. Each pick appends
+							a new TID-keyed record — matching how the lexicon is declared.
 						</p>
 						<StatusSection
 							currentStatus={currentStatus}

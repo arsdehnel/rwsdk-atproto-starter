@@ -36,10 +36,9 @@ export async function post({
 
 	const lexClient = new Client(oauthSession);
 	const createdAt = new Date().toISOString() as DatetimeString;
-	const res = await lexClient.put(
+	const res = await lexClient.create(
 		statusSchema,
 		{ status, createdAt },
-		{ rkey: "self" },
 	);
 
 	return Response.json({ success: true, uri: res.uri });
