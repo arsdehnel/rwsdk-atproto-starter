@@ -8,9 +8,7 @@ import { statusStore } from "@/lib/status-store";
 import type { AppContext } from "@/worker";
 
 export async function PostContent({ ctx }: RequestInfo<AppContext>) {
-	const did = ctx.session?.did ?? null;
-	const { ATPROTO_PDS_URL: pdsUrl } = env;
-
+	let did = ctx.session?.did ?? null;
 	let userHandle: string | null = null;
 	// Current status comes from the in-memory Tap store, not a direct PDS read.
 	// On a fresh worker start the store is empty, so this will be null until the
