@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Usage: ./scripts/check-cascade.sh
+# Usage: ./scripts/check-cascade.sh [--cascade-from <branch>]
 # Run this after a cascade rebase to verify the branch chain is healthy.
+#
+# --cascade-from <branch>: when provided, divergence from parent is treated as
+#   an expected/informational note (not an error) for branches downstream of
+#   <branch>. Use this for the pre-flight check before running a cascade, where
+#   those branches are intentionally diverged and about to be rebased.
 #
 # Checks:
 #   1. Each branch is cleanly based on the previous one (no divergence).
@@ -24,7 +29,19 @@ BRANCHES=(
 RED='\033[0;31m'
 YELLOW='\033[1;33m'
 GREEN='\033[0;32m'
+DIM='\033[2m'
 NC='\033[0m'
+
+# Optional: branches downstream of this index get divergence demoted to a note.
+cascade_from_idx=-1
+if [[ "${1:-}" == "--cascade-from" && -n "${2:-}" ]]; then
+  for i in "${!BRANCHES[@]}"; do
+    if [[ "${BRANCHES[$i]}" == "$2" ]]; then
+      cascade_from_idx=$i
+      break
+    fi
+  done
+fi
 
 errors=0
 warnings=0
@@ -32,6 +49,7 @@ warnings=0
 pass() { echo -e "  ${GREEN}✓${NC} $*"; }
 warn() { echo -e "  ${YELLOW}⚠${NC}  $*"; ((warnings++)) || true; }
 fail() { echo -e "  ${RED}✗${NC} $*"; ((errors++)) || true; }
+note() { echo -e "  ${DIM}·${NC} $*"; }
 
 # Fetch a branch from origin if it doesn't exist locally.
 ensure_branch() {
@@ -65,6 +83,8 @@ for (( i=1; i<${#BRANCHES[@]}; i++ )); do
 
   if [[ "$merge_base" == "$parent_tip" ]]; then
     pass "cleanly based on $parent"
+  elif [[ $cascade_from_idx -ge 0 && $i -gt $cascade_from_idx ]]; then
+    note "diverged from $parent — expected, will be fixed by cascade"
   else
     fail "DIVERGED from $parent (merge-base is $(git log --oneline -1 "$merge_base" 2>/dev/null), not parent tip)"
   fi

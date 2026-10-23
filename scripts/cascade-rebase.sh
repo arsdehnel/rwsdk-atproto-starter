@@ -46,9 +46,11 @@ if [[ $start_idx -eq $(( ${#BRANCHES[@]} - 1 )) ]]; then
 fi
 
 # Pre-flight: verify the cascade is healthy before making any changes.
+# --cascade-from tells the check that divergence downstream of START_BRANCH is
+# expected (those branches are what this cascade is about to fix).
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 echo "Running pre-flight cascade health check..."
-if ! "$SCRIPT_DIR/check-cascade.sh"; then
+if ! "$SCRIPT_DIR/check-cascade.sh" --cascade-from "$START_BRANCH"; then
   echo ""
   echo "Fix the errors above before running the cascade."
   exit 1
