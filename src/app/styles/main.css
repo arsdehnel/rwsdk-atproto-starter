@@ -1,4 +1,8 @@
 @import "./base.css";
 @import "./localhost-warning.css";
+<<<<<<< HEAD
 @import "./post-progress.css";
+=======
+@import "./series-list.css";
+>>>>>>> d83ff43 (feat: initial post 2 functionality)
 @import "./sign-out-button.css";
