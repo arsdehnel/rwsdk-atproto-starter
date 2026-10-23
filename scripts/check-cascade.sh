@@ -33,8 +33,23 @@ pass() { echo -e "  ${GREEN}✓${NC} $*"; }
 warn() { echo -e "  ${YELLOW}⚠${NC}  $*"; ((warnings++)) || true; }
 fail() { echo -e "  ${RED}✗${NC} $*"; ((errors++)) || true; }
 
+# Fetch a branch from origin if it doesn't exist locally.
+ensure_branch() {
+  local branch="$1"
+  if ! git rev-parse --verify "$branch" &>/dev/null; then
+    echo "  (fetching $branch from origin...)"
+    git fetch origin "$branch:$branch" 2>/dev/null || true
+  fi
+}
+
 echo ""
 echo "Checking cascade health..."
+echo ""
+
+# Make sure every branch in the chain is available locally before checking.
+for branch in "${BRANCHES[@]}"; do
+  ensure_branch "$branch"
+done
 echo ""
 
 for (( i=1; i<${#BRANCHES[@]}; i++ )); do
