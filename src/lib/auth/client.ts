@@ -7,21 +7,17 @@ import {
 	buildAtprotoLoopbackClientMetadata,
 	NodeOAuthClient,
 } from "@atproto/oauth-client-node";
+import { kvDecrypt, kvEncrypt } from "./crypto";
 
-// Use globalThis so the client and its token stores survive across
-// hot-reloads in dev. In production, the Worker isolate keeps them alive
-// for the lifetime of the instance.
+// Use globalThis so the NodeOAuthClient singleton survives hot-reloads in dev.
+// In production, the Worker isolate keeps it alive for its lifetime.
 const globalAuth = globalThis as unknown as {
 	atprotoClient: NodeOAuthClient | null;
-	stateStore: Map<string, NodeSavedState>;
-	sessionStore: Map<string, NodeSavedSession>;
 };
 
 globalAuth.atprotoClient ??= null;
-globalAuth.stateStore ??= new Map();
-globalAuth.sessionStore ??= new Map();
 
-export const SCOPE = "atproto";
+export const SCOPE = "atproto repo:xyz.statusphere.status";
 
 export async function getOAuthClient(): Promise<NodeOAuthClient> {
 	if (globalAuth.atprotoClient) return globalAuth.atprotoClient;
@@ -47,31 +43,45 @@ export async function getOAuthClient(): Promise<NodeOAuthClient> {
 			redirect_uris: ["http://127.0.0.1:5173/oauth/callback"],
 		}),
 
-		// stateStore and sessionStore are in-memory for now. This means OAuth
-		// tokens are lost on Worker restart and aren't shared across isolates.
-		// Post 4 (authenticated writes) will need a durable store here, keyed
-		// by DID — separate from the DO session which is keyed by session ID.
+		// stateStore: ephemeral KV with a 10-minute TTL. OAuth state only needs to
+		// survive the seconds between the authorization redirect and the callback.
+		// The TTL prevents stale entries from accumulating. Values are encrypted at
+		// rest with AES-256-GCM using OAUTH_KV_ENCRYPTION_KEY.
 		stateStore: {
-			async get(key) {
-				return globalAuth.stateStore.get(key);
+			async get(key: string): Promise<NodeSavedState | undefined> {
+				const raw = await env.OAUTH_STATE_KV.get(key);
+				if (!raw) return undefined;
+				const plaintext = await kvDecrypt(raw);
+				return JSON.parse(plaintext) as NodeSavedState;
 			},
-			async set(key, value) {
-				globalAuth.stateStore.set(key, value);
+			async set(key: string, value: NodeSavedState): Promise<void> {
+				const encrypted = await kvEncrypt(JSON.stringify(value));
+				await env.OAUTH_STATE_KV.put(key, encrypted, {
+					expirationTtl: 600, // 10 minutes
+				});
 			},
-			async del(key) {
-				globalAuth.stateStore.delete(key);
+			async del(key: string): Promise<void> {
+				await env.OAUTH_STATE_KV.delete(key);
 			},
 		},
 
+		// sessionStore: KV keyed by DID. OAuth tokens and DPoP key material persist
+		// across Worker restarts and isolate evictions — users stay logged in after a
+		// dev server restart or a production cold start. Values are encrypted at rest
+		// with AES-256-GCM using OAUTH_KV_ENCRYPTION_KEY.
 		sessionStore: {
-			async get(key) {
-				return globalAuth.sessionStore.get(key);
+			async get(did: string): Promise<NodeSavedSession | undefined> {
+				const raw = await env.OAUTH_SESSION_KV.get(did);
+				if (!raw) return undefined;
+				const plaintext = await kvDecrypt(raw);
+				return JSON.parse(plaintext) as NodeSavedSession;
 			},
-			async set(key, value) {
-				globalAuth.sessionStore.set(key, value);
+			async set(did: string, value: NodeSavedSession): Promise<void> {
+				const encrypted = await kvEncrypt(JSON.stringify(value));
+				await env.OAUTH_SESSION_KV.put(did, encrypted);
 			},
-			async del(key) {
-				globalAuth.sessionStore.delete(key);
+			async del(did: string): Promise<void> {
+				await env.OAUTH_SESSION_KV.delete(did);
 			},
 		},
 	});

@@ -1,3 +1,4 @@
+import { env } from "cloudflare:workers";
 import type { RouteMiddleware } from "rwsdk/router";
 
 export const setCommonHeaders =
@@ -23,9 +24,12 @@ export const setCommonHeaders =
 			"geolocation=(), microphone=(), camera=()",
 		);
 
-		// Defines trusted sources for content loading and script execution:
+		// Defines trusted sources for content loading and script execution.
+		// connect-src includes the PDS URL so the browser can fetch public XRPC
+		// endpoints (e.g. listRecords) directly without proxying through the worker.
+		const pdsUrl = env.ATPROTO_PDS_URL ?? "";
 		response.headers.set(
 			"Content-Security-Policy",
-			`default-src 'self'; script-src 'self' 'unsafe-eval' 'nonce-${nonce}' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; frame-ancestors 'self'; frame-src 'self' https://challenges.cloudflare.com; object-src 'none';`,
+			`default-src 'self'; script-src 'self' 'unsafe-eval' 'nonce-${nonce}' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; frame-ancestors 'self'; frame-src 'self' https://challenges.cloudflare.com; object-src 'none'; connect-src 'self' ${pdsUrl};`,
 		);
 	};

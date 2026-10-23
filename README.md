@@ -6,14 +6,14 @@ This is the companion code for a [blog series](https://arsdehnel.com/posts) that
 
 ## Where this branch is at
 
-Take a look [the series overview](https://arsdehnel.github.io/rwsdk-atproto-starter/) for a complete picture of things.  Right now you're on code for [Step 3: Local Dev Setup](https://arsdehnel.com/posts/rwsdk-atproto-03-local-dev-setup).
+Take a look [the series overview](https://arsdehnel.github.io/rwsdk-atproto-starter/) for a complete picture of things.  Right now you're on code for [Step 4: AT Protocol Writes](https://arsdehnel.com/posts/rwsdk-atproto-04-atproto-writes).
 
 ## Prerequisites
 
 - [Node.js](https://nodejs.org) 26.x
 - [pnpm](https://pnpm.io)
 - A [Cloudflare account](https://dash.cloudflare.com/sign-up) (free tier is fine for development)
-- [Docker](https://docs.docker.com/get-docker) (Post 3 and later — for running a local PDS)
+- [Docker](https://docs.docker.com/get-docker)
 
 ## Getting started
 
@@ -25,10 +25,7 @@ pnpm docker:up
 pnpm dev
 ```
 
-`docker:up` starts postgres, plc, pds, maildev, and a one-shot init container that creates three test accounts. Once the worker is running, log in with any one of them:
-    - `alice.devnet.test` / `alice-devnet-pass` 
-    - `bob.devnet.test` / `bob-devnet-pass`
-    - `carol.devnet.test` / `carol-devnet-pass`
+`docker:up` starts postgres, plc, pds, maildev, and a one-shot init container that creates two test accounts. Once the worker is running, log in with `alice.devnet.test` / `alice-devnet-pass` or `bob.devnet.test` / `bob-devnet-pass`.
 
 To watch the init container seed the accounts:
 
