@@ -1,6 +1,6 @@
 import type { RequestInfo } from "rwsdk/worker";
 
-import { BlueskyFeed } from "@/components/bluesky-feed/bluesky-feed";
+import { PdsFeedViewer } from "@/app/components";
 import type { AppContext } from "@/worker";
 
 const ENDPOINT =
@@ -14,7 +14,7 @@ export async function PostContent(_: RequestInfo<AppContext>) {
 		<>
 			<section className="section">
 				<h2 className="sectionTitle">Live reads from the AT Protocol</h2>
-				<BlueskyFeed endpoint={ENDPOINT} records={records} />
+				<PdsFeedViewer endpoint={ENDPOINT} records={records} />
 			</section>
 
 			<section className="section">

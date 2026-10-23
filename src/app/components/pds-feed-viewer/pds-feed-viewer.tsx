@@ -1,8 +1,8 @@
 "use client";
 
-import styles from "./bluesky-feed.module.css";
+import styles from "./pds-feed-viewer.module.css";
 
-export function BlueskyFeed({
+export function PdsFeedViewer({
 	endpoint,
 	records,
 }: {
