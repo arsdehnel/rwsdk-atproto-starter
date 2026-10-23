@@ -9,6 +9,7 @@ async function post({ request }: RequestInfo) {
 	}
 
 	const client = await getOAuthClient();
+<<<<<<< HEAD
 
 	try {
 		const authUrl = await client.authorize(handle, { scope: SCOPE });
@@ -23,6 +24,10 @@ async function post({ request }: RequestInfo) {
 			{ status: 400 },
 		);
 	}
+=======
+	const authUrl = await client.authorize(handle, { scope: SCOPE });
+	return Response.json({ redirectUrl: authUrl.toString() });
+>>>>>>> d83ff43 (feat: initial post 2 functionality)
 }
 
 export default { post };
