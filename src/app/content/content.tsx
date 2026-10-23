@@ -1,32 +1,56 @@
 import type { RequestInfo } from "rwsdk/worker";
-import { PdsFeedViewer } from "@/app/components";
+import { LoggedInUser, LoginForm, PdsFeedViewer } from "@/app/components";
 import type { AppContext } from "@/worker";
 import { postConfig } from "./config";
 
-const ENDPOINT =
-	"https://bsky.social/xrpc/com.atproto.repo.listRecords?repo=bsky.app&collection=app.bsky.feed.post&limit=3";
-
-export async function PostContent(_: RequestInfo<AppContext>) {
-	const response = await fetch(ENDPOINT);
-	const records = await response.json();
-
+export async function PostContent({ ctx }: RequestInfo<AppContext>) {
+	const did = ctx.session?.did ?? null;
+	let userRecords = null;
+	let userHandle: string | null = null;
+	if (did) {
+		const [recordsRes, handleRes] = await Promise.all([
+			fetch(
+				`https://bsky.social/xrpc/com.atproto.repo.listRecords?repo=${did}&collection=app.bsky.feed.post&limit=5`,
+			),
+			fetch(
+				`https://bsky.social/xrpc/com.atproto.repo.describeRepo?repo=${did}`,
+			),
+		]);
+		userRecords = await recordsRes.json();
+		const handleData = (await handleRes.json()) as { handle?: string };
+		userHandle = handleData.handle ?? null;
+	}
 	return (
 		<>
-			<section className="section">
-				<h2 className="sectionTitle">RWSDK Create App</h2>
-				<p className="prose">
-					This started with the base{" "}
-					<code className="inlineCode">
-						pnpx create-rwsdk rwsdk-atproto-starter
-					</code>{" "}
-					and layers on the ATP read from there.
-				</p>
-			</section>
-
-			<section className="section">
-				<h2 className="sectionTitle">Live reads from the AT Protocol</h2>
-				<PdsFeedViewer endpoint={ENDPOINT} records={records} />
-			</section>
+			{did ? (
+				<>
+					<LoggedInUser did={did} userHandle={userHandle} />
+					<section className="section">
+						<h2 className="sectionTitle">Your recent posts</h2>
+						<PdsFeedViewer
+							endpoint={`https://bsky.social/xrpc/com.atproto.repo.listRecords?repo=${did}&collection=app.bsky.feed.post&limit=5`}
+							records={userRecords}
+						/>
+					</section>
+				</>
+			) : (
+				<>
+					<section className="section">
+						<h2 className="sectionTitle">Sign in with Bluesky</h2>
+						<p className="prose">
+							Enter your Bluesky handle to authenticate via AT Protocol OAuth.
+							You'll be redirected to Bluesky to approve access, then back here.
+						</p>
+						<LoginForm />
+					</section>
+					<section className="section">
+						<h2 className="sectionTitle">Live from the AT Protocol</h2>
+						<p className="prose">
+							Sign in above to see your recent posts pulled live from your PDS.
+						</p>
+					</section>
+				</>
+			)}
 
 			<section className="section">
 				<h2 className="sectionTitle">Up Next</h2>
