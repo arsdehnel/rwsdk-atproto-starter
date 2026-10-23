@@ -22,6 +22,23 @@
 		"enabled": true
 	},
 
+	// Durable Object session storage
+	"durable_objects": {
+		"bindings": [
+			{ "name": "DO_BROWSER_SESSION", "class_name": "BrowserSession" }
+		]
+	},
+
+	// Declarative export registration for Durable Object classes.
+	// Mutually exclusive with the older "migrations" array.
+	"exports": {
+		"BrowserSession": { "type": "durable-object", "storage": "sqlite" }
+	},
+
+	"secrets": {
+		"required": ["BROWSER_SESSION_SIGNING_KEY"]
+	},
+
 	// Environment variables
 	"vars": {
 		// Add your environment variables here
