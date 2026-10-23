@@ -1,19 +1,24 @@
+import { eq } from "drizzle-orm";
 import type { RequestInfo } from "rwsdk/worker";
 import { LoggedInUser } from "@/components/logged-in-user/logged-in-user";
 import { LoginForm } from "@/components/login-form/login-form";
 import { StatusFeed } from "@/components/status-feed/status-feed";
 import { StatusPicker } from "@/components/status-picker/status-picker";
+import { db } from "@/db/db";
+import { statuses } from "@/db/schema";
 import { getOAuthClient } from "@/lib/auth/client";
-import { statusStore } from "@/lib/status-store";
 import type { AppContext } from "@/worker";
 
 export async function PostContent({ ctx }: RequestInfo<AppContext>) {
 	let did = ctx.session?.did ?? null;
 	let userHandle: string | null = null;
-	// Current status comes from the in-memory Tap store, not a direct PDS read.
-	// On a fresh worker start the store is empty, so this will be null until the
-	// first pick fires a webhook. Post 6 fixes that with D1.
-	const currentStatus = did ? (statusStore.get(did)?.status ?? null) : null;
+	const [currentEntry] = did
+		? await db
+				.select({ status: statuses.status })
+				.from(statuses)
+				.where(eq(statuses.did, did))
+		: [];
+	const currentStatus = currentEntry?.status ?? null;
 
 	if (did) {
 		try {
@@ -41,21 +46,28 @@ export async function PostContent({ ctx }: RequestInfo<AppContext>) {
 					<section className="section">
 						<h2 className="sectionTitle">Your status</h2>
 						<p className="prose">
-							Pick an emoji. Just like the last step's version it gets written
-							to your PDS as an{" "}
-							<code className="inlineCode">xyz.statusphere.status</code> record.
-							Unlike that version, though, we've got Tap setup now to pick it up
-							from the firehose and delivers it to the feed below — no PDS read
-							involved.
+							Pick an emoji again, it still gets written to your PDS as an{" "}
+							<code className="inlineCode">xyz.statusphere.status</code> record,
+							and Tap still picks it up from the firehose and delivers it to the
+							worker and your browser.
+						</p>
+						<p className="prose">
+							Once you've picked one, try restarting the worker (
+							<code className="inlineCode">pnpm dev</code>) and refreshing the
+							page. Your status survives now as it's written to D1.
 						</p>
 						<StatusPicker currentStatus={currentStatus} />
 					</section>
 
 					<section className="section">
-						<h2 className="sectionTitle">Live from Tap</h2>
+						<h2 className="sectionTitle">
+							Live from Tap but with D1 persistence
+						</h2>
 						<p className="prose">
-							As the event flows through from PDS to Relay to Tap back to your
-							local host this will updated via server-side events.
+							Just like Step 5's architecture, the event flows through from PDS
+							to Relay to Tap back to your local host but now that data will be
+							saved to D1 while also being pushed to this UI via server-side
+							events.
 							<ol>
 								<li>
 									The write goes to your PDS, which emits a firehose event
@@ -69,13 +81,15 @@ export async function PostContent({ ctx }: RequestInfo<AppContext>) {
 									Tap delivers the events to{" "}
 									<code className="inlineCode">POST /webhooks/tap</code>
 								</li>
-								<li>The worker updates its in-memory store</li>
+								<li>
+									The worker upserts into D1 and updates the in-memory store
+								</li>
 								<li>
 									The worker pushes the new list to all open SSE connections
 								</li>
 							</ol>
 						</p>
-						<StatusFeed initialStatuses={Array.from(statusStore.values())} />
+						<StatusFeed initialStatuses={await db.select().from(statuses)} />
 					</section>
 				</>
 			) : (
