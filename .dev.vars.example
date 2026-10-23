@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 BROWSER_SESSION_SIGNING_KEY=this-is-a-string-used-for-encrypting-browser-session-data
 OAUTH_STATE_KV_ENCRYPTION_KEYS=["dev-only-insecure-key-replace-for-production"]
 OAUTH_TOKEN_KV_ENCRYPTION_KEYS=["dev-only-insecure-key-replace-for-production"]
 # Must match TAP_ADMIN_PASSWORD in docker-compose.yml
 WEBHOOK_TAP_SECRET=tap-dev-password
+=======
+BROWSER_SESSION_SIGNING_KEY=this-is-a-string-used-for-encrypting-browser-session-data
+>>>>>>> d83ff43 (feat: initial post 2 functionality)
