@@ -42,6 +42,12 @@
 		"UserSession": { "type": "durable-object", "storage": "sqlite" }
 	},
 
+	// Secrets — set via `wrangler secret put <NAME>` for production.
+	// For local dev, add them to .dev.vars (see .dev.vars.example).
+	"secrets": {
+		"required": ["OAUTH_KV_ENCRYPTION_KEY"]
+	},
+
 	// Environment variables
 	"vars": {
 		// Add your environment variables here.

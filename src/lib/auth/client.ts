@@ -7,6 +7,7 @@ import {
 	buildAtprotoLoopbackClientMetadata,
 	NodeOAuthClient,
 } from "@atproto/oauth-client-node";
+import { kvDecrypt, kvEncrypt } from "./crypto";
 
 // Use globalThis so the NodeOAuthClient singleton survives hot-reloads in dev.
 // In production, the Worker isolate keeps it alive for its lifetime.
@@ -44,14 +45,18 @@ export async function getOAuthClient(): Promise<NodeOAuthClient> {
 
 		// stateStore: ephemeral KV with a 10-minute TTL. OAuth state only needs to
 		// survive the seconds between the authorization redirect and the callback.
-		// The TTL prevents stale entries from accumulating.
+		// The TTL prevents stale entries from accumulating. Values are encrypted at
+		// rest with AES-256-GCM using OAUTH_KV_ENCRYPTION_KEY.
 		stateStore: {
 			async get(key: string): Promise<NodeSavedState | undefined> {
 				const raw = await env.OAUTH_STATE_KV.get(key);
-				return raw ? (JSON.parse(raw) as NodeSavedState) : undefined;
+				if (!raw) return undefined;
+				const plaintext = await kvDecrypt(raw);
+				return JSON.parse(plaintext) as NodeSavedState;
 			},
 			async set(key: string, value: NodeSavedState): Promise<void> {
-				await env.OAUTH_STATE_KV.put(key, JSON.stringify(value), {
+				const encrypted = await kvEncrypt(JSON.stringify(value));
+				await env.OAUTH_STATE_KV.put(key, encrypted, {
 					expirationTtl: 600, // 10 minutes
 				});
 			},
@@ -60,16 +65,20 @@ export async function getOAuthClient(): Promise<NodeOAuthClient> {
 			},
 		},
 
-		// sessionStore: KV keyed by DID. OAuth tokens persist across Worker restarts
-		// and isolate evictions — users stay logged in after a dev server restart or
-		// a production cold start.
+		// sessionStore: KV keyed by DID. OAuth tokens and DPoP key material persist
+		// across Worker restarts and isolate evictions — users stay logged in after a
+		// dev server restart or a production cold start. Values are encrypted at rest
+		// with AES-256-GCM using OAUTH_KV_ENCRYPTION_KEY.
 		sessionStore: {
 			async get(did: string): Promise<NodeSavedSession | undefined> {
 				const raw = await env.OAUTH_SESSION_KV.get(did);
-				return raw ? (JSON.parse(raw) as NodeSavedSession) : undefined;
+				if (!raw) return undefined;
+				const plaintext = await kvDecrypt(raw);
+				return JSON.parse(plaintext) as NodeSavedSession;
 			},
 			async set(did: string, value: NodeSavedSession): Promise<void> {
-				await env.OAUTH_SESSION_KV.put(did, JSON.stringify(value));
+				const encrypted = await kvEncrypt(JSON.stringify(value));
+				await env.OAUTH_SESSION_KV.put(did, encrypted);
 			},
 			async del(did: string): Promise<void> {
 				await env.OAUTH_SESSION_KV.delete(did);

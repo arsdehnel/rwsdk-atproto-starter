@@ -5,3 +5,8 @@
 # Override here if your ports differ, or clear them to target production bsky.social.
 # ATPROTO_PDS_URL=http://localhost:3000
 # ATPROTO_PLC_URL=http://localhost:2582
+
+# Encryption key for OAuth state and session data stored in KV.
+# The value below is fine for local dev. For production, replace it with a
+# random secret and set it via: wrangler secret put OAUTH_KV_ENCRYPTION_KEY
+OAUTH_KV_ENCRYPTION_KEY=dev-only-insecure-key-replace-for-production
