@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Drawer } from "@/components/drawer/drawer";
+import { Drawer } from "@/app/components/drawer/drawer";
 import styles from "./header-nav.module.css";
 
 type DrawerId = "building" | "series" | "run-it";
