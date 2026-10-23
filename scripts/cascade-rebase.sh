@@ -45,6 +45,15 @@ if [[ $start_idx -eq $(( ${#BRANCHES[@]} - 1 )) ]]; then
   exit 0
 fi
 
+# Pre-flight: verify the cascade is healthy before making any changes.
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+echo "Running pre-flight cascade health check..."
+if ! "$SCRIPT_DIR/check-cascade.sh"; then
+  echo ""
+  echo "Fix the errors above before running the cascade."
+  exit 1
+fi
+
 ORIGINAL_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
 # Record each branch's current tip before the cascade begins.
@@ -98,8 +107,5 @@ echo ""
 echo "Cascade complete."
 echo ""
 
-# Run the health check to catch any spurious commit buildup early.
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-if [[ -x "$SCRIPT_DIR/check-cascade.sh" ]]; then
-  "$SCRIPT_DIR/check-cascade.sh"
-fi
+# Post-cascade health check to catch any spurious commit buildup.
+"$SCRIPT_DIR/check-cascade.sh"
