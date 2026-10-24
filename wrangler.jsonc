@@ -31,6 +31,7 @@
 	"vars": {
 		// Add your environment variables here
 		"ATPROTO_PDS_URL": "http://localhost:3000",
-		"ATPROTO_PLC_URL": "http://localhost:2582"
+		"ATPROTO_PLC_URL": "http://localhost:2582",
+		"ATPROTO_TAP_URL": "http://localhost:2480"
 	}
 }

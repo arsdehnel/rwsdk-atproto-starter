@@ -4,6 +4,7 @@ import oauthCallback from "@/app/api/oauth-callback";
 import oauthClientMetadata from "@/app/api/oauth-client-metadata";
 import oauthLogin from "@/app/api/oauth-login";
 import oauthLogout from "@/app/api/oauth-logout";
+import tapWebhook from "@/app/api/webhooks-tap";
 import { Document } from "@/app/document";
 import { setCommonHeaders } from "@/app/headers";
 import { sessionStore } from "@/app/lib/session";
@@ -24,5 +25,6 @@ export default defineApp([
 	route("/oauth/logout", oauthLogout),
 	route("/client-metadata.json", oauthClientMetadata),
 	route("/status", status),
+	route("/webhooks/tap", tapWebhook),
 	render(Document, [route("/", Home)]),
 ]);

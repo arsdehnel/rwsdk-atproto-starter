@@ -6,7 +6,7 @@ This is the companion code for a [blog series](https://arsdehnel.com/posts) that
 
 ## Where this branch is at
 
-Take a look [the series overview](https://arsdehnel.github.io/rwsdk-atproto-starter/) for a complete picture of things. Right now you're on code for [Step 4: AT Protocol Writes](https://arsdehnel.com/posts/rwsdk-atp-s1-p4-atp-writes).
+Take a look [the series overview](https://arsdehnel.github.io/rwsdk-atproto-starter/) for a complete picture of things. Right now you're on code for [Step 5: Tap Sync](https://arsdehnel.com/posts/rwsdk-atp-s1-p5-tap-sync).
 
 ## Prerequisites
 
@@ -20,7 +20,7 @@ Take a look [the series overview](https://arsdehnel.github.io/rwsdk-atproto-star
 ```sh
 git clone https://github.com/arsdehnel/rwsdk-atproto-starter
 cd rwsdk-atproto-starter
-git checkout post/series-1/04-atp-writes
+git checkout post/series-1/05-tap-sync
 pnpm install
 pnpm docker:up
 pnpm dev
