@@ -2,6 +2,7 @@ export * from "./building-content/building-content";
 export * from "./drawer/drawer";
 export * from "./header-content/header-content";
 export * from "./header-nav/header-nav";
+export * from "./localhost-warning/localhost-warning";
 export * from "./logged-in-user/logged-in-user";
 export * from "./login-form/login-form";
 export * from "./pds-feed-viewer/pds-feed-viewer";
