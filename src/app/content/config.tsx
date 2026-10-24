@@ -54,11 +54,11 @@ export const postConfig = {
 =======
 export const postConfig = {
 	series: 1,
-	step: 3,
-	postUrl: "https://arsdehnel.com/posts/rwsdk-atp-1-03-local-dev",
+	step: 4,
+	postUrl: "https://arsdehnel.com/posts/rwsdk-atproto-1-04-atp-writes",
 	commandLines: [
 		"git clone https://github.com/arsdehnel/rwsdk-atproto-starter",
-		"git checkout post/series-1/03-local-dev",
+		"git checkout post/series-1/04-atp-writes",
 		"pnpm install",
 		"pnpm docker:up",
 		"pnpm dev",
@@ -84,8 +84,8 @@ export const postConfig = {
 					<code className="inlineCode">carol-devnet-pass</code>
 				</li>
 			</ul>
-			And try it with your own public account which won't work because we're
-			local-only now
+			Then set your status and see the PDS data update below it showing the full
+			scope of the Statusphere records we are saving.
 		</p>
 	),
 >>>>>>> d83ff43 (feat: initial post 2 functionality)
