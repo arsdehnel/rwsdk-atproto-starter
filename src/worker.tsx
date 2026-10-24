@@ -8,6 +8,7 @@ import { Document } from "@/app/document";
 import { setCommonHeaders } from "@/app/headers";
 import { sessionStore } from "@/app/lib/session";
 import { Home } from "@/app/pages/home";
+import status from "./app/api/status";
 
 export type AppContext = {
 	session: { did: string | null } | null;
@@ -22,5 +23,6 @@ export default defineApp([
 	route("/oauth/callback", oauthCallback),
 	route("/oauth/logout", oauthLogout),
 	route("/client-metadata.json", oauthClientMetadata),
+	route("/status", status),
 	render(Document, [route("/", Home)]),
 ]);

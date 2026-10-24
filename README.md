@@ -6,21 +6,21 @@ This is the companion code for a [blog series](https://arsdehnel.com/posts) that
 
 ## Where this branch is at
 
-Take a look [the series overview](https://arsdehnel.github.io/rwsdk-atproto-starter/) for a complete picture of things. Right now you're on code for [Step 3: Local Dev Setup](https://arsdehnel.com/posts/rwsdk-atp-s1-p3-local-dev).
+Take a look [the series overview](https://arsdehnel.github.io/rwsdk-atproto-starter/) for a complete picture of things. Right now you're on code for [Step 4: AT Protocol Writes](https://arsdehnel.com/posts/rwsdk-atp-s1-p4-atp-writes).
 
 ## Prerequisites
 
 - [Node.js](https://nodejs.org) 26.x
 - [pnpm](https://pnpm.io)
 - A [Cloudflare account](https://dash.cloudflare.com/sign-up) (free tier is fine for development)
-- [Docker](https://docs.docker.com/get-docker) (Post 3 and later — for running a local PDS)
+- [Docker](https://docs.docker.com/get-docker)
 
 ## Getting started
 
 ```sh
 git clone https://github.com/arsdehnel/rwsdk-atproto-starter
 cd rwsdk-atproto-starter
-git checkout post/series-1/03-local-dev
+git checkout post/series-1/04-atp-writes
 pnpm install
 pnpm docker:up
 pnpm dev

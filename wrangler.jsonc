@@ -22,6 +22,11 @@
 		"enabled": true
 	},
 
+	// KV for AT Protocol OAuth tokens
+	"kv_namespaces": [
+		{ "binding": "KV_OAUTH_TOKENS", "id": "KV_OAUTH_TOKENS_LOCAL" }
+	],
+
 	// Environment variables
 	"vars": {
 		// Add your environment variables here
