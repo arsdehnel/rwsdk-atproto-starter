@@ -7,16 +7,15 @@ import {
 	buildAtprotoLoopbackClientMetadata,
 	NodeOAuthClient,
 } from "@atproto/oauth-client-node";
+import { kvDecrypt, kvEncrypt } from "./crypto";
 
 // Use globalThis so the NodeOAuthClient singleton survives hot-reloads in dev.
 // In production, the Worker isolate keeps it alive for its lifetime.
 const globalAuth = globalThis as unknown as {
 	atprotoClient: NodeOAuthClient | null;
-	stateStore: Map<string, NodeSavedState>;
 };
 
 globalAuth.atprotoClient ??= null;
-globalAuth.stateStore ??= new Map();
 
 export const SCOPE = "atproto repo:xyz.statusphere.status";
 
@@ -44,17 +43,25 @@ export async function getOAuthClient(): Promise<NodeOAuthClient> {
 			redirect_uris: ["http://127.0.0.1:5173/oauth/callback"],
 		}),
 
-		// stateStore: is still in memory as this only needs to live long enough for
-		//   the login itself to complete
+		// stateStore: ephemeral KV with a 10-minute TTL. OAuth state only needs to
+		// survive the seconds between the authorization redirect and the callback.
+		// The TTL prevents stale entries from accumulating. Values are encrypted at
+		// rest with AES-256-GCM using OAUTH_STATE_KV_ENCRYPTION_KEY..
 		stateStore: {
-			async get(key) {
-				return globalAuth.stateStore.get(key);
+			async get(key: string): Promise<NodeSavedState | undefined> {
+				const raw = await env.KV_OAUTH_STATE.get(key);
+				if (!raw) return undefined;
+				const plaintext = await kvDecrypt(raw);
+				return JSON.parse(plaintext) as NodeSavedState;
 			},
-			async set(key, value) {
-				globalAuth.stateStore.set(key, value);
+			async set(key: string, value: NodeSavedState): Promise<void> {
+				const encrypted = await kvEncrypt(JSON.stringify(value));
+				await env.KV_OAUTH_STATE.put(key, encrypted, {
+					expirationTtl: 600, // 10 minutes
+				});
 			},
-			async del(key) {
-				globalAuth.stateStore.delete(key);
+			async del(key: string): Promise<void> {
+				await env.KV_OAUTH_STATE.delete(key);
 			},
 		},
 

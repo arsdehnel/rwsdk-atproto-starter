@@ -22,9 +22,10 @@
 		"enabled": true
 	},
 
-	// KV for AT Protocol OAuth tokens
+	// KV for AT Protocol OAuth tokens and state
 	"kv_namespaces": [
-		{ "binding": "KV_OAUTH_TOKENS", "id": "KV_OAUTH_TOKENS_LOCAL" }
+		{ "binding": "KV_OAUTH_TOKENS", "id": "KV_OAUTH_TOKENS_LOCAL" },
+		{ "binding": "KV_OAUTH_STATE", "id": "KV_OAUTH_STATE_LOCAL" }
 	],
 
 	// Durable Object for TAP sync state
@@ -41,6 +42,10 @@
 	// Mutually exclusive with the older "migrations" array.
 	"exports": {
 		"AppViewSyncState": { "type": "durable-object", "storage": "sqlite" }
+	},
+
+	"secrets": {
+		"required": ["OAUTH_STATE_KV_ENCRYPTION_KEY"]
 	},
 
 	// Environment variables
