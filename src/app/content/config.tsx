@@ -54,11 +54,11 @@ export const postConfig = {
 =======
 export const postConfig = {
 	series: 1,
-	step: 4,
-	postUrl: "https://arsdehnel.com/posts/rwsdk-atproto-1-04-atp-writes",
+	step: 5,
+	postUrl: "https://arsdehnel.com/posts/rwsdk-atproto-1-05-tap-sync",
 	commandLines: [
 		"git clone https://github.com/arsdehnel/rwsdk-atproto-starter",
-		"git checkout post/series-1/04-atp-writes",
+		"git checkout post/series-1/05-tap-sync",
 		"pnpm install",
 		"pnpm docker:up",
 		"pnpm dev",
@@ -84,8 +84,8 @@ export const postConfig = {
 					<code className="inlineCode">carol-devnet-pass</code>
 				</li>
 			</ul>
-			Then set your status and see the PDS data update below it showing the full
-			scope of the Statusphere records we are saving.
+			Then set your status and note the update as the Tap's webhook comes in and
+			is processed.
 		</p>
 	),
 >>>>>>> d83ff43 (feat: initial post 2 functionality)
