@@ -4,12 +4,14 @@ import { useState } from "react";
 import { PdsFeedViewer, StatusPicker } from "@/app/components";
 
 interface StatusSectionProps {
+	did: string;
 	currentStatus: string | null;
 	listRecordsEndpoint: string;
 	initialRecords: unknown;
 }
 
 export function StatusSection({
+	did,
 	currentStatus,
 	listRecordsEndpoint,
 	initialRecords,
@@ -25,7 +27,11 @@ export function StatusSection({
 
 	return (
 		<>
-			<StatusPicker currentStatus={currentStatus} onSuccess={handleSuccess} />
+			<StatusPicker
+				currentStatus={currentStatus}
+				onSuccess={handleSuccess}
+				did={did}
+			/>
 			<h2 className="sectionTitle">View your status records</h2>
 			<p className="prose">
 				The write used OAuth and the lex client. The read doesn't since{" "}

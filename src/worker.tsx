@@ -1,4 +1,6 @@
+import { env } from "cloudflare:workers";
 import { render, route } from "rwsdk/router";
+import { syncedStateRoutes } from "rwsdk/use-synced-state/worker";
 import { defineApp } from "rwsdk/worker";
 import oauthCallback from "@/app/api/oauth-callback";
 import oauthClientMetadata from "@/app/api/oauth-client-metadata";
@@ -11,6 +13,8 @@ import { sessionStore } from "@/app/lib/session";
 import { Home } from "@/app/pages/home";
 import status from "./app/api/status";
 
+export { AppViewSyncState } from "@/app/durable-objects";
+
 export type AppContext = {
 	session: { did: string | null } | null;
 };
@@ -20,6 +24,9 @@ export default defineApp([
 	async ({ ctx, request }) => {
 		ctx.session = await sessionStore.load(request);
 	},
+	...syncedStateRoutes(() => env.DO_APPVIEW_SYNC_STATE, {
+		durableObjectName: "appViewSyncState",
+	}),
 	route("/oauth/login", oauthLogin),
 	route("/oauth/callback", oauthCallback),
 	route("/oauth/logout", oauthLogout),

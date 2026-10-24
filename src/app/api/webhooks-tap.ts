@@ -1,9 +1,7 @@
-// import { env } from "cloudflare:workers";
+import { env } from "cloudflare:workers";
 import type { LexValue } from "@atproto/lex";
 import { parseTapEvent, type TapEvent } from "@atproto/tap";
 import type { RequestInfo } from "rwsdk/worker";
-
-// import { sseClients, statusStore, type StatusEntry } from "@/lib/status-store";
 
 async function post({ request }: RequestInfo): Promise<Response> {
 	let body: unknown;
@@ -16,7 +14,6 @@ async function post({ request }: RequestInfo): Promise<Response> {
 	let event: TapEvent;
 	try {
 		event = parseTapEvent(body as LexValue);
-		console.log(`Received tap hook:\n${JSON.stringify(event, null, 4)}`);
 	} catch {
 		// Malformed event — Tap will retry in production, locally it shouldn't fail since we control the sources, but we don't want to block on bad data.
 		return new Response("Unrecognized event", { status: 400 });
@@ -29,30 +26,31 @@ async function post({ request }: RequestInfo): Promise<Response> {
 		return new Response("ok");
 	}
 
-	// if (event.action === "delete") {
-	// 	statusStore.delete(event.did);
-	// } else {
-	// 	const status = (event.record?.status as string) ?? "";
+	if (event.action === "delete") {
+		const stub = env.DO_APPVIEW_SYNC_STATE.get(
+			env.DO_APPVIEW_SYNC_STATE.idFromName("appViewSyncState"),
+		);
+		await stub.removeStatus(event.did);
+	} else {
+		const status = (event.record?.status as string) ?? "";
 
-	// 	// Resolve the handle — describeRepo is public, no auth needed.
-	// 	let handle: string | null = null;
-	// 	try {
-	// 		const res = await fetch(
-	// 			`${env.ATPROTO_PDS_URL}/xrpc/com.atproto.repo.describeRepo?repo=${event.did}`,
-	// 		);
-	// 		const data = (await res.json()) as { handle?: string };
-	// 		handle = data.handle ?? null;
-	// 	} catch {
-	// 		// Handle resolution is best-effort; fall back to null.
-	// 	}
+		// Resolve the handle — describeRepo is public, no auth needed.
+		let handle: string | null = null;
+		try {
+			const res = await fetch(
+				`${env.ATPROTO_PDS_URL}/xrpc/com.atproto.repo.describeRepo?repo=${event.did}`,
+			);
+			const data = (await res.json()) as { handle?: string };
+			handle = data.handle ?? null;
+		} catch {
+			// Handle resolution is best-effort; fall back to null.
+		}
 
-	// 	statusStore.set(event.did, {
-	// 		did: event.did,
-	// 		handle,
-	// 		status,
-	// 		updatedAt: new Date().toISOString(),
-	// 	});
-	// }
+		const stub = env.DO_APPVIEW_SYNC_STATE.get(
+			env.DO_APPVIEW_SYNC_STATE.idFromName("appViewSyncState"),
+		);
+		await stub.updateStatus(event.did, status, handle);
+	}
 
 	return new Response("ok");
 }

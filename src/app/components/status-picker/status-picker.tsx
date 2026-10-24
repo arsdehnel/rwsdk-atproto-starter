@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useSyncedState } from "rwsdk/use-synced-state/client";
+import type { StatusEntry } from "@/app/durable-objects";
 
 const EMOJIS = [
 	"👍",
@@ -26,19 +28,39 @@ const EMOJIS = [
 ];
 
 interface StatusPickerProps {
+	did: string;
 	currentStatus?: string | null;
 	onSuccess?: () => void;
 }
 
-export function StatusPicker({ currentStatus, onSuccess }: StatusPickerProps) {
+export function StatusPicker({
+	did,
+	currentStatus,
+	onSuccess,
+}: StatusPickerProps) {
 	const [selected, setSelected] = useState<string | null>(
 		currentStatus ?? null,
+	);
+	const [, setStatusMap] = useSyncedState<Record<string, StatusEntry>>(
+		{},
+		"statusMap",
 	);
 	const [loading, setLoading] = useState(false);
 
 	async function handleSelect(emoji: string) {
 		setLoading(true);
 		setSelected(emoji);
+		setStatusMap((prev) => {
+			return {
+				...prev,
+				[did]: {
+					did,
+					status: emoji,
+					handle: null,
+					updatedAt: new Date().toISOString(),
+				},
+			};
+		});
 
 		try {
 			const res = await fetch("/status", {
@@ -59,6 +81,20 @@ export function StatusPicker({ currentStatus, onSuccess }: StatusPickerProps) {
 			}
 
 			if (!res.ok) throw new Error("Failed to update status");
+
+			const savedStatus = (await res.json()) as { createdAt: string };
+			setStatusMap((prev) => {
+				return {
+					...prev,
+					[did]: {
+						did,
+						status: emoji,
+						handle: null,
+						updatedAt: savedStatus.createdAt,
+					},
+				};
+			});
+
 			onSuccess?.();
 		} catch (err) {
 			console.error("Failed to update status:", err);

@@ -29,6 +29,7 @@
 		"@atproto/lex": "^0.3.14",
 		"@atproto/oauth-client-node": "^0.5.9",
 		"@atproto/tap": "^0.4.12",
+		"capnweb": "^0.12.0",
 		"react": "19.2.8",
 		"react-dom": "19.2.8",
 		"react-server-dom-webpack": "19.2.8",
