@@ -46,16 +46,22 @@ export async function getOAuthClient(): Promise<NodeOAuthClient> {
 		// stateStore: ephemeral KV with a 10-minute TTL. OAuth state only needs to
 		// survive the seconds between the authorization redirect and the callback.
 		// The TTL prevents stale entries from accumulating. Values are encrypted at
-		// rest with AES-256-GCM using OAUTH_STATE_KV_ENCRYPTION_KEY..
+		// rest with AES-256-GCM using OAUTH_STATE_KV_ENCRYPTION_KEY.
 		stateStore: {
 			async get(key: string): Promise<NodeSavedState | undefined> {
 				const raw = await env.KV_OAUTH_STATE.get(key);
 				if (!raw) return undefined;
-				const plaintext = await kvDecrypt(raw);
+				const plaintext = await kvDecrypt(
+					raw,
+					env.OAUTH_STATE_KV_ENCRYPTION_KEY,
+				);
 				return JSON.parse(plaintext) as NodeSavedState;
 			},
 			async set(key: string, value: NodeSavedState): Promise<void> {
-				const encrypted = await kvEncrypt(JSON.stringify(value));
+				const encrypted = await kvEncrypt(
+					JSON.stringify(value),
+					env.OAUTH_STATE_KV_ENCRYPTION_KEY,
+				);
 				await env.KV_OAUTH_STATE.put(key, encrypted, {
 					expirationTtl: 600, // 10 minutes
 				});

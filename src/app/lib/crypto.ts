@@ -6,16 +6,14 @@
 // different ciphertexts. Including it in the stored value means the decryption
 // key is the only thing needed to recover the plaintext.
 
-import { env } from "cloudflare:workers";
-
 const IV_BYTES = 12;
 const INFO = new TextEncoder().encode("oauth-kv-encryption");
 
 // Derives an AES-256-GCM key from an arbitrary string secret via HKDF-SHA-256.
 // HKDF tolerates secrets that aren't uniformly random bytes (e.g. base64 strings
 // or passphrases) and makes it easy to rotate to a new key format later.
-async function deriveKey(): Promise<CryptoKey> {
-	const raw = new TextEncoder().encode(env.OAUTH_STATE_KV_ENCRYPTION_KEY);
+async function deriveKey(secret: string): Promise<CryptoKey> {
+	const raw = new TextEncoder().encode(secret);
 	const keyMaterial = await crypto.subtle.importKey("raw", raw, "HKDF", false, [
 		"deriveKey",
 	]);
@@ -28,8 +26,11 @@ async function deriveKey(): Promise<CryptoKey> {
 	);
 }
 
-export async function kvEncrypt(plaintext: string): Promise<string> {
-	const key = await deriveKey();
+export async function kvEncrypt(
+	plaintext: string,
+	secret: string,
+): Promise<string> {
+	const key = await deriveKey(secret);
 	const iv = crypto.getRandomValues(new Uint8Array(IV_BYTES));
 	const encoded = new TextEncoder().encode(plaintext);
 	const ciphertext = await crypto.subtle.encrypt(
@@ -44,8 +45,11 @@ export async function kvEncrypt(plaintext: string): Promise<string> {
 	return btoa(Array.from(combined, (b) => String.fromCharCode(b)).join(""));
 }
 
-export async function kvDecrypt(stored: string): Promise<string> {
-	const key = await deriveKey();
+export async function kvDecrypt(
+	stored: string,
+	secret: string,
+): Promise<string> {
+	const key = await deriveKey(secret);
 	const combined = Uint8Array.from(atob(stored), (c) => c.charCodeAt(0));
 	const iv = combined.slice(0, IV_BYTES);
 	const ciphertext = combined.slice(IV_BYTES);
