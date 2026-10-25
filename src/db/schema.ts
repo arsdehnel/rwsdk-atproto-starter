@@ -2,20 +2,20 @@ import { relations, sql } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 export const users = sqliteTable("users", {
-	did: text("did").primaryKey(),
-	handle: text("handle"),
-	createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
-	updatedAt: text("updated_at").notNull().default(sql`(datetime('now'))`),
+	did: text().primaryKey(),
+	handle: text(),
+	createdAt: text().notNull().default(sql`(datetime('now'))`),
+	updatedAt: text().notNull().default(sql`(datetime('now'))`),
 });
 
 export const statuses = sqliteTable("statuses", {
-	id: integer("id").primaryKey({ autoIncrement: true }),
-	did: text("did")
+	id: integer().primaryKey({ autoIncrement: true }),
+	did: text()
 		.notNull()
 		.references(() => users.did, { onDelete: "cascade" }),
-	status: text("status").notNull(),
-	atUri: text("at_uri").notNull().unique(),
-	createdAt: text("created_at").notNull(),
+	status: text().notNull(),
+	atUri: text().notNull().unique(),
+	createdAt: text().notNull(),
 });
 
 export const usersRelations = relations(users, ({ many }) => ({

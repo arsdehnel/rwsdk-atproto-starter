@@ -3,7 +3,7 @@ import { sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/d1";
 import * as schema from "./schema";
 
-const db = drizzle(env.DB, { schema });
+const db = drizzle(env.DB, { schema, casing: "snake_case" });
 
 export default {
 	getReader: async () => db,
