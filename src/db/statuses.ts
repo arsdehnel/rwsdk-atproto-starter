@@ -1,4 +1,4 @@
-import { eq, sql } from "drizzle-orm";
+import { count, desc, eq, sql } from "drizzle-orm";
 import { db } from "@/db/db";
 import { statuses } from "@/db/schema";
 
@@ -28,6 +28,15 @@ export async function upsertStatus(
 		);
 		throw err;
 	}
+}
+
+export async function getPopularStatuses(limit = 8) {
+	return db
+		.select({ status: statuses.status, count: count() })
+		.from(statuses)
+		.groupBy(statuses.status)
+		.orderBy(desc(count()))
+		.limit(limit);
 }
 
 export async function deleteStatus(atUri: string) {
