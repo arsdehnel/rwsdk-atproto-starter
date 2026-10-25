@@ -51,8 +51,8 @@
 				}
 			},
 			"indexes": {
-				"statuses_atUri_unique": {
-					"name": "statuses_atUri_unique",
+				"statuses_at_uri_unique": {
+					"name": "statuses_at_uri_unique",
 					"columns": ["at_uri"],
 					"isUnique": true
 				}
