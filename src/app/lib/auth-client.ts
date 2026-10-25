@@ -71,20 +71,31 @@ export async function getOAuthClient(): Promise<NodeOAuthClient> {
 			},
 		},
 
-		// sessionStore: KV keyed by DID. OAuth tokens persist across Worker restarts
-		// and isolate evictions — users stay logged in after a dev server restart or
-		// a production cold start.
+		// sessionStore: DO with custom storage methods to handle propagation lag
+		//   and token refresh lock problems
 		sessionStore: {
 			async get(did: string): Promise<NodeSavedSession | undefined> {
-				const raw = await env.KV_OAUTH_TOKENS.get(did);
-				return raw ? (JSON.parse(raw) as NodeSavedSession) : undefined;
+				const doStub = await env.DO_OAUTH_TOKEN.getByName(did);
+				return await doStub.getToken();
 			},
 			async set(did: string, value: NodeSavedSession): Promise<void> {
-				await env.KV_OAUTH_TOKENS.put(did, JSON.stringify(value));
+				const doStub = await env.DO_OAUTH_TOKEN.getByName(did);
+				await doStub.setToken(value);
 			},
 			async del(did: string): Promise<void> {
-				await env.KV_OAUTH_TOKENS.delete(did);
+				const doStub = await env.DO_OAUTH_TOKEN.getByName(did);
+				await doStub.deleteToken();
 			},
+		},
+
+		requestLock: async (did, fn) => {
+			const doStub = await env.DO_OAUTH_TOKEN.getByName(did);
+			await doStub.acquireLock();
+			try {
+				return await fn();
+			} finally {
+				await doStub.releaseLock();
+			}
 		},
 	});
 
