@@ -2,6 +2,7 @@ import { env } from "cloudflare:workers";
 import type { LexValue } from "@atproto/lex";
 import { parseTapEvent, type TapEvent } from "@atproto/tap";
 import type { RequestInfo } from "rwsdk/worker";
+import { upsertUser } from "@/db/users";
 
 async function post({ request }: RequestInfo): Promise<Response> {
 	let body: unknown;
@@ -43,6 +44,8 @@ async function post({ request }: RequestInfo): Promise<Response> {
 		} catch {
 			// Handle resolution is best-effort; fall back to null.
 		}
+
+		await upsertUser(event.did, handle);
 
 		const stub = env.DO_APPVIEW_SYNC_STATE.getByName("appViewSyncState");
 		await stub.updateStatus(event.did, status, handle);

@@ -3,6 +3,7 @@ import type { OAuthSession } from "@atproto/oauth-client-node";
 import type { RequestInfo } from "rwsdk/worker";
 import { getOAuthClient } from "@/app/lib/auth-client";
 import { sessionStore } from "@/app/lib/session";
+import { upsertUser } from "@/db/users";
 
 async function get({ request, response }: RequestInfo) {
 	const client = await getOAuthClient();
@@ -15,6 +16,7 @@ async function get({ request, response }: RequestInfo) {
 	}
 
 	await sessionStore.save(response.headers, { did: session.did });
+	await upsertUser(session.did);
 
 	// Register the user's repo with Tap so it tracks their records on the
 	// firehose. Without this, Tap won't deliver webhook events for this DID.
