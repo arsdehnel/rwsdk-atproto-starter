@@ -18,7 +18,12 @@ export class AppViewSyncState extends SyncedStateServer {
 		// already has state in memory from a previous warm request.
 		args[0].blockConcurrencyWhile(async () => {
 			if (this.getState("statusMap")) return;
-			await this.seedFromD1();
+			try {
+				await this.seedFromD1();
+			} catch {
+				// Seeding is best-effort. If D1 is unavailable on cold start the DO
+				// still functions — statusMap populates as webhooks arrive.
+			}
 		});
 	}
 

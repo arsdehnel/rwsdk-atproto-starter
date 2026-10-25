@@ -43,7 +43,7 @@ async function post({ request }: RequestInfo): Promise<Response> {
 		const stub = env.DO_APPVIEW_SYNC_STATE.getByName("appViewSyncState");
 		await stub.removeStatus(event.did);
 	} else {
-		const status = (event.record?.status as string) ?? "";
+		const status = event.record?.status as string;
 
 		// Resolve the handle — describeRepo is public, no auth needed.
 		let handle: string | null = null;
