@@ -8,7 +8,7 @@ CREATE TABLE `statuses` (
 	FOREIGN KEY (`did`) REFERENCES `users`(`did`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `statuses_at_uri_unique` ON `statuses` (`at_uri`);--> statement-breakpoint
+CREATE UNIQUE INDEX `statuses_atUri_unique` ON `statuses` (`at_uri`);--> statement-breakpoint
 CREATE TABLE `users` (
 	`did` text PRIMARY KEY NOT NULL,
 	`handle` text,
