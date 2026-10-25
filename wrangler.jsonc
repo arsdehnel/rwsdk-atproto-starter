@@ -27,6 +27,17 @@
 		{ "binding": "KV_OAUTH_STATE", "id": "KV_OAUTH_STATE_LOCAL" }
 	],
 
+	// D1 for persisting status records indexed from the Tap webhook.
+	// For production: run `wrangler d1 create rwsdk-atproto-starter` and replace database_id.
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "rwsdk-atproto-starter-local",
+			"database_id": "local",
+			"migrations_dir": "drizzle"
+		}
+	],
+
 	// Durable Objects for browser sessions, TAP sync state, and OAuth tokens
 	"durable_objects": {
 		"bindings": [
