@@ -1,6 +1,6 @@
 import { DurableObject, env } from "cloudflare:workers";
 import type { NodeSavedSession } from "@atproto/oauth-client-node";
-import { kvDecrypt, kvEncrypt } from "@/app/lib/crypto";
+import { kvDecrypt, kvEncrypt, parseKeyRing } from "@/app/lib/crypto";
 
 export class OAuthToken extends DurableObject {
 	private tokenData: NodeSavedSession | undefined = undefined;
@@ -12,21 +12,46 @@ export class OAuthToken extends DurableObject {
 		if (!this.tokenData) {
 			const rawTokenData = await this.ctx.storage.get<string>("tokenData");
 			if (!rawTokenData) return undefined;
-			const plaintext = await kvDecrypt(
-				rawTokenData,
-				env.OAUTH_TOKEN_KV_ENCRYPTION_KEY,
-			);
+
+			const keys = parseKeyRing(env.OAUTH_TOKEN_KV_ENCRYPTION_KEYS);
+			let plaintext: string | undefined;
+			let needsReencryption = false;
+
+			for (let i = 0; i < keys.length; i++) {
+				try {
+					plaintext = await kvDecrypt(rawTokenData, keys[i]);
+					needsReencryption = i > 0;
+					break;
+				} catch {
+					if (i === keys.length - 1)
+						throw new Error(`Token decryption failed, no more keys to try`);
+				}
+			}
+
+			if (!plaintext) {
+				throw new Error(
+					`Token decryption failed, no decrypted value determined`,
+				);
+			}
+
 			this.tokenData = JSON.parse(plaintext) as NodeSavedSession;
+
+			// Re-encrypt with current key so this entry migrates off the old key.
+			if (needsReencryption) {
+				const encrypted = await kvEncrypt(
+					JSON.stringify(this.tokenData),
+					keys[0],
+				);
+				await this.ctx.storage.put<string>("tokenData", encrypted);
+			}
 		}
 		return this.tokenData;
 	}
 
 	async setToken(tokenData: NodeSavedSession) {
 		this.tokenData = tokenData;
-		const encrypted = await kvEncrypt(
-			JSON.stringify(tokenData),
-			env.OAUTH_TOKEN_KV_ENCRYPTION_KEY,
-		);
+		const keys = parseKeyRing(env.OAUTH_TOKEN_KV_ENCRYPTION_KEYS);
+		const encrypted = await kvEncrypt(JSON.stringify(tokenData), keys[0]);
 		await this.ctx.storage.put<string>("tokenData", encrypted);
 	}
 

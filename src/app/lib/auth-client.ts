@@ -7,7 +7,7 @@ import {
 	buildAtprotoLoopbackClientMetadata,
 	NodeOAuthClient,
 } from "@atproto/oauth-client-node";
-import { kvDecrypt, kvEncrypt } from "./crypto";
+import { kvDecrypt, kvEncrypt, parseKeyRing } from "./crypto";
 
 // Use globalThis so the NodeOAuthClient singleton survives hot-reloads in dev.
 // In production, the Worker isolate keeps it alive for its lifetime.
@@ -46,22 +46,27 @@ export async function getOAuthClient(): Promise<NodeOAuthClient> {
 		// stateStore: ephemeral KV with a 10-minute TTL. OAuth state only needs to
 		// survive the seconds between the authorization redirect and the callback.
 		// The TTL prevents stale entries from accumulating. Values are encrypted at
-		// rest with AES-256-GCM using OAUTH_STATE_KV_ENCRYPTION_KEY.
+		// rest with AES-256-GCM using the first key in OAUTH_STATE_KV_ENCRYPTION_KEYS.
+		// Previous keys in the ring are tried on decrypt to support zero-downtime
+		// key rotation; no re-encryption is needed since entries expire within 10 minutes.
 		stateStore: {
 			async get(key: string): Promise<NodeSavedState | undefined> {
 				const raw = await env.KV_OAUTH_STATE.get(key);
 				if (!raw) return undefined;
-				const plaintext = await kvDecrypt(
-					raw,
-					env.OAUTH_STATE_KV_ENCRYPTION_KEY,
-				);
-				return JSON.parse(plaintext) as NodeSavedState;
+				const keys = parseKeyRing(env.OAUTH_STATE_KV_ENCRYPTION_KEYS);
+				for (let i = 0; i < keys.length; i++) {
+					try {
+						const plaintext = await kvDecrypt(raw, keys[i]);
+						return JSON.parse(plaintext) as NodeSavedState;
+					} catch {
+						if (i === keys.length - 1)
+							throw new Error(`Token could not be decrypted`);
+					}
+				}
 			},
 			async set(key: string, value: NodeSavedState): Promise<void> {
-				const encrypted = await kvEncrypt(
-					JSON.stringify(value),
-					env.OAUTH_STATE_KV_ENCRYPTION_KEY,
-				);
+				const keys = parseKeyRing(env.OAUTH_STATE_KV_ENCRYPTION_KEYS);
+				const encrypted = await kvEncrypt(JSON.stringify(value), keys[0]);
 				await env.KV_OAUTH_STATE.put(key, encrypted, {
 					expirationTtl: 600, // 10 minutes
 				});

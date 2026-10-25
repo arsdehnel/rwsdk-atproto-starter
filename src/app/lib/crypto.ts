@@ -60,3 +60,15 @@ export async function kvDecrypt(
 	);
 	return new TextDecoder().decode(plaintext);
 }
+
+// Parses a JSON array of encryption keys from a Wrangler secret.
+// Index 0 is the current key (used for encryption); subsequent entries are
+// previous keys tried in order during decryption to support zero-downtime
+// key rotation.
+export function parseKeyRing(raw: string): string[] {
+	const keys = JSON.parse(raw) as string[];
+	if (!Array.isArray(keys) || keys.length === 0) {
+		throw new Error("Encryption key ring must be a non-empty JSON array");
+	}
+	return keys;
+}
