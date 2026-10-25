@@ -2,6 +2,7 @@ import { env } from "cloudflare:workers";
 import type { LexValue } from "@atproto/lex";
 import { parseTapEvent, type TapEvent } from "@atproto/tap";
 import type { RequestInfo } from "rwsdk/worker";
+import { deleteStatus, upsertStatus } from "@/db/statuses";
 import { upsertUser } from "@/db/users";
 
 async function post({ request }: RequestInfo): Promise<Response> {
@@ -27,7 +28,10 @@ async function post({ request }: RequestInfo): Promise<Response> {
 		return new Response("ok");
 	}
 
+	const atUri = `at://${event.did}/${event.collection}/${event.rkey}`;
+
 	if (event.action === "delete") {
+		await deleteStatus(atUri);
 		const stub = env.DO_APPVIEW_SYNC_STATE.getByName("appViewSyncState");
 		await stub.removeStatus(event.did);
 	} else {
@@ -46,6 +50,7 @@ async function post({ request }: RequestInfo): Promise<Response> {
 		}
 
 		await upsertUser(event.did, handle);
+		await upsertStatus(event.did, atUri, status, event.rev);
 
 		const stub = env.DO_APPVIEW_SYNC_STATE.getByName("appViewSyncState");
 		await stub.updateStatus(event.did, status, handle);

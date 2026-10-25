@@ -14,8 +14,9 @@ export const statuses = sqliteTable("statuses", {
 		.notNull()
 		.references(() => users.did, { onDelete: "cascade" }),
 	status: text().notNull(),
+	rev: text(),
 	atUri: text().notNull().unique(),
-	createdAt: text().notNull(),
+	receivedAt: text().notNull(),
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
