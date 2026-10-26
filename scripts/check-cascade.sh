@@ -13,7 +13,7 @@ set -euo pipefail
 #   1. Each branch is cleanly based on the previous one (no divergence).
 #   2. Each branch's unique commits contain no message that also appears in
 #      the immediately preceding branch's unique commits (spurious duplicates).
-#   3. post-config.tsx step numbers are sequential (1, 2, 3... or N/A).
+#   3. post-config.tsx post numbers are sequential (1, 2, 3... or N/A).
 
 BRANCHES=(
   post/series-1/01-get-started
@@ -131,7 +131,7 @@ for (( i=1; i<${#BRANCHES[@]}; i++ )); do
   if [[ -n "$expected_step" ]]; then
     expected_step=$((10#$expected_step))  # strip leading zero
     actual_step=$(git show "$branch:src/app/content/config.tsx" 2>/dev/null \
-      | grep -oE 'step: [0-9]+' | grep -oE '[0-9]+') || actual_step=""
+      | grep -oE '^\s+(step|post): [0-9]+,' | grep -oE '[0-9]+' | head -1) || actual_step=""
     if [[ -z "$actual_step" ]]; then
       warn "no step number found in post-config.tsx"
     elif [[ "$actual_step" == "$expected_step" ]]; then
