@@ -4,7 +4,7 @@ import {
 	GoingDeeper,
 	HeaderContent,
 	HeaderNav,
-	SeriesList,
+	PostProgress,
 } from "@/app/components";
 import { PostContent, postConfig } from "@/app/content";
 import type { AppContext } from "@/worker";
@@ -21,7 +21,12 @@ export async function Home(requestInfo: RequestInfo<AppContext>) {
 							postUrl={postConfig.postUrl}
 						/>
 					}
-					seriesContent={<SeriesList currentStep={postConfig.step} />}
+					seriesContent={
+						<PostProgress
+							currentSeries={postConfig.series}
+							currentStep={postConfig.step}
+						/>
+					}
 					goingDeeperContent={<GoingDeeper {...postConfig.goingDeeper} />}
 				/>
 			</header>

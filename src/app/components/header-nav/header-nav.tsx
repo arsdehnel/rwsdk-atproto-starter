@@ -8,7 +8,7 @@ type DrawerId = "building" | "series" | "going-deeper";
 
 const DRAWERS: Array<{ id: DrawerId; label: string }> = [
 	{ id: "building", label: "What you're building" },
-	{ id: "series", label: "The series" },
+	{ id: "series", label: "The progression" },
 	{ id: "going-deeper", label: "Going deeper" },
 ];
 

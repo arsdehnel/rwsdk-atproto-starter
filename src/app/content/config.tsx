@@ -8,6 +8,7 @@ export type GoingDeeperContent = {
 };
 
 export const postConfig = {
+	series: 1,
 	step: 1,
 	postUrl: "https://arsdehnel.com/posts/rwsdk-atproto-01-first-read",
 	goingDeeper: {

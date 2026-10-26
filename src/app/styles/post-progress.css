@@ -1,3 +1,17 @@
+.seriesGroup {
+	margin-bottom: 1rem;
+}
+
+.seriesGroupTitle {
+	font-size: 1rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: #333;
+	margin: 1rem 0 0.4rem;
+	border-bottom: 1px solid #bbb;
+}
+
 .seriesList {
 	list-style: none;
 	padding-left: 0;
