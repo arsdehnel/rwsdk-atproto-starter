@@ -16,13 +16,16 @@ set -euo pipefail
 #   3. post-config.tsx step numbers are sequential (1, 2, 3... or N/A).
 
 BRANCHES=(
-  post/01-first-read
-  post/02-atproto-oauth
-  post/03-local-dev-setup
-  post/04-atproto-writes
-  post/05-tap-sync
-  post/06-d1-persistence
-  post/07-appview
+  post/series-1/01-get-started
+  post/series-1/02-atp-oauth
+  post/series-1/03-local-dev
+  post/series-1/04-atp-writes
+  post/series-1/05-tap-sync
+  post/series-2/01-production-oauth
+  post/series-2/02-d1-tap-pipeline
+  post/series-2/03-appview-features
+  post/series-2/04-production-ready
+  # post/series-2/05-??? — uncomment and set name when branch is created
   main
 )
 
@@ -127,7 +130,7 @@ for (( i=1; i<${#BRANCHES[@]}; i++ )); do
   expected_step=$(echo "$branch" | grep -oE '/0[0-9]-' | grep -oE '[0-9]+') || true
   if [[ -n "$expected_step" ]]; then
     expected_step=$((10#$expected_step))  # strip leading zero
-    actual_step=$(git show "$branch:src/components/post-config/post-config.tsx" 2>/dev/null \
+    actual_step=$(git show "$branch:src/app/content/config.tsx" 2>/dev/null \
       | grep -oE 'step: [0-9]+' | grep -oE '[0-9]+') || actual_step=""
     if [[ -z "$actual_step" ]]; then
       warn "no step number found in post-config.tsx"
