@@ -5,6 +5,48 @@ import type { RequestInfo } from "rwsdk/worker";
 import { deleteStatus, upsertStatus } from "@/db/statuses";
 import { upsertUser } from "@/db/users";
 
+type DidDocument = {
+	service?: Array<{ id: string; type: string; serviceEndpoint: string }>;
+};
+
+// Resolve a DID to its AT Protocol handle by looking up the DID document
+// and calling describeRepo against the user's actual PDS.
+// Returns null if resolution fails at any step (best-effort).
+async function resolveHandle(did: string): Promise<string | null> {
+	try {
+		let didDoc: DidDocument;
+		if (did.startsWith("did:plc:")) {
+			const plcUrl = env.ATPROTO_PLC_URL || "https://plc.directory";
+			const res = await fetch(`${plcUrl}/${did}`);
+			if (!res.ok) return null;
+			didDoc = (await res.json()) as DidDocument;
+		} else if (did.startsWith("did:web:")) {
+			const domain = did.slice("did:web:".length);
+			const res = await fetch(`https://${domain}/.well-known/did.json`);
+			if (!res.ok) return null;
+			didDoc = (await res.json()) as DidDocument;
+		} else {
+			return null;
+		}
+
+		const pdsService = didDoc.service?.find(
+			(s) =>
+				s.type === "AtprotoPersonalDataServer" &&
+				(s.id === "#atproto_pds" || s.id.endsWith("#atproto_pds")),
+		);
+		if (!pdsService?.serviceEndpoint) return null;
+
+		const res = await fetch(
+			`${pdsService.serviceEndpoint}/xrpc/com.atproto.repo.describeRepo?repo=${did}`,
+		);
+		if (!res.ok) return null;
+		const data = (await res.json()) as { handle?: string };
+		return data.handle ?? null;
+	} catch {
+		return null;
+	}
+}
+
 async function post({ request }: RequestInfo): Promise<Response> {
 	// Tap forwards the same Basic auth credentials it uses for its own API.
 	// Value format: Basic base64(admin:<TAP_ADMIN_PASSWORD>)
@@ -45,17 +87,9 @@ async function post({ request }: RequestInfo): Promise<Response> {
 	} else {
 		const status = event.record?.status as string;
 
-		// Resolve the handle — describeRepo is public, no auth needed.
-		let handle: string | null = null;
-		try {
-			const res = await fetch(
-				`${env.ATPROTO_PDS_URL}/xrpc/com.atproto.repo.describeRepo?repo=${event.did}`,
-			);
-			const data = (await res.json()) as { handle?: string };
-			handle = data.handle ?? null;
-		} catch {
-			// Handle resolution is best-effort; fall back to null.
-		}
+		// Resolve the handle via DID document lookup → PDS describeRepo.
+		// Best-effort: falls back to null if the DID or PDS is unreachable.
+		const handle = await resolveHandle(event.did);
 
 		await upsertUser(event.did, handle);
 		await upsertStatus(event.did, atUri, status, event.rev);
