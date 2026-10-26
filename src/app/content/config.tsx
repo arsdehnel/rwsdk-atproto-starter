@@ -9,12 +9,24 @@ export type GoingDeeperContent = {
 
 export const postConfig = {
 	series: 1,
-	step: 1,
-	postUrl: "https://arsdehnel.com/posts/rwsdk-atproto-01-first-read",
+	post: 1,
+	slug: "get-started",
+	nextPost: {
+		series: 1,
+		post: 2,
+		slug: "atp-oauth",
+		description: (
+			<>
+				Now that we've established a basic ATP interaction we're ready to dive
+				into <strong>Step 2: AT Proto OAuth</strong>
+			</>
+		),
+	},
 	goingDeeper: {
 		explanation: (
 			<p className="prose">
-				This post reads live data from the AT Protocol using XRPC and the{" "}
+				This post starts from an RWSDK starter kit and reads live data from the
+				AT Protocol using XRPC and the{" "}
 				<code className="inlineCode">app.bsky.feed.getTimeline</code> lexicon.
 			</p>
 		),
@@ -33,6 +45,11 @@ export const postConfig = {
 				url: "https://developers.cloudflare.com/workers/",
 				label: "Cloudflare Workers docs",
 				note: "The runtime this app runs on",
+			},
+			{
+				url: "https://rwsdk.com/",
+				label: "RedwoodSDK",
+				note: "Server-first React, running on the Cloudflare platform",
 			},
 		],
 	} satisfies GoingDeeperContent,

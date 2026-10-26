@@ -1,7 +1,7 @@
 import type { RequestInfo } from "rwsdk/worker";
-
 import { PdsFeedViewer } from "@/app/components";
 import type { AppContext } from "@/worker";
+import { postConfig } from "./config";
 
 const ENDPOINT =
 	"https://bsky.social/xrpc/com.atproto.repo.listRecords?repo=bsky.app&collection=app.bsky.feed.post&limit=3";
@@ -13,6 +13,17 @@ export async function PostContent(_: RequestInfo<AppContext>) {
 	return (
 		<>
 			<section className="section">
+				<h2 className="sectionTitle">RWSDK Create App</h2>
+				<p className="prose">
+					This started with the base{" "}
+					<code className="inlineCode">
+						pnpx create-rwsdk rwsdk-atproto-starter
+					</code>{" "}
+					and layers on the ATP read from there.
+				</p>
+			</section>
+
+			<section className="section">
 				<h2 className="sectionTitle">Live reads from the AT Protocol</h2>
 				<PdsFeedViewer endpoint={ENDPOINT} records={records} />
 			</section>
@@ -20,18 +31,17 @@ export async function PostContent(_: RequestInfo<AppContext>) {
 			<section className="section">
 				<h2 className="sectionTitle">Up Next</h2>
 				<p className="prose">
-					Now that we've established a basic ATP interaction we're ready to dive
-					into <strong>Step 2: AT Proto OAuth</strong> (
+					{postConfig.nextPost.description} (
 					<a
 						className="link-inline"
-						href="https://arsdehnel.com/posts/rwsdk-atproto-02-atproto-oauth"
+						href={`https://arsdehnel.com/posts/rwsdk-atp-s${postConfig.nextPost.series}-p${postConfig.nextPost.post}-${postConfig.nextPost.slug}`}
 					>
 						Blog Post
 					</a>{" "}
 					|{" "}
 					<a
 						className="link-inline"
-						href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/02-atproto-oauth"
+						href={`https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/series-${postConfig.nextPost.series}/0${postConfig.nextPost.post}-${postConfig.nextPost.slug}/`}
 					>
 						Git Branch
 					</a>

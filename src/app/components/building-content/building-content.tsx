@@ -1,18 +1,18 @@
-interface BuildingContentProps {
-	currentStep: number;
-	postUrl: string;
-}
-
 export function BuildingContent({
-	currentStep,
+	currentSeries,
+	currentPost,
 	postUrl,
-}: BuildingContentProps) {
+}: {
+	currentSeries: number;
+	currentPost: number;
+	postUrl: string;
+}) {
 	return (
 		<>
 			<p className="prose">
 				You're on{" "}
 				<a href={postUrl} target="_blank" rel="noreferrer" className="link">
-					Post {currentStep}
+					Series {currentSeries}, Post {currentPost}
 				</a>{" "}
 				of a blog series that builds a real AT Protocol app from scratch — one
 				step at a time. By the end the series covers:

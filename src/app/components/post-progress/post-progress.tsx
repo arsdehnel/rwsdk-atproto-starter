@@ -21,12 +21,13 @@ const SERIES = [
 	},
 ];
 
-interface SeriesListProps {
+export function PostProgress({
+	currentSeries,
+	currentPost,
+}: {
 	currentSeries: number;
-	currentStep: number;
-}
-
-export function PostProgress({ currentSeries, currentStep }: SeriesListProps) {
+	currentPost: number;
+}) {
 	return (
 		<>
 			{SERIES.map((series, si) => {
@@ -39,9 +40,9 @@ export function PostProgress({ currentSeries, currentStep }: SeriesListProps) {
 								const postNum = pi + 1;
 								const isPast =
 									seriesNum < currentSeries ||
-									(seriesNum === currentSeries && postNum < currentStep);
+									(seriesNum === currentSeries && postNum < currentPost);
 								const isCurrent =
-									seriesNum === currentSeries && postNum === currentStep;
+									seriesNum === currentSeries && postNum === currentPost;
 
 								const stateClass = isPast
 									? "seriesItemPast"

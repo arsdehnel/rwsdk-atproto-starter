@@ -17,14 +17,15 @@ export async function Home(requestInfo: RequestInfo<AppContext>) {
 				<HeaderNav
 					buildingContent={
 						<BuildingContent
-							currentStep={postConfig.step}
-							postUrl={postConfig.postUrl}
+							currentSeries={postConfig.series}
+							currentPost={postConfig.post}
+							postUrl={`https://arsdehnel.com/posts/rwsdk-atp-s${postConfig.series}-p${postConfig.post}-${postConfig.slug}`}
 						/>
 					}
 					seriesContent={
 						<PostProgress
 							currentSeries={postConfig.series}
-							currentStep={postConfig.step}
+							currentPost={postConfig.post}
 						/>
 					}
 					goingDeeperContent={<GoingDeeper {...postConfig.goingDeeper} />}
