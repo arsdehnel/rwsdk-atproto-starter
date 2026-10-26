@@ -45,6 +45,27 @@ export async function PostContent({ ctx }: RequestInfo<AppContext>) {
 			)}
 
 			<section className="section">
+				<h2 className="sectionTitle">Review the changes</h2>
+				<p className="prose">
+					Take a look at the{" "}
+					<a
+						className="link-inline"
+						href={`https://arsdehnel.com/posts/rwsdk-atp-s${postConfig.series}-p${postConfig.post}-${postConfig.slug}`}
+					>
+						blog post
+					</a>{" "}
+					for this step or dive into the{" "}
+					<a
+						className="link-inline"
+						href={`https://github.com/arsdehnel/rwsdk-atproto-starter/pull/${postConfig.pr}`}
+					>
+						pull request
+					</a>{" "}
+					to see the exact changes made.
+				</p>
+			</section>
+
+			<section className="section">
 				<h2 className="sectionTitle">Up Next</h2>
 				<p className="prose">
 					{postConfig.nextPost.description} (

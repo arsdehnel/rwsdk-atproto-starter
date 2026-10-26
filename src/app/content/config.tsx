@@ -11,24 +11,25 @@ export const postConfig = {
 	series: 1,
 	post: 2,
 	slug: "atp-oauth",
+	pr: 98,
 	nextPost: {
 		series: 1,
 		post: 3,
 		slug: "local-dev",
 		description: (
 			<>
-				With OAuth in place, <strong>Step 3: Local Dev Setup</strong> wires up
-				a full local AT Protocol stack so you can develop and test without
-				hitting production
+				With OAuth in place, <strong>Step 3: Local Dev Setup</strong> wires up a
+				full local AT Protocol stack so you can develop and test without hitting
+				production
 			</>
 		),
 	},
 	goingDeeper: {
 		explanation: (
 			<p className="prose">
-				This post adds AT Protocol OAuth so the feed is fetched on behalf of
-				the logged-in user. The AT Protocol uses a OAuth 2.0 + PKCE flow with
-				a few protocol-specific extensions for identity resolution.
+				This post adds AT Protocol OAuth so the feed is fetched on behalf of the
+				logged-in user. The AT Protocol uses a OAuth 2.0 + PKCE flow with a few
+				protocol-specific extensions for identity resolution.
 			</p>
 		),
 		links: [
