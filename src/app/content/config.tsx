@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 export type GoingDeeperContent = {
 	links: {
 		url: string;
@@ -51,42 +50,4 @@ export const postConfig = {
 			},
 		],
 	} satisfies GoingDeeperContent,
-=======
-export const postConfig = {
-	series: 1,
-	step: 5,
-	postUrl: "https://arsdehnel.com/posts/rwsdk-atproto-1-05-tap-sync",
-	commandLines: [
-		"git clone https://github.com/arsdehnel/rwsdk-atproto-starter",
-		"git checkout post/series-1/05-tap-sync",
-		"pnpm install",
-		"pnpm docker:up",
-		"pnpm dev",
-	],
-	explanation: (
-		<p className="prose">
-			Open{" "}
-			<a href="http://127.0.0.1:5173" className="link">
-				127.0.0.1:5173
-			</a>{" "}
-			and log in with any of the three seeded accounts:
-			<ul>
-				<li>
-					<code className="inlineCode">alice.devnet.test</code> /{" "}
-					<code className="inlineCode">alice-devnet-pass</code>
-				</li>
-				<li>
-					<code className="inlineCode">bob.devnet.test</code> /{" "}
-					<code className="inlineCode">bob-devnet-pass</code>
-				</li>
-				<li>
-					<code className="inlineCode">carol.devnet.test</code> /{" "}
-					<code className="inlineCode">carol-devnet-pass</code>
-				</li>
-			</ul>
-			Then set your status and note the update as the Tap's webhook comes in and
-			is processed.
-		</p>
-	),
->>>>>>> d83ff43 (feat: initial post 2 functionality)
 };
