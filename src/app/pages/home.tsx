@@ -1,9 +1,9 @@
 import type { RequestInfo } from "rwsdk/worker";
 import {
 	BuildingContent,
+	GoingDeeper,
 	HeaderContent,
 	HeaderNav,
-	RunItContent,
 	SeriesList,
 } from "@/app/components";
 import { PostContent, postConfig } from "@/app/content";
@@ -22,12 +22,7 @@ export async function Home(requestInfo: RequestInfo<AppContext>) {
 						/>
 					}
 					seriesContent={<SeriesList currentStep={postConfig.step} />}
-					runItContent={
-						<RunItContent
-							commandLines={postConfig.commandLines}
-							explanation={postConfig.explanation}
-						/>
-					}
+					goingDeeperContent={<GoingDeeper {...postConfig.goingDeeper} />}
 				/>
 			</header>
 
