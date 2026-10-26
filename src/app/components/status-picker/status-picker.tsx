@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useSyncedState } from "rwsdk/use-synced-state/client";
+import { setStatus } from "@/app/actions/status";
 import type { StatusEntry } from "@/app/durable-objects";
 
 const EMOJIS = [
@@ -63,26 +64,25 @@ export function StatusPicker({
 		});
 
 		try {
-			const res = await fetch("/status", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ status: emoji }),
-			});
+			const result = await setStatus(emoji);
 
-			if (res.status === 401) {
-				// OAuth session is gone — clear the HTTP session and return to login.
-				// JavaScript fetch can't trigger a cookie-clearing redirect, but a form submission can
-				const form = document.createElement("form");
-				form.method = "POST";
-				form.action = "/oauth/logout";
-				document.body.appendChild(form);
-				form.submit();
-				return;
+			if (!result.success) {
+				if (
+					result.error === "unauthorized" ||
+					result.error === "session_expired"
+				) {
+					// OAuth session is gone — clear the HTTP session and return to login.
+					// JavaScript fetch can't trigger a cookie-clearing redirect, but a form submission can
+					const form = document.createElement("form");
+					form.method = "POST";
+					form.action = "/oauth/logout";
+					document.body.appendChild(form);
+					form.submit();
+					return;
+				}
+				throw new Error("Failed to update status");
 			}
 
-			if (!res.ok) throw new Error("Failed to update status");
-
-			const savedStatus = (await res.json()) as { createdAt: string };
 			setStatusMap((prev) => {
 				return {
 					...prev,
@@ -90,7 +90,7 @@ export function StatusPicker({
 						did,
 						status: emoji,
 						handle: null,
-						updatedAt: savedStatus.createdAt,
+						updatedAt: result.createdAt,
 					},
 				};
 			});
