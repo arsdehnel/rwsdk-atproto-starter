@@ -9,44 +9,43 @@ export type GoingDeeperContent = {
 
 export const postConfig = {
 	series: 2,
-	post: 3,
-	slug: "appview-features",
-	pr: 102,
+	post: 4,
+	slug: "deploy-prep",
+	pr: 103,
 	nextPost: {
 		series: 2,
-		post: 4,
-		slug: "deploy-prep",
+		post: 5,
+		slug: "next-steps",
 		description: (
 			<>
-				The app is feature-complete.{" "}
-				<strong>Step 4: Deploy Prep</strong> wires up production secrets and
-				environment config to get ready for Cloudflare Workers deployment
+				Almost done. <strong>Step 5: Next Steps</strong> is the deployed,
+				production-ready final state of the full application
 			</>
 		),
 	},
 	goingDeeper: {
 		explanation: (
 			<p className="prose">
-				This post adds AppView-style features — reading the community's status
-				records from D1 rather than directly from individual PDSs. This is the
-				pattern real AppViews use to serve aggregated data at scale.
+				This post prepares the app for production deployment — wiring up
+				Cloudflare secrets, configuring production environment variables, and
+				deploying to a live Workers URL.
 			</p>
 		),
 		links: [
 			{
-				url: "https://atproto.com/guides/glossary#app-view",
-				label: "AT Protocol AppView concept",
-				note: "How AppViews aggregate and serve data from the firehose",
+				url: "https://developers.cloudflare.com/workers/wrangler/commands/#secret",
+				label: "Wrangler secrets",
+				note: "How to manage secrets for production deployments",
 			},
 			{
-				url: "https://developers.cloudflare.com/d1/",
-				label: "Cloudflare D1 docs",
-				note: "The database powering the aggregated status feed",
+				url: "https://developers.cloudflare.com/workers/wrangler/configuration/#environments",
+				label: "Wrangler environments",
+				note: "Configuring dev, staging, and production environments",
 			},
 			{
-				url: "https://atproto.com/specs/did",
-				label: "DID spec",
-				note: "How user identities are resolved across the network",
+				url: "https://developers.cloudflare.com/workers/",
+				label: "Cloudflare Workers deployment docs",
+				note: "Deploying and managing your Worker in production",
 			},
 		],
 	} satisfies GoingDeeperContent,
