@@ -73,11 +73,83 @@
 		]
 	},
 
-	// Environment variables
+	// Environment variables — local dev only.
+	// ATPROTO_* vars are absent in deployed environments so the app falls back
+	// to production AT Protocol infrastructure (bsky.social, plc.directory).
 	"vars": {
-		// Add your environment variables here
 		"ATPROTO_PDS_URL": "http://localhost:3000",
 		"ATPROTO_PLC_URL": "http://localhost:2582",
 		"ATPROTO_TAP_URL": "http://localhost:2480"
+	},
+	"env": {
+		"integration": {
+			"vars": {
+				"APP_URL": "https://rwsdk-atproto-starter-integration.example.workers.dev"
+			},
+			"kv_namespaces": [
+				{ "binding": "KV_OAUTH_STATE", "id": "<integration-kv-namespace-id>" }
+			],
+			"d1_databases": [
+				{
+					"binding": "DB",
+					"database_name": "rwsdk-atproto-starter-integration",
+					"database_id": "<integration-d1-database-id>",
+					"migrations_dir": "drizzle"
+				}
+			],
+			"durable_objects": {
+				"bindings": [
+					{ "name": "DO_BROWSER_SESSION", "class_name": "BrowserSession" },
+					{ "name": "DO_APPVIEW_SYNC_STATE", "class_name": "AppViewSyncState" },
+					{ "name": "DO_OAUTH_TOKEN", "class_name": "OAuthToken" }
+				]
+			}
+		},
+		"staging": {
+			"vars": {
+				"APP_URL": "https://rwsdk-atproto-starter-staging.example.workers.dev"
+			},
+			"kv_namespaces": [
+				{ "binding": "KV_OAUTH_STATE", "id": "<staging-kv-namespace-id>" }
+			],
+			"d1_databases": [
+				{
+					"binding": "DB",
+					"database_name": "rwsdk-atproto-starter-staging",
+					"database_id": "<staging-d1-database-id>",
+					"migrations_dir": "drizzle"
+				}
+			],
+			"durable_objects": {
+				"bindings": [
+					{ "name": "DO_BROWSER_SESSION", "class_name": "BrowserSession" },
+					{ "name": "DO_APPVIEW_SYNC_STATE", "class_name": "AppViewSyncState" },
+					{ "name": "DO_OAUTH_TOKEN", "class_name": "OAuthToken" }
+				]
+			}
+		},
+		"production": {
+			"vars": {
+				"APP_URL": "https://rwsdk-atproto-starter-production.example.workers.dev"
+			},
+			"kv_namespaces": [
+				{ "binding": "KV_OAUTH_STATE", "id": "<production-kv-namespace-id>" }
+			],
+			"d1_databases": [
+				{
+					"binding": "DB",
+					"database_name": "rwsdk-atproto-starter-production",
+					"database_id": "<production-d1-database-id>",
+					"migrations_dir": "drizzle"
+				}
+			],
+			"durable_objects": {
+				"bindings": [
+					{ "name": "DO_BROWSER_SESSION", "class_name": "BrowserSession" },
+					{ "name": "DO_APPVIEW_SYNC_STATE", "class_name": "AppViewSyncState" },
+					{ "name": "DO_OAUTH_TOKEN", "class_name": "OAuthToken" }
+				]
+			}
+		}
 	}
 }
