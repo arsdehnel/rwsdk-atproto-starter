@@ -28,7 +28,7 @@ export function BuildingContent({
 					>
 						Bluesky
 					</a>{" "}
-					accounts or a local devnet
+					accounts or a local dev stack
 				</li>
 				<li>
 					Read and write records using a typed{" "}
@@ -55,6 +55,18 @@ export function BuildingContent({
 					— no polling
 				</li>
 				<li>
+					Manage stateful compute with{" "}
+					<a
+						href="https://developers.cloudflare.com/durable-objects/"
+						target="_blank"
+						rel="noreferrer"
+						className="link"
+					>
+						Durable Objects
+					</a>{" "}
+					for sessions, OAuth tokens, and live sync
+				</li>
+				<li>
 					Persist indexed data with{" "}
 					<a
 						href="https://developers.cloudflare.com/d1"
@@ -75,7 +87,7 @@ export function BuildingContent({
 					</a>
 				</li>
 				<li>
-					Full local devnet via{" "}
+					Full local dev stack via{" "}
 					<a
 						href="https://docs.docker.com/compose"
 						target="_blank"
@@ -85,6 +97,10 @@ export function BuildingContent({
 						Docker Compose
 					</a>{" "}
 					so you never test against production
+				</li>
+				<li>
+					Deploy to Cloudflare Workers with a production-ready three-environment
+					wrangler config
 				</li>
 			</ul>
 			<p className="prose">
