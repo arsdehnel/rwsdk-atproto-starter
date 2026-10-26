@@ -65,7 +65,9 @@ export async function kvDecrypt(
 // Index 0 is the current key (used for encryption); subsequent entries are
 // previous keys tried in order during decryption to support zero-downtime
 // key rotation.
-export function parseKeyRing(raw: string): string[] {
+export function parseKeyRing(raw: string | undefined): string[] {
+	if (raw === undefined)
+		throw new Error("Encryption key ring secret is not configured");
 	const keys = JSON.parse(raw) as string[];
 	if (!Array.isArray(keys) || keys.length === 0) {
 		throw new Error("Encryption key ring must be a non-empty JSON array");

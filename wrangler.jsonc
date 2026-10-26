@@ -78,8 +78,7 @@
 	// to production AT Protocol infrastructure (bsky.social, plc.directory).
 	"vars": {
 		"ATPROTO_PDS_URL": "http://localhost:3000",
-		"ATPROTO_PLC_URL": "http://localhost:2582",
-		"ATPROTO_TAP_URL": "http://localhost:2480"
+		"ATPROTO_PLC_URL": "http://localhost:2582"
 	},
 	"env": {
 		"integration": {
@@ -99,7 +98,6 @@
 			],
 			"durable_objects": {
 				"bindings": [
-					{ "name": "DO_BROWSER_SESSION", "class_name": "BrowserSession" },
 					{ "name": "DO_APPVIEW_SYNC_STATE", "class_name": "AppViewSyncState" },
 					{ "name": "DO_OAUTH_TOKEN", "class_name": "OAuthToken" }
 				]
@@ -122,7 +120,6 @@
 			],
 			"durable_objects": {
 				"bindings": [
-					{ "name": "DO_BROWSER_SESSION", "class_name": "BrowserSession" },
 					{ "name": "DO_APPVIEW_SYNC_STATE", "class_name": "AppViewSyncState" },
 					{ "name": "DO_OAUTH_TOKEN", "class_name": "OAuthToken" }
 				]
@@ -145,7 +142,6 @@
 			],
 			"durable_objects": {
 				"bindings": [
-					{ "name": "DO_BROWSER_SESSION", "class_name": "BrowserSession" },
 					{ "name": "DO_APPVIEW_SYNC_STATE", "class_name": "AppViewSyncState" },
 					{ "name": "DO_OAUTH_TOKEN", "class_name": "OAuthToken" }
 				]
