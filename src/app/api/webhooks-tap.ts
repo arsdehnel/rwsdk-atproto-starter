@@ -6,6 +6,17 @@ import { deleteStatus, upsertStatus } from "@/db/statuses";
 import { upsertUser } from "@/db/users";
 
 async function post({ request }: RequestInfo): Promise<Response> {
+	// Tap forwards the same Basic auth credentials it uses for its own API.
+	// Value format: Basic base64(admin:<TAP_ADMIN_PASSWORD>)
+	const secret = env.WEBHOOK_TAP_SECRET;
+	if (secret) {
+		const expected = `Basic ${btoa(`admin:${secret}`)}`;
+		const actual = request.headers.get("Authorization") ?? "";
+		if (actual !== expected) {
+			return new Response("Unauthorized", { status: 401 });
+		}
+	}
+
 	let body: unknown;
 	try {
 		body = await request.json();
