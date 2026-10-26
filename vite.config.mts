@@ -33,12 +33,9 @@ export default defineConfig({
 		// Bind to 127.0.0.1 so the OAuth redirect URI (http://127.0.0.1:5173/oauth/callback)
 		// matches the address the dev server is actually listening on.
 		host: "127.0.0.1",
-<<<<<<< HEAD
 		// Allow the Tap Docker container to reach the dev server via host.docker.internal.
 		// Without this, Vite blocks requests whose Host header doesn't match the bound address.
 		allowedHosts: ["host.docker.internal"],
-=======
->>>>>>> d83ff43 (feat: initial post 2 functionality)
 	},
 	plugins: [
 		patchAtprotoRedirectError(),

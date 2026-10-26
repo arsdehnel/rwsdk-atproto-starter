@@ -30,15 +30,11 @@
 		"write-status": "tsx scripts/write-status.ts"
 	},
 	"dependencies": {
-<<<<<<< HEAD
 		"@atproto/lex": "^0.3.14",
 		"@atproto/oauth-client-node": "^0.5.9",
 		"@atproto/tap": "^0.4.12",
 		"capnweb": "^0.12.0",
 		"drizzle-orm": "^0.44.2",
-=======
-		"@atproto/oauth-client-node": "^0.5.9",
->>>>>>> d83ff43 (feat: initial post 2 functionality)
 		"react": "19.2.8",
 		"react-dom": "19.2.8",
 		"react-server-dom-webpack": "19.2.8",
