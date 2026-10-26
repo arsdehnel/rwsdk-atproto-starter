@@ -34,22 +34,14 @@ export async function PostContent({ ctx }: RequestInfo<AppContext>) {
 					</section>
 				</>
 			) : (
-				<>
-					<section className="section">
-						<h2 className="sectionTitle">Sign in with Bluesky</h2>
-						<p className="prose">
-							Enter your Bluesky handle to authenticate via AT Protocol OAuth.
-							You'll be redirected to Bluesky to approve access, then back here.
-						</p>
-						<LoginForm />
-					</section>
-					<section className="section">
-						<h2 className="sectionTitle">Live from the AT Protocol</h2>
-						<p className="prose">
-							Sign in above to see your recent posts pulled live from your PDS.
-						</p>
-					</section>
-				</>
+				<section className="section">
+					<h2 className="sectionTitle">Sign in with Bluesky</h2>
+					<p className="prose">
+						Enter your Bluesky handle to authenticate via AT Protocol OAuth.
+						You'll be redirected to Bluesky to approve access, then back here.
+					</p>
+					<LoginForm />
+				</section>
 			)}
 
 			<section className="section">
