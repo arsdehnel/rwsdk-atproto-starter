@@ -26,11 +26,17 @@ export const postConfig = {
 	},
 	goingDeeper: {
 		explanation: (
-			<p className="prose">
-				This post adds AT Protocol OAuth so the feed is fetched on behalf of the
-				logged-in user. The AT Protocol uses a OAuth 2.0 + PKCE flow with a few
-				protocol-specific extensions for identity resolution.
-			</p>
+			<>
+				<p className="prose">
+					This post adds AT Protocol OAuth so the feed is fetched on behalf of
+					the logged-in user. The AT Protocol uses a OAuth 2.0 + PKCE flow with
+					a few protocol-specific extensions for identity resolution.
+				</p>
+				<p className="prose">
+					For browser sessions we're using the DO-based setup from RedwoodSDK.
+					This gives us simple cookies and a mechanism to keep sessions alive.
+				</p>
+			</>
 		),
 		links: [
 			{
@@ -46,7 +52,12 @@ export const postConfig = {
 			{
 				url: "https://developers.cloudflare.com/durable-objects/",
 				label: "Cloudflare Durable Objects",
-				note: "Used here to persist OAuth state across the login flow",
+				note: "Used here to persist sessions in user browsers via cookies",
+			},
+			{
+				url: "https://docs.rwsdk.com/core/authentication#session-management",
+				label: "RWSDK Sessions",
+				note: "Simple browser sessions managed server-side with Cloudflare DO",
 			},
 		],
 	} satisfies GoingDeeperContent,
