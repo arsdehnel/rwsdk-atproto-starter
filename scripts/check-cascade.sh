@@ -136,6 +136,8 @@ for (( i=1; i<${#BRANCHES[@]}; i++ )); do
       warn "no step number found in post-config.tsx"
     elif [[ "$actual_step" == "$expected_step" ]]; then
       pass "post-config step: $actual_step"
+    elif [[ $cascade_from_idx -ge 0 && $i -gt $cascade_from_idx ]]; then
+      note "post-config step is $actual_step, expected $expected_step — stale, will be fixed"
     else
       fail "post-config step is $actual_step, expected $expected_step"
     fi
