@@ -15,7 +15,7 @@ BRANCHES=(
   post/series-2/02-d1-persistence
   post/series-2/03-appview-features
   post/series-2/04-deploy-prep
-  # post/series-2/05-??? — uncomment and set name when branch is created
+  post/series-2/05-next-steps
   main
 )
 
