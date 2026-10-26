@@ -21,7 +21,7 @@ export function HeaderContent(): React.ReactNode {
 				>
 					RedwoodSDK
 				</a>{" "}
-				and{" "}
+				deploying to{" "}
 				<a
 					href="https://developers.cloudflare.com/workers"
 					target="_blank"

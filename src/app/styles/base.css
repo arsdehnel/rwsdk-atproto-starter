@@ -17,16 +17,22 @@ body {
 .container {
 	max-width: 1000px;
 	margin: 0 auto;
-	padding: 3rem 2rem 5rem;
+	padding: 1rem 2rem 5rem;
 	font-family: var(--font-noto);
-	background-color: var(--color-cream);
+	background-color: rgba(0, 0, 0, 0.1);
 	color: var(--text-color);
 	min-height: 100vh;
 }
 
 .header {
-	margin-bottom: 4rem;
+	margin-bottom: 2rem;
 	display: flex;
+}
+
+main {
+	background: var(--color-cream);
+	padding: 1rem;
+	box-shadow: 0 0 10px 10px var(--color-cream);
 }
 
 .title {
@@ -43,6 +49,11 @@ body {
 	color: #444;
 }
 
+.header-content .subtitle {
+	margin: 0.25rem;
+	font-size: 1.2rem;
+}
+
 .section {
 	margin-bottom: 3.5rem;
 }
@@ -51,7 +62,7 @@ body {
 	font-family: var(--font-playfair);
 	font-size: 2rem;
 	font-weight: bold;
-	margin-bottom: 0.75rem;
+	margin: 0;
 }
 
 .prose {
