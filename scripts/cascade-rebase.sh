@@ -12,9 +12,9 @@ BRANCHES=(
   post/series-1/04-atp-writes
   post/series-1/05-tap-sync
   post/series-2/01-production-oauth
-  post/series-2/02-d1-tap-pipeline
+  post/series-2/02-d1-persistence
   post/series-2/03-appview-features
-  post/series-2/04-production-ready
+  post/series-2/04-deploy-prep
   # post/series-2/05-??? — uncomment and set name when branch is created
   main
 )
