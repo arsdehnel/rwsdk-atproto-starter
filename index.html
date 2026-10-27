@@ -142,6 +142,13 @@
       font-size: inherit;
       color: inherit;
     }
+
+    tr.series-header td {
+      background-color: rgba(0, 0, 0, 0.06);
+      font-size: 0.85rem;
+      letter-spacing: 0.04em;
+      padding: 0.35rem 0.5rem;
+    }
   </style>
 </head>
 <body>
@@ -157,72 +164,95 @@
 <li>The PR showing the code changes involved made in that step</li>
 </ul>
 <table>
-<thead>
-<tr>
-<th>Step</th>
-<th>Title / Blog Post</th>
-<th>Intro</th>
-<th>Git Branch</th>
-<th>GitHub PR</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>1</td>
-<td><a href="https://arsdehnel.com/posts/rwsdk-atproto-01-first-read">First Read</a></td>
-<td>Fetch and display public AT Protocol records without authenticating</td>
-<td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/01-first-read"><code>post/01-first-read</code></a></td>
-<td>n/a (initial <code>rwsdk</code> create repo)</td>
-</tr>
-<tr>
-<td>2</td>
-<td><a href="https://arsdehnel.com/posts/rwsdk-atproto-02-atproto-oauth">AT Proto OAuth</a></td>
-<td>Wire up OAuth login against a real Bluesky account</td>
-<td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/02-atproto-oauth"><code>post/02-atproto-oauth</code></a></td>
-<td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/pull/9">Step 2 Additions</a></td>
-</tr>
-<tr>
-<td>3</td>
-<td><a href="https://arsdehnel.com/posts/rwsdk-atproto-03-local-dev-setup">Local Dev Setup</a></td>
-<td>Run a full AT Protocol PDS and PLC locally in Docker — no prod dependency</td>
-<td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/03-local-dev-setup"><code>post/03-local-dev-setup</code></a></td>
-<td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/pull/10">Step 3 Additions</a></td>
-</tr>
-<tr>
-<td>4</td>
-<td><a href="https://arsdehnel.com/posts/rwsdk-atproto-04-atproto-writes">AT Proto Writes</a></td>
-<td>Define a lexicon, codegen TypeScript types, and write records to your PDS</td>
-<td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/04-atproto-writes"><code>post/04-atproto-writes</code></a></td>
-<td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/pull/11">Step 4 Additions</a></td>
-</tr>
-<tr>
-<td>5</td>
-<td><a href="https://arsdehnel.com/posts/rwsdk-atproto-05-tap-sync">Tap Sync</a></td>
-<td>React to new records in real time using Tap webhooks and SSE</td>
-<td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/05-tap-sync"><code>post/05-tap-sync</code></a></td>
-<td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/pull/12">Step 5 Additions</a></td>
-</tr>
-<tr>
-<td>6</td>
-<td><a href="https://arsdehnel.com/posts/rwsdk-atproto-06-d1-persistence">D1 Persistence</a></td>
-<td>Swap in-memory state for D1 and Drizzle so data survives a restart</td>
-<td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/06-d1-persistence"><code>post/06-d1-persistence</code></a></td>
-<td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/pull/13">Step 6 Additions</a></td>
-</tr>
-<tr>
-<td>7</td>
-<td><a href="https://arsdehnel.com/posts/rwsdk-atproto-07-appview">AppView</a></td>
-<td>Index records from multiple users and serve a public status board</td>
-<td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/07-appview"><code>post/07-appview</code></a></td>
-<td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/pull/14">Step 7 Additions</a></td>
-</tr>
-<tr>
-<td>8</td>
-<td><a href="https://arsdehnel.com/posts/rwsdk-atproto-08-next-steps">Next Steps</a></td>
-<td>What&#39;s left open, what to harden before going further, and where to take it</td>
-<td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/08-next-steps"><code>post/08-next-steps</code></a></td>
-<td>n/a (no code changes in Step 8)</td>
-</tr>
-</tbody></table>
+  <thead>
+    <tr>
+      <th>Post</th>
+      <th>Title / Blog Post</th>
+      <th>Intro</th>
+      <th>Git Branch</th>
+      <th>GitHub PR</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="series-header">
+      <td colspan="5"><strong>Series 1: Local Dev Foundation</strong></td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td><a href="https://arsdehnel.com/posts/rwsdk-atp-s1-p1-get-started">Get Started</a></td>
+      <td>Start from a fresh RWSDK app and fetch your first live AT Protocol records — no account, no auth required</td>
+      <td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/series-1/01-get-started"><code>post/series-1/01-get-started</code></a></td>
+      <td>n/a (initial <code>create-rwsdk</code> app)</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td><a href="https://arsdehnel.com/posts/rwsdk-atp-s1-p2-atp-oauth">AT Protocol OAuth</a></td>
+      <td>Wire up AT Protocol OAuth 2.0 + PKCE so the feed is fetched on behalf of a logged-in Bluesky user</td>
+      <td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/series-1/02-atp-oauth"><code>post/series-1/02-atp-oauth</code></a></td>
+      <td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/pull/98">PR #98</a></td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td><a href="https://arsdehnel.com/posts/rwsdk-atp-s1-p3-local-dev">Local Dev Setup</a></td>
+      <td>Run a full local AT Protocol stack — PDS, AppView, Tap — in Docker Compose, OAuth against localhost</td>
+      <td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/series-1/03-local-dev"><code>post/series-1/03-local-dev</code></a></td>
+      <td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/pull/99">PR #99</a></td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td><a href="https://arsdehnel.com/posts/rwsdk-atp-s1-p4-atp-writes">AT Protocol Writes</a></td>
+      <td>Define a lexicon, codegen TypeScript types, and write records to the local PDS using XRPC</td>
+      <td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/series-1/04-atp-writes"><code>post/series-1/04-atp-writes</code></a></td>
+      <td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/pull/100">PR #100</a></td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td><a href="https://arsdehnel.com/posts/rwsdk-atp-s1-p5-tap-sync">Tap Sync</a></td>
+      <td>Connect to the AT Protocol firehose via Tap to sync status records from other users in real time</td>
+      <td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/series-1/05-tap-sync"><code>post/series-1/05-tap-sync</code></a></td>
+      <td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/pull/75">PR #75</a></td>
+    </tr>
+    <tr class="series-header">
+      <td colspan="5"><strong>Series 2: Production Ready</strong></td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td><a href="https://arsdehnel.com/posts/rwsdk-atp-s2-p1-production-oauth">Production OAuth</a></td>
+      <td>Swap the loopback OAuth client for a confidential client that works with any AT Protocol PDS</td>
+      <td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/series-2/01-production-oauth"><code>post/series-2/01-production-oauth</code></a></td>
+      <td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/pull/78">PR #78</a></td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td><a href="https://arsdehnel.com/posts/rwsdk-atp-s2-p2-d1-persistence">D1 Persistence</a></td>
+      <td>Add Cloudflare D1 as a relational store for status records synced from the Tap firehose</td>
+      <td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/series-2/02-d1-persistence"><code>post/series-2/02-d1-persistence</code></a></td>
+      <td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/pull/101">PR #101</a></td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td><a href="https://arsdehnel.com/posts/rwsdk-atp-s2-p3-appview-features">AppView Features</a></td>
+      <td>Add AppView-style aggregations — reading community data from D1, not from individual PDSs</td>
+      <td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/series-2/03-appview-features"><code>post/series-2/03-appview-features</code></a></td>
+      <td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/pull/102">PR #102</a></td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td><a href="https://arsdehnel.com/posts/rwsdk-atp-s2-p4-deploy-prep">Deploy Prep</a></td>
+      <td>Wire up production secrets, configure environment variables, and deploy to Cloudflare Workers</td>
+      <td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/series-2/04-deploy-prep"><code>post/series-2/04-deploy-prep</code></a></td>
+      <td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/pull/103">PR #103</a></td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td><a href="https://arsdehnel.com/posts/rwsdk-atp-s2-p5-next-steps">Next Steps</a></td>
+      <td>The production-ready starting point — the complete app deployed and live, with what to harden next</td>
+      <td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/series-2/05-next-steps"><code>post/series-2/05-next-steps</code></a></td>
+      <td><a href="https://github.com/arsdehnel/rwsdk-atproto-starter/pull/104">PR #104</a></td>
+    </tr>
+  </tbody>
+</table>
+
 <h2>What you&#39;ll end up with</h2>
 <ul>
 <li>A working <a href="https://rwsdk.dev">rwsdk</a> app built for <a href="https://developers.cloudflare.com/workers">Cloudflare Workers</a>, running locally via <a href="https://vite.dev">Vite</a></li>
@@ -233,7 +263,7 @@
 <li>A full local dev stack via <a href="https://docs.docker.com/compose">Docker Compose</a> so you never have to touch prod infrastructure</li>
 </ul>
 <h2>Get started</h2>
-<p>This will get you the end result.  Change to whatever branch you want for the step you&#39;re digging into once you&#39;ve cloned the repo.  The <code>main</code> branch that you&#39;ll be on initially mirrors step 8&#39;s final result.</p>
+<p>This will get you the end result. Change to whatever branch you want for the step you&#39;re digging into once you&#39;ve cloned the repo. The <code>main</code> branch mirrors the final result of Series 2.</p>
 <pre><code class="language-sh">git clone https://github.com/arsdehnel/rwsdk-atproto-starter
 cd rwsdk-atproto-starter
 pnpm install

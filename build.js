@@ -148,6 +148,13 @@ const html = `<!DOCTYPE html>
       font-size: inherit;
       color: inherit;
     }
+
+    tr.series-header td {
+      background-color: rgba(0, 0, 0, 0.06);
+      font-size: 0.85rem;
+      letter-spacing: 0.04em;
+      padding: 0.35rem 0.5rem;
+    }
   </style>
 </head>
 <body>
