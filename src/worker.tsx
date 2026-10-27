@@ -9,8 +9,6 @@ import { setCommonHeaders } from "@/app/headers";
 import { sessionStore } from "@/app/lib/session";
 import { Home } from "@/app/pages/home";
 
-export { BrowserSession } from "@/app/durable-objects/browser-session";
-
 export type AppContext = {
 	session: { did: string | null } | null;
 };
