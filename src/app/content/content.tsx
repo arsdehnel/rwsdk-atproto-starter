@@ -1,6 +1,11 @@
 import { Client } from "@atproto/lex";
 import type { RequestInfo } from "rwsdk/worker";
-import { LoggedInUser, LoginForm, StatusSection } from "@/app/components";
+import {
+	LoggedInUser,
+	LoginForm,
+	StatusBoard,
+	StatusSection,
+} from "@/app/components";
 import { getOAuthClient } from "@/app/lib/auth-client";
 import statusSchema from "@/lexicons/xyz/statusphere/status";
 import type { AppContext } from "@/worker";
@@ -63,10 +68,12 @@ export async function PostContent({ ctx }: RequestInfo<AppContext>) {
 							here.
 						</p>
 						<StatusSection
+							did={did}
 							currentStatus={currentStatus}
 							listRecordsEndpoint={statusRecordsEndpoint ?? ""}
 							initialRecords={statusRecords}
 						/>
+						<StatusBoard />
 					</section>
 				</>
 			) : (

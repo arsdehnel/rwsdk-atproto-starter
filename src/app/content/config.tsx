@@ -9,44 +9,45 @@ export type GoingDeeperContent = {
 
 export const postConfig = {
 	series: 1,
-	post: 4,
-	slug: "atp-writes",
-	pr: 100,
+	post: 5,
+	slug: "tap-sync",
+	pr: 75,
 	nextPost: {
-		series: 1,
-		post: 5,
-		slug: "tap-sync",
+		series: 2,
+		post: 1,
+		slug: "production-oauth",
 		description: (
 			<>
-				With writes working, <strong>Step 5: Tap Sync</strong> connects to the
-				AT Protocol firehose to index status records from other users in real
-				time
+				Series 1 is complete.{" "}
+				<strong>Series 2, Step 1: Production OAuth</strong> starts the move to
+				production by swapping the loopback OAuth client for one that works
+				with any AT Protocol PDS
 			</>
 		),
 	},
 	goingDeeper: {
 		explanation: (
 			<p className="prose">
-				This post adds authenticated writes — creating and deleting records on
-				your PDS using AT Protocol lexicons and XRPC. KV is introduced to
-				persist OAuth tokens across Worker restarts.
+				This post connects to Tap — a firehose relay for the AT Protocol — and
+				syncs status updates from other users in real time using
+				server-sent events.
 			</p>
 		),
 		links: [
 			{
-				url: "https://atproto.com/guides/lexicon",
-				label: "AT Protocol lexicon guide",
-				note: "How schemas define the records and endpoints of the protocol",
+				url: "https://atproto.com/specs/event-stream",
+				label: "AT Protocol event stream spec",
+				note: "The firehose protocol that Tap relays",
 			},
 			{
-				url: "https://atproto.com/specs/xrpc",
-				label: "XRPC spec",
-				note: "The HTTP API layer built on top of lexicons",
+				url: "https://github.com/bluesky-social/jetstream",
+				label: "Jetstream (Tap is based on this)",
+				note: "Filtered event stream for the AT Protocol",
 			},
 			{
-				url: "https://developers.cloudflare.com/kv/",
-				label: "Cloudflare KV docs",
-				note: "Used here to durably store OAuth session tokens",
+				url: "https://developers.cloudflare.com/workers/runtime-apis/server-sent-events/",
+				label: "Cloudflare Workers SSE docs",
+				note: "How the live status feed is pushed to the browser",
 			},
 		],
 	} satisfies GoingDeeperContent,
