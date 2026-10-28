@@ -1,0 +1,145 @@
+# Local AT Protocol devnet for development
+#
+# Usage:  pnpm docker:up && pnpm dev
+#
+# After first startup, test account credentials are written to data/accounts.env.
+# Log in with:
+#   alice.devnet.test  (password: alice-devnet-pass)
+#   bob.devnet.test  (password: bob-devnet-pass)
+#   carol.devnet.test  (password: carol-devnet-pass)
+#
+# Services adapted from https://github.com/OpenMeet-Team/atproto-devnet
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: plc
+    ports:
+      - "5433:5432"
+    networks:
+      - atproto-devnet
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+  plc:
+    image: itaru2622/bluesky-did-method-plc:latest
+    restart: unless-stopped
+    # PLC needs DB_CREDS_JSON as a single JSON string. We can't build that with
+    # compose env var interpolation, so we wrap the entrypoint to construct it
+    # at runtime from individual credential vars.
+    entrypoint: >
+      sh -c "
+        export DB_CREDS_JSON=$$(printf '{\"username\":\"%s\",\"password\":\"%s\",\"host\":\"%s\",\"port\":\"%s\",\"database\":\"%s\"}' postgres postgres postgres 5432 plc)
+        export DB_MIGRATE_CREDS_JSON=$$DB_CREDS_JSON
+        exec node /app/packages/server/service/index.js
+      "
+    environment:
+      PORT: 2582
+      DATABASE_URL: "postgres://postgres:postgres@postgres:5432/plc"
+      ENABLE_MIGRATIONS: "true"
+      LOG_ENABLED: "true"
+      LOG_LEVEL: warn
+      NODE_ENV: development
+    ports:
+      - "2582:2582"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - atproto-devnet
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:2582/_health"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  maildev:
+    image: maildev/maildev:latest
+    ports:
+      - "1081:1080"
+      - "1026:1025"
+    networks:
+      - atproto-devnet
+
+  pds:
+    image: ghcr.io/bluesky-social/pds:0.4
+    user: root
+    restart: unless-stopped
+    depends_on:
+      plc:
+        condition: service_healthy
+      maildev:
+        condition: service_started
+    environment:
+      PDS_PORT: 3000
+      # PDS_HOSTNAME=localhost makes the PDS use http://localhost:3000 as its public
+      # URL. This lets the browser's Origin header match what the PDS expects,
+      # fixing "BadRequestError: Invalid origin" during OAuth.
+      PDS_HOSTNAME: localhost
+      # PDS_DEV_MODE bypasses "Resource URL must use the https scheme", allowing
+      # the PDS to serve its OAuth endpoints over plain HTTP.
+      PDS_DEV_MODE: "true"
+      PDS_DATA_DIRECTORY: /pds/data
+      PDS_BLOBSTORE_DISK_LOCATION: /pds/data/blocks
+      PDS_DID_PLC_URL: http://plc:2582
+      PDS_BSKY_APP_VIEW_URL: https://appview.invalid
+      PDS_BSKY_APP_VIEW_DID: did:example:invalid
+      PDS_REPORT_SERVICE_URL: https://moderator.invalid
+      PDS_REPORT_SERVICE_DID: did:example:invalid
+      PDS_CRAWLERS: ""
+      # Required for newer PDS builds: DID resolution calls the local plc over
+      # http:// and newer builds block that without this flag.
+      PDS_DISABLE_SSRF_PROTECTION: "true"
+      PDS_INVITE_REQUIRED: "true"
+      PDS_ADMIN_PASSWORD: devnet-admin-password
+      PDS_JWT_SECRET: devnet-jwt-secret-not-for-production
+      PDS_PLC_ROTATION_KEY_K256_PRIVATE_KEY_HEX: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      PDS_EMAIL_SMTP_URL: smtp://maildev:1025
+      PDS_EMAIL_FROM_ADDRESS: noreply@devnet.test
+      PDS_HANDLE_DOMAINS: .devnet.test
+      PDS_SERVICE_HANDLE_DOMAINS: .devnet.test
+      LOG_ENABLED: "true"
+      NODE_ENV: development
+    volumes:
+      - pds-data:/pds/data
+    ports:
+      - "3000:3000"
+    networks:
+      - atproto-devnet
+    healthcheck:
+      test:
+        ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:3000/xrpc/_health"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  init:
+    image: alpine:3.20
+    depends_on:
+      pds:
+        condition: service_healthy
+      plc:
+        condition: service_healthy
+    volumes:
+      - ./scripts:/scripts:ro
+      - ./data:/devnet-data
+    environment:
+      PDS_ADMIN_PASSWORD: devnet-admin-password
+      HANDLE_DOMAIN: .devnet.test
+    entrypoint: /bin/sh
+    command: ["/scripts/init.sh"]
+    networks:
+      - atproto-devnet
+    restart: "no"
+
+volumes:
+  pds-data:
+
+networks:
+  atproto-devnet:

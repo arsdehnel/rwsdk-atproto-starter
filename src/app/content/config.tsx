@@ -9,55 +9,44 @@ export type GoingDeeperContent = {
 
 export const postConfig = {
 	series: 1,
-	post: 2,
-	slug: "atp-oauth",
-	pr: 98,
+	post: 3,
+	slug: "local-dev",
+	pr: 99,
 	nextPost: {
 		series: 1,
-		post: 3,
-		slug: "local-dev",
+		post: 4,
+		slug: "atp-writes",
 		description: (
 			<>
-				With OAuth in place, <strong>Step 3: Local Dev Setup</strong> wires up a
-				full local AT Protocol stack so you can develop and test without hitting
-				production
+				With a local dev stack running,{" "}
+				<strong>Step 4: ATP Writes</strong> adds authenticated record creation
+				and deletion using AT Protocol lexicons
 			</>
 		),
 	},
 	goingDeeper: {
 		explanation: (
-			<>
-				<p className="prose">
-					This post adds AT Protocol OAuth so the feed is fetched on behalf of
-					the logged-in user. The AT Protocol uses a OAuth 2.0 + PKCE flow with
-					a few protocol-specific extensions for identity resolution.
-				</p>
-				<p className="prose">
-					For browser sessions we're using the DO-based setup from RedwoodSDK.
-					This gives us simple cookies and a mechanism to keep sessions alive.
-				</p>
-			</>
+			<p className="prose">
+				This post sets up a local dev environment with a full AT Protocol stack
+				— PDS, Bluesky AppView, and Tap — running in Docker Compose. OAuth
+				works against the local PDS rather than bsky.social.
+			</p>
 		),
 		links: [
 			{
-				url: "https://atproto.com/specs/oauth",
-				label: "AT Protocol OAuth spec",
-				note: "The full OAuth 2.0 profile used by atproto clients",
+				url: "https://atproto.com/guides/self-hosting",
+				label: "AT Protocol self-hosting guide",
+				note: "Running your own PDS",
 			},
 			{
-				url: "https://atproto.com/guides/identity",
-				label: "AT Protocol identity guide",
-				note: "How DIDs and handles map to authorization servers",
+				url: "https://github.com/bluesky-social/atproto",
+				label: "atproto monorepo",
+				note: "Source for the PDS, AppView, and related services",
 			},
 			{
-				url: "https://developers.cloudflare.com/durable-objects/",
-				label: "Cloudflare Durable Objects",
-				note: "Used here to persist sessions in user browsers via cookies",
-			},
-			{
-				url: "https://docs.rwsdk.com/core/authentication#session-management",
-				label: "RWSDK Sessions",
-				note: "Simple browser sessions managed server-side with Cloudflare DO",
+				url: "https://docs.docker.com/compose/",
+				label: "Docker Compose docs",
+				note: "Orchestrating the local dev stack",
 			},
 		],
 	} satisfies GoingDeeperContent,
