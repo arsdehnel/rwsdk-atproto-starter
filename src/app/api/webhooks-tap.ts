@@ -27,9 +27,7 @@ async function post({ request }: RequestInfo): Promise<Response> {
 	}
 
 	if (event.action === "delete") {
-		const stub = env.DO_APPVIEW_SYNC_STATE.get(
-			env.DO_APPVIEW_SYNC_STATE.idFromName("appViewSyncState"),
-		);
+		const stub = env.DO_APPVIEW_SYNC_STATE.getByName("appViewSyncState");
 		await stub.removeStatus(event.did);
 	} else {
 		const status = (event.record?.status as string) ?? "";
@@ -46,9 +44,7 @@ async function post({ request }: RequestInfo): Promise<Response> {
 			// Handle resolution is best-effort; fall back to null.
 		}
 
-		const stub = env.DO_APPVIEW_SYNC_STATE.get(
-			env.DO_APPVIEW_SYNC_STATE.idFromName("appViewSyncState"),
-		);
+		const stub = env.DO_APPVIEW_SYNC_STATE.getByName("appViewSyncState");
 		await stub.updateStatus(event.did, status, handle);
 	}
 
