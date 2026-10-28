@@ -98,6 +98,7 @@
 			],
 			"durable_objects": {
 				"bindings": [
+					{ "name": "DO_BROWSER_SESSION", "class_name": "BrowserSession" },
 					{ "name": "DO_APPVIEW_SYNC_STATE", "class_name": "AppViewSyncState" },
 					{ "name": "DO_OAUTH_TOKEN", "class_name": "OAuthToken" }
 				]
@@ -120,6 +121,7 @@
 			],
 			"durable_objects": {
 				"bindings": [
+					{ "name": "DO_BROWSER_SESSION", "class_name": "BrowserSession" },
 					{ "name": "DO_APPVIEW_SYNC_STATE", "class_name": "AppViewSyncState" },
 					{ "name": "DO_OAUTH_TOKEN", "class_name": "OAuthToken" }
 				]
@@ -142,6 +144,7 @@
 			],
 			"durable_objects": {
 				"bindings": [
+					{ "name": "DO_BROWSER_SESSION", "class_name": "BrowserSession" },
 					{ "name": "DO_APPVIEW_SYNC_STATE", "class_name": "AppViewSyncState" },
 					{ "name": "DO_OAUTH_TOKEN", "class_name": "OAuthToken" }
 				]
