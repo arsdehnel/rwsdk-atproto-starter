@@ -6,8 +6,12 @@ interface __BaseEnv_Env {
 	ATPROTO_PDS_URL: "http://localhost:3000";
 	ATPROTO_PLC_URL: "http://localhost:2582";
 	ATPROTO_TAP_URL: "http://localhost:2480";
+	BROWSER_SESSION_SIGNING_KEY: string;
 	OAUTH_STATE_KV_ENCRYPTION_KEYS: string;
 	OAUTH_TOKEN_KV_ENCRYPTION_KEYS: string;
+	DO_BROWSER_SESSION: DurableObjectNamespace<
+		import("./src/worker").BrowserSession
+	>;
 	DO_APPVIEW_SYNC_STATE: DurableObjectNamespace<
 		import("./src/worker").AppViewSyncState
 	>;
@@ -16,7 +20,7 @@ interface __BaseEnv_Env {
 declare namespace Cloudflare {
 	interface GlobalProps {
 		mainModule: typeof import("./src/worker");
-		durableNamespaces: "AppViewSyncState" | "OAuthToken";
+		durableNamespaces: "BrowserSession" | "AppViewSyncState" | "OAuthToken";
 	}
 	interface Env extends __BaseEnv_Env {}
 }
@@ -34,6 +38,7 @@ declare namespace NodeJS {
 				| "ATPROTO_PDS_URL"
 				| "ATPROTO_PLC_URL"
 				| "ATPROTO_TAP_URL"
+				| "BROWSER_SESSION_SIGNING_KEY"
 				| "OAUTH_STATE_KV_ENCRYPTION_KEYS"
 				| "OAUTH_TOKEN_KV_ENCRYPTION_KEYS"
 			>

@@ -27,9 +27,13 @@
 		{ "binding": "KV_OAUTH_STATE", "id": "KV_OAUTH_STATE_LOCAL" }
 	],
 
-	// Durable Objects for TAP sync state and OAuth tokens
+	// Durable Objects for browser sessions, TAP sync state, and OAuth tokens
 	"durable_objects": {
 		"bindings": [
+			{
+				"name": "DO_BROWSER_SESSION",
+				"class_name": "BrowserSession"
+			},
 			{
 				"name": "DO_APPVIEW_SYNC_STATE",
 				"class_name": "AppViewSyncState"
@@ -44,12 +48,14 @@
 	// Declarative export registration for Durable Object classes.
 	// Mutually exclusive with the older "migrations" array.
 	"exports": {
+		"BrowserSession": { "type": "durable-object", "storage": "sqlite" },
 		"AppViewSyncState": { "type": "durable-object", "storage": "sqlite" },
 		"OAuthToken": { "type": "durable-object", "storage": "sqlite" }
 	},
 
 	"secrets": {
 		"required": [
+			"BROWSER_SESSION_SIGNING_KEY",
 			"OAUTH_STATE_KV_ENCRYPTION_KEYS",
 			"OAUTH_TOKEN_KV_ENCRYPTION_KEYS"
 		]
