@@ -9,47 +9,55 @@ export type GoingDeeperContent = {
 
 export const postConfig = {
 	series: 1,
-	post: 1,
-	slug: "get-started",
+	post: 2,
+	slug: "atp-oauth",
+	pr: 98,
 	nextPost: {
 		series: 1,
-		post: 2,
-		slug: "atp-oauth",
+		post: 3,
+		slug: "local-dev",
 		description: (
 			<>
-				Now that we've established a basic ATP interaction we're ready to dive
-				into <strong>Step 2: AT Proto OAuth</strong>
+				With OAuth in place, <strong>Step 3: Local Dev Setup</strong> wires up a
+				full local AT Protocol stack so you can develop and test without hitting
+				production
 			</>
 		),
 	},
 	goingDeeper: {
 		explanation: (
-			<p className="prose">
-				This post starts from an RWSDK starter kit and reads live data from the
-				AT Protocol using XRPC and the{" "}
-				<code className="inlineCode">app.bsky.feed.getTimeline</code> lexicon.
-			</p>
+			<>
+				<p className="prose">
+					This post adds AT Protocol OAuth so the feed is fetched on behalf of
+					the logged-in user. The AT Protocol uses a OAuth 2.0 + PKCE flow with
+					a few protocol-specific extensions for identity resolution.
+				</p>
+				<p className="prose">
+					For browser sessions we're using the DO-based setup from RedwoodSDK.
+					This gives us simple cookies and a mechanism to keep sessions alive.
+				</p>
+			</>
 		),
 		links: [
 			{
-				url: "https://atproto.com/guides/overview",
-				label: "AT Protocol overview",
-				note: "The protocol spec — data model, DIDs, lexicons, and repos",
+				url: "https://atproto.com/specs/oauth",
+				label: "AT Protocol OAuth spec",
+				note: "The full OAuth 2.0 profile used by atproto clients",
 			},
 			{
-				url: "https://docs.bsky.app/docs/api/app-bsky-feed-get-timeline",
-				label: "app.bsky.feed.getTimeline",
-				note: "The lexicon used to fetch the feed in this post",
+				url: "https://atproto.com/guides/identity",
+				label: "AT Protocol identity guide",
+				note: "How DIDs and handles map to authorization servers",
 			},
 			{
-				url: "https://developers.cloudflare.com/workers/",
-				label: "Cloudflare Workers docs",
-				note: "The runtime this app runs on",
+				url: "https://developers.cloudflare.com/durable-objects/",
+				label: "Cloudflare Durable Objects",
+				note: "Used here to persist sessions in user browsers via cookies",
 			},
 			{
-				url: "https://rwsdk.com/",
-				label: "RedwoodSDK",
-				note: "Server-first React, running on the Cloudflare platform",
+				url: "https://docs.rwsdk.com/core/authentication#session-management",
+				label: "RWSDK Sessions",
+				note: "Simple browser sessions managed server-side with Cloudflare DO",
 			},
 		],
 	} satisfies GoingDeeperContent,
