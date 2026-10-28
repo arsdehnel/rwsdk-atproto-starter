@@ -3,7 +3,7 @@ import type { LexValue } from "@atproto/lex";
 import { parseTapEvent, type TapEvent } from "@atproto/tap";
 import type { RequestInfo } from "rwsdk/worker";
 import { deleteStatus, upsertStatus } from "@/db/statuses";
-import { upsertUser } from "@/db/users";
+import { getUserHandle, upsertUser } from "@/db/users";
 
 type DidDocument = {
 	service?: Array<{ id: string; type: string; serviceEndpoint: string }>;
@@ -87,9 +87,11 @@ async function post({ request }: RequestInfo): Promise<Response> {
 	} else {
 		const status = event.record?.status as string;
 
-		// Resolve the handle via DID document lookup → PDS describeRepo.
-		// Best-effort: falls back to null if the DID or PDS is unreachable.
-		const handle = await resolveHandle(event.did);
+		// Use the stored handle from D1 if we've seen this user before —
+		// avoids two HTTP requests (PLC + describeRepo) on every event.
+		// Falls back to full resolution for new users or previously-failed lookups.
+		const handle =
+			(await getUserHandle(event.did)) ?? (await resolveHandle(event.did));
 
 		await upsertUser(event.did, handle);
 		await upsertStatus(event.did, atUri, status, event.rev);
