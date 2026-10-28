@@ -1,6 +1,6 @@
 import { desc, eq } from "drizzle-orm";
 import { SyncedStateServer } from "rwsdk/use-synced-state/worker";
-import db from "@/db/db";
+import { db } from "@/db/db";
 import { statuses, users } from "@/db/schema";
 
 export type StatusEntry = {
@@ -46,8 +46,7 @@ export class AppViewSyncState extends SyncedStateServer {
 	}
 
 	private async seedFromD1() {
-		const readDb = await db.getReader();
-		const rows = await readDb
+		const rows = await db
 			.select({
 				did: statuses.did,
 				status: statuses.status,
