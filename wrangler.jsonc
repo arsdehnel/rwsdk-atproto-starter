@@ -22,17 +22,25 @@
 		"enabled": true
 	},
 
-	// KV for AT Protocol OAuth tokens
+	// KV for AT Protocol OAuth state
 	"kv_namespaces": [
-		{ "binding": "KV_OAUTH_TOKENS", "id": "KV_OAUTH_TOKENS_LOCAL" }
+		{ "binding": "KV_OAUTH_STATE", "id": "KV_OAUTH_STATE_LOCAL" }
 	],
 
-	// Durable Object for TAP sync state
+	// Durable Objects for browser sessions, TAP sync state, and OAuth tokens
 	"durable_objects": {
 		"bindings": [
 			{
+				"name": "DO_BROWSER_SESSION",
+				"class_name": "BrowserSession"
+			},
+			{
 				"name": "DO_APPVIEW_SYNC_STATE",
 				"class_name": "AppViewSyncState"
+			},
+			{
+				"name": "DO_OAUTH_TOKEN",
+				"class_name": "OAuthToken"
 			}
 		]
 	},
@@ -40,7 +48,17 @@
 	// Declarative export registration for Durable Object classes.
 	// Mutually exclusive with the older "migrations" array.
 	"exports": {
-		"AppViewSyncState": { "type": "durable-object", "storage": "sqlite" }
+		"BrowserSession": { "type": "durable-object", "storage": "sqlite" },
+		"AppViewSyncState": { "type": "durable-object", "storage": "sqlite" },
+		"OAuthToken": { "type": "durable-object", "storage": "sqlite" }
+	},
+
+	"secrets": {
+		"required": [
+			"BROWSER_SESSION_SIGNING_KEY",
+			"OAUTH_STATE_KV_ENCRYPTION_KEYS",
+			"OAUTH_TOKEN_KV_ENCRYPTION_KEYS"
+		]
 	},
 
 	// Environment variables

@@ -8,46 +8,45 @@ export type GoingDeeperContent = {
 };
 
 export const postConfig = {
-	series: 1,
-	post: 5,
-	slug: "tap-sync",
-	pr: 75,
+	series: 2,
+	post: 1,
+	slug: "production-oauth",
+	pr: 78,
 	nextPost: {
 		series: 2,
-		post: 1,
-		slug: "production-oauth",
+		post: 2,
+		slug: "d1-persistence",
 		description: (
 			<>
-				Series 1 is complete.{" "}
-				<strong>Series 2, Step 1: Production OAuth</strong> starts the move to
-				production by swapping the loopback OAuth client for one that works
-				with any AT Protocol PDS
+				With production OAuth in place,{" "}
+				<strong>Step 2: D1 Persistence</strong> adds D1 as a relational store
+				for status records synced from the AT Protocol firehose
 			</>
 		),
 	},
 	goingDeeper: {
 		explanation: (
 			<p className="prose">
-				This post connects to Tap — a firehose relay for the AT Protocol — and
-				syncs status updates from other users in real time using
-				server-sent events.
+				This post swaps the loopback OAuth client for one that works against
+				production PDS instances. It introduces Web Crypto for signing client
+				assertions and adapts the OAuth metadata endpoint for public deployment.
 			</p>
 		),
 		links: [
 			{
-				url: "https://atproto.com/specs/event-stream",
-				label: "AT Protocol event stream spec",
-				note: "The firehose protocol that Tap relays",
+				url: "https://atproto.com/specs/oauth",
+				label: "AT Protocol OAuth spec",
+				note: "The full OAuth 2.0 profile — including the confidential client flow used here",
 			},
 			{
-				url: "https://github.com/bluesky-social/jetstream",
-				label: "Jetstream (Tap is based on this)",
-				note: "Filtered event stream for the AT Protocol",
+				url: "https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto",
+				label: "Web Crypto API (SubtleCrypto)",
+				note: "Used to generate and sign the client's private key",
 			},
 			{
-				url: "https://developers.cloudflare.com/workers/runtime-apis/server-sent-events/",
-				label: "Cloudflare Workers SSE docs",
-				note: "How the live status feed is pushed to the browser",
+				url: "https://developers.cloudflare.com/kv/",
+				label: "Cloudflare KV docs",
+				note: "Persists OAuth state and session tokens across isolates",
 			},
 		],
 	} satisfies GoingDeeperContent,

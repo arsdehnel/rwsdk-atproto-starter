@@ -1,1 +1,3 @@
 BROWSER_SESSION_SIGNING_KEY=this-is-a-string-used-for-encrypting-browser-session-data
+OAUTH_STATE_KV_ENCRYPTION_KEYS=["dev-only-insecure-key-replace-for-production"]
+OAUTH_TOKEN_KV_ENCRYPTION_KEYS=["dev-only-insecure-key-replace-for-production"]

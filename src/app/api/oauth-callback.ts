@@ -1,11 +1,18 @@
 import { env } from "cloudflare:workers";
+import type { OAuthSession } from "@atproto/oauth-client-node";
 import type { RequestInfo } from "rwsdk/worker";
 import { getOAuthClient } from "@/app/lib/auth-client";
 import { sessionStore } from "@/app/lib/session";
 
 async function get({ request, response }: RequestInfo) {
 	const client = await getOAuthClient();
-	const { session } = await client.callback(new URL(request.url).searchParams);
+	let session: OAuthSession | undefined;
+	try {
+		({ session } = await client.callback(new URL(request.url).searchParams));
+	} catch {
+		response.headers.set("Location", "/oauth/login");
+		return new Response(null, { status: 302, headers: response.headers });
+	}
 
 	await sessionStore.save(response.headers, { did: session.did });
 

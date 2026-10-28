@@ -13,7 +13,11 @@ import { sessionStore } from "@/app/lib/session";
 import { Home } from "@/app/pages/home";
 import status from "./app/api/status";
 
-export { AppViewSyncState } from "@/app/durable-objects";
+export {
+	AppViewSyncState,
+	BrowserSession,
+	OAuthToken,
+} from "@/app/durable-objects";
 
 export type AppContext = {
 	session: { did: string | null } | null;
