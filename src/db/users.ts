@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import db from "@/db/db";
+import { db } from "@/db/db";
 import { users } from "@/db/schema";
 
 // Upserts a user record by DID. Safe to call from both the OAuth callback
@@ -7,9 +7,8 @@ import { users } from "@/db/schema";
 // On conflict, handle is updated only if the incoming value is non-null —
 // COALESCE preserves the existing handle rather than overwriting it with null.
 export async function upsertUser(did: string, handle?: string | null) {
-	const writeDb = await db.getWriter();
 	try {
-		await writeDb
+		await db
 			.insert(users)
 			.values({
 				did,

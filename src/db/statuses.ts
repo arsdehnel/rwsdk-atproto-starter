@@ -1,5 +1,5 @@
 import { eq, sql } from "drizzle-orm";
-import db from "@/db/db";
+import { db } from "@/db/db";
 import { statuses } from "@/db/schema";
 
 export async function upsertStatus(
@@ -8,9 +8,8 @@ export async function upsertStatus(
 	status: string,
 	rev: string,
 ) {
-	const writeDb = await db.getWriter();
 	try {
-		await writeDb
+		await db
 			.insert(statuses)
 			.values({ did, atUri, status, rev, receivedAt: new Date().toISOString() })
 			.onConflictDoUpdate({
@@ -32,9 +31,8 @@ export async function upsertStatus(
 }
 
 export async function deleteStatus(atUri: string) {
-	const writeDb = await db.getWriter();
 	try {
-		await writeDb.delete(statuses).where(eq(statuses.atUri, atUri));
+		await db.delete(statuses).where(eq(statuses.atUri, atUri));
 	} catch (err) {
 		const cause = err instanceof Error ? err.cause : undefined;
 		console.error(
