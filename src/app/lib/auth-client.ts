@@ -8,20 +8,17 @@ import {
 	NodeOAuthClient,
 } from "@atproto/oauth-client-node";
 
-// Use globalThis so the client and its token stores survive across
-// hot-reloads in dev. In production, the Worker isolate keeps them alive
-// for the lifetime of the instance.
+// Use globalThis so the NodeOAuthClient singleton survives hot-reloads in dev.
+// In production, the Worker isolate keeps it alive for its lifetime.
 const globalAuth = globalThis as unknown as {
 	atprotoClient: NodeOAuthClient | null;
 	stateStore: Map<string, NodeSavedState>;
-	sessionStore: Map<string, NodeSavedSession>;
 };
 
 globalAuth.atprotoClient ??= null;
 globalAuth.stateStore ??= new Map();
-globalAuth.sessionStore ??= new Map();
 
-export const SCOPE = "atproto";
+export const SCOPE = "atproto repo:xyz.statusphere.status";
 
 export async function getOAuthClient(): Promise<NodeOAuthClient> {
 	if (globalAuth.atprotoClient) return globalAuth.atprotoClient;
@@ -47,10 +44,8 @@ export async function getOAuthClient(): Promise<NodeOAuthClient> {
 			redirect_uris: ["http://127.0.0.1:5173/oauth/callback"],
 		}),
 
-		// stateStore and sessionStore are in-memory for now. This means OAuth
-		// tokens are lost on Worker restart and aren't shared across isolates.
-		// Post 4 (authenticated writes) will need a durable store here, keyed
-		// by DID — separate from the DO session which is keyed by session ID.
+		// stateStore: is still in memory as this only needs to live long enough for
+		//   the login itself to complete
 		stateStore: {
 			async get(key) {
 				return globalAuth.stateStore.get(key);
@@ -63,15 +58,19 @@ export async function getOAuthClient(): Promise<NodeOAuthClient> {
 			},
 		},
 
+		// sessionStore: KV keyed by DID. OAuth tokens persist across Worker restarts
+		// and isolate evictions — users stay logged in after a dev server restart or
+		// a production cold start.
 		sessionStore: {
-			async get(key) {
-				return globalAuth.sessionStore.get(key);
+			async get(did: string): Promise<NodeSavedSession | undefined> {
+				const raw = await env.KV_OAUTH_TOKENS.get(did);
+				return raw ? (JSON.parse(raw) as NodeSavedSession) : undefined;
 			},
-			async set(key, value) {
-				globalAuth.sessionStore.set(key, value);
+			async set(did: string, value: NodeSavedSession): Promise<void> {
+				await env.KV_OAUTH_TOKENS.put(did, JSON.stringify(value));
 			},
-			async del(key) {
-				globalAuth.sessionStore.delete(key);
+			async del(did: string): Promise<void> {
+				await env.KV_OAUTH_TOKENS.delete(did);
 			},
 		},
 	});

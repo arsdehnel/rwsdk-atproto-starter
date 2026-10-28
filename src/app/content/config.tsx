@@ -9,44 +9,44 @@ export type GoingDeeperContent = {
 
 export const postConfig = {
 	series: 1,
-	post: 3,
-	slug: "local-dev",
-	pr: 99,
+	post: 4,
+	slug: "atp-writes",
+	pr: 100,
 	nextPost: {
 		series: 1,
-		post: 4,
-		slug: "atp-writes",
+		post: 5,
+		slug: "tap-sync",
 		description: (
 			<>
-				With a local dev stack running,{" "}
-				<strong>Step 4: ATP Writes</strong> adds authenticated record creation
-				and deletion using AT Protocol lexicons
+				With writes working, <strong>Step 5: Tap Sync</strong> connects to the
+				AT Protocol firehose to index status records from other users in real
+				time
 			</>
 		),
 	},
 	goingDeeper: {
 		explanation: (
 			<p className="prose">
-				This post sets up a local dev environment with a full AT Protocol stack
-				— PDS, Bluesky AppView, and Tap — running in Docker Compose. OAuth
-				works against the local PDS rather than bsky.social.
+				This post adds authenticated writes — creating and deleting records on
+				your PDS using AT Protocol lexicons and XRPC. KV is introduced to
+				persist OAuth tokens across Worker restarts.
 			</p>
 		),
 		links: [
 			{
-				url: "https://atproto.com/guides/self-hosting",
-				label: "AT Protocol self-hosting guide",
-				note: "Running your own PDS",
+				url: "https://atproto.com/guides/lexicon",
+				label: "AT Protocol lexicon guide",
+				note: "How schemas define the records and endpoints of the protocol",
 			},
 			{
-				url: "https://github.com/bluesky-social/atproto",
-				label: "atproto monorepo",
-				note: "Source for the PDS, AppView, and related services",
+				url: "https://atproto.com/specs/xrpc",
+				label: "XRPC spec",
+				note: "The HTTP API layer built on top of lexicons",
 			},
 			{
-				url: "https://docs.docker.com/compose/",
-				label: "Docker Compose docs",
-				note: "Orchestrating the local dev stack",
+				url: "https://developers.cloudflare.com/kv/",
+				label: "Cloudflare KV docs",
+				note: "Used here to durably store OAuth session tokens",
 			},
 		],
 	} satisfies GoingDeeperContent,
