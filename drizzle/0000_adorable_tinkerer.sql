@@ -2,8 +2,9 @@ CREATE TABLE `statuses` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`did` text NOT NULL,
 	`status` text NOT NULL,
+	`rev` text,
 	`at_uri` text NOT NULL,
-	`created_at` text NOT NULL,
+	`received_at` text NOT NULL,
 	FOREIGN KEY (`did`) REFERENCES `users`(`did`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
