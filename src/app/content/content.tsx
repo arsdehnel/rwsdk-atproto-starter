@@ -125,27 +125,6 @@ export async function PostContent({ ctx }: RequestInfo<AppContext>) {
 					to see the exact changes made.
 				</p>
 			</section>
-
-			<section className="section">
-				<h2 className="sectionTitle">Up Next</h2>
-				<p className="prose">
-					{postConfig.nextPost.description} (
-					<a
-						className="link-inline"
-						href={`https://arsdehnel.com/posts/rwsdk-atp-s${postConfig.nextPost.series}-p${postConfig.nextPost.post}-${postConfig.nextPost.slug}`}
-					>
-						Blog Post
-					</a>{" "}
-					|{" "}
-					<a
-						className="link-inline"
-						href={`https://github.com/arsdehnel/rwsdk-atproto-starter/tree/post/series-${postConfig.nextPost.series}/0${postConfig.nextPost.post}-${postConfig.nextPost.slug}/`}
-					>
-						Git Branch
-					</a>
-					).
-				</p>
-			</section>
 		</>
 	);
 }
