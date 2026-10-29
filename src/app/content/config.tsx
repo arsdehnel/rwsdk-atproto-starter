@@ -9,44 +9,44 @@ export type GoingDeeperContent = {
 
 export const postConfig = {
 	series: 2,
-	post: 1,
-	slug: "production-oauth",
-	pr: 78,
+	post: 2,
+	slug: "d1-persistence",
+	pr: 101,
 	nextPost: {
 		series: 2,
-		post: 2,
-		slug: "d1-persistence",
+		post: 3,
+		slug: "appview-features",
 		description: (
 			<>
-				With production OAuth in place,{" "}
-				<strong>Step 2: D1 Persistence</strong> adds D1 as a relational store
-				for status records synced from the AT Protocol firehose
+				With records stored in D1,{" "}
+				<strong>Step 3: AppView Features</strong> builds AppView-style
+				aggregations — surfacing community status data from the database
 			</>
 		),
 	},
 	goingDeeper: {
 		explanation: (
 			<p className="prose">
-				This post swaps the loopback OAuth client for one that works against
-				production PDS instances. It introduces Web Crypto for signing client
-				assertions and adapts the OAuth metadata endpoint for public deployment.
+				This post adds D1 as a relational store for status records synced from
+				the Tap firehose. Drizzle ORM manages the schema and queries, and
+				records are upserted from the webhook handler.
 			</p>
 		),
 		links: [
 			{
-				url: "https://atproto.com/specs/oauth",
-				label: "AT Protocol OAuth spec",
-				note: "The full OAuth 2.0 profile — including the confidential client flow used here",
+				url: "https://developers.cloudflare.com/d1/",
+				label: "Cloudflare D1 docs",
+				note: "The SQLite-based relational database used here",
 			},
 			{
-				url: "https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto",
-				label: "Web Crypto API (SubtleCrypto)",
-				note: "Used to generate and sign the client's private key",
+				url: "https://orm.drizzle.team/docs/overview",
+				label: "Drizzle ORM docs",
+				note: "Schema definition and query builder used with D1",
 			},
 			{
-				url: "https://developers.cloudflare.com/kv/",
-				label: "Cloudflare KV docs",
-				note: "Persists OAuth state and session tokens across isolates",
+				url: "https://atproto.com/specs/lexicon",
+				label: "Lexicon spec",
+				note: "The schema format for the status records being stored",
 			},
 		],
 	} satisfies GoingDeeperContent,

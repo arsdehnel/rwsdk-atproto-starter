@@ -65,3 +65,22 @@ create_account "carol${HANDLE_DOMAIN}" "carol@devnet.test" "carol-devnet-pass" "
 chmod 666 "${DATA_DIR}/accounts.env" 2>/dev/null || true
 
 log "Done. Credentials written to data/accounts.env"
+
+# ── Register test accounts with Tap ──────────────────────────────
+# Pre-register the test DIDs so Tap delivers webhook events for them
+# immediately, without waiting for an OAuth login. In production, Tap
+# connects to the Bluesky relay and uses collection signals instead —
+# no per-DID registration needed.
+TAP_URL="http://tap:2480"
+DIDS=$(grep '_DID=' "${DATA_DIR}/accounts.env" | sed 's/.*_DID=//' | tr '\n' ',' | sed 's/,$//')
+
+if [ -n "$DIDS" ]; then
+  JSON_ARRAY=$(printf '[%s]' "$(echo "$DIDS" | sed 's/,/","/g' | sed 's/^/"/' | sed 's/$/"/')")
+  log "Registering DIDs with Tap: ${DIDS}"
+  curl -sf -X POST "${TAP_URL}/repos/add" \
+    -H "Content-Type: application/json" \
+    -H "Authorization: Basic $(printf 'admin:%s' "${TAP_ADMIN_PASSWORD}" | base64)" \
+    -d "{\"dids\": ${JSON_ARRAY}}" \
+    && log "Tap registration complete." \
+    || log "WARNING: Tap registration failed (Tap may not be running)."
+fi
