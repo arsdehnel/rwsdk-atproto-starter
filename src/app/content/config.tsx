@@ -9,44 +9,44 @@ export type GoingDeeperContent = {
 
 export const postConfig = {
 	series: 2,
-	post: 2,
-	slug: "d1-persistence",
-	pr: 101,
+	post: 3,
+	slug: "appview-features",
+	pr: 102,
 	nextPost: {
 		series: 2,
-		post: 3,
-		slug: "appview-features",
+		post: 4,
+		slug: "deploy-prep",
 		description: (
 			<>
-				With records stored in D1,{" "}
-				<strong>Step 3: AppView Features</strong> builds AppView-style
-				aggregations — surfacing community status data from the database
+				The app is feature-complete.{" "}
+				<strong>Step 4: Deploy Prep</strong> wires up production secrets and
+				environment config to get ready for Cloudflare Workers deployment
 			</>
 		),
 	},
 	goingDeeper: {
 		explanation: (
 			<p className="prose">
-				This post adds D1 as a relational store for status records synced from
-				the Tap firehose. Drizzle ORM manages the schema and queries, and
-				records are upserted from the webhook handler.
+				This post adds AppView-style features — reading the community's status
+				records from D1 rather than directly from individual PDSs. This is the
+				pattern real AppViews use to serve aggregated data at scale.
 			</p>
 		),
 		links: [
 			{
+				url: "https://atproto.com/guides/glossary#app-view",
+				label: "AT Protocol AppView concept",
+				note: "How AppViews aggregate and serve data from the firehose",
+			},
+			{
 				url: "https://developers.cloudflare.com/d1/",
 				label: "Cloudflare D1 docs",
-				note: "The SQLite-based relational database used here",
+				note: "The database powering the aggregated status feed",
 			},
 			{
-				url: "https://orm.drizzle.team/docs/overview",
-				label: "Drizzle ORM docs",
-				note: "Schema definition and query builder used with D1",
-			},
-			{
-				url: "https://atproto.com/specs/lexicon",
-				label: "Lexicon spec",
-				note: "The schema format for the status records being stored",
+				url: "https://atproto.com/specs/did",
+				label: "DID spec",
+				note: "How user identities are resolved across the network",
 			},
 		],
 	} satisfies GoingDeeperContent,

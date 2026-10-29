@@ -1,5 +1,5 @@
+import { readdirSync, statSync } from "node:fs";
 import { defineConfig } from "drizzle-kit";
-import { readdirSync, statSync } from "fs";
 
 const d1Dir = ".wrangler/state/v3/d1/miniflare-D1DatabaseObject";
 let localDbUrl: string | undefined;
@@ -19,5 +19,6 @@ export default defineConfig({
 	schema: "./src/db/schema.ts",
 	out: "./drizzle",
 	dialect: "sqlite",
+	casing: "snake_case",
 	...(localDbUrl ? { dbCredentials: { url: localDbUrl } } : {}),
 });

@@ -11,7 +11,6 @@ import { Document } from "@/app/document";
 import { setCommonHeaders } from "@/app/headers";
 import { sessionStore } from "@/app/lib/session";
 import { Home } from "@/app/pages/home";
-import status from "./app/api/status";
 
 export {
 	AppViewSyncState,
@@ -35,7 +34,6 @@ export default defineApp([
 	route("/oauth/callback", oauthCallback),
 	route("/oauth/logout", oauthLogout),
 	route("/client-metadata.json", oauthClientMetadata),
-	route("/status", status),
 	route("/webhooks/tap", tapWebhook),
 	render(Document, [route("/", Home)]),
 ]);

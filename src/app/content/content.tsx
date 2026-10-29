@@ -3,10 +3,12 @@ import type { RequestInfo } from "rwsdk/worker";
 import {
 	LoggedInUser,
 	LoginForm,
+	PopularStatuses,
 	StatusBoard,
 	StatusSection,
 } from "@/app/components";
 import { getOAuthClient } from "@/app/lib/auth-client";
+import { getPopularStatuses } from "@/db/statuses";
 import statusSchema from "@/lexicons/xyz/statusphere/status";
 import type { AppContext } from "@/worker";
 import { postConfig } from "./config";
@@ -53,29 +55,12 @@ export async function PostContent({ ctx }: RequestInfo<AppContext>) {
 		}
 	}
 
+	const popularStatuses = await getPopularStatuses();
+
 	return (
 		<>
 			{did ? (
-				<>
-					<LoggedInUser did={did} userHandle={userHandle} />
-					<section className="section">
-						<h2 className="sectionTitle">Set your status</h2>
-						<p className="prose">
-							Pick an emoji. It gets written to your local PDS as a new{" "}
-							<code className="inlineCode">xyz.statusphere.status</code> record
-							using <code className="inlineCode">create</code>. Each pick
-							appends a new TID-keyed record but we're just showing the latest
-							here.
-						</p>
-						<StatusSection
-							did={did}
-							currentStatus={currentStatus}
-							listRecordsEndpoint={statusRecordsEndpoint ?? ""}
-							initialRecords={statusRecords}
-						/>
-						<StatusBoard />
-					</section>
-				</>
+				<LoggedInUser did={did} userHandle={userHandle} />
 			) : (
 				<section className="section">
 					<h2 className="sectionTitle">Sign in with AT Protocol</h2>
@@ -86,6 +71,39 @@ export async function PostContent({ ctx }: RequestInfo<AppContext>) {
 					<LoginForm />
 				</section>
 			)}
+
+			{did && (
+				<section className="section">
+					<h2 className="sectionTitle">Set your status</h2>
+					<p className="prose">
+						Pick an emoji. It gets written to your local PDS as a new{" "}
+						<code className="inlineCode">xyz.statusphere.status</code> record
+						using <code className="inlineCode">create</code>. Each pick appends
+						a new TID-keyed record but we're just showing the latest here.
+					</p>
+					<StatusSection
+						did={did}
+						currentStatus={currentStatus}
+						listRecordsEndpoint={statusRecordsEndpoint ?? ""}
+						initialRecords={statusRecords}
+					/>
+				</section>
+			)}
+
+			<section className="section">
+				<h2 className="sectionTitle">Top picked</h2>
+				<p className="prose">
+					Aggregated from all status records in D1 — server-rendered on each
+					page load.
+				</p>
+				<PopularStatuses statuses={popularStatuses} />
+			</section>
+
+			<section className="section">
+				<h2 className="sectionTitle">Current statuses</h2>
+				<p className="prose">Live feed synced via Durable Object WebSocket.</p>
+				<StatusBoard />
+			</section>
 
 			<section className="section">
 				<h2 className="sectionTitle">Review the changes</h2>

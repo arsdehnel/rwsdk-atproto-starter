@@ -1,0 +1,23 @@
+.popularStatusesGrid {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+}
+
+.popularStatusesItem {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.25rem;
+	min-width: 3rem;
+}
+
+.popularStatusesEmoji {
+	font-size: 1.75rem;
+	line-height: 1;
+}
+
+.popularStatusesTally {
+	font-size: 0.75rem;
+	color: #a1a1aa;
+}

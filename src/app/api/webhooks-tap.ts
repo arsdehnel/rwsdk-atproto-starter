@@ -3,7 +3,49 @@ import type { LexValue } from "@atproto/lex";
 import { parseTapEvent, type TapEvent } from "@atproto/tap";
 import type { RequestInfo } from "rwsdk/worker";
 import { deleteStatus, upsertStatus } from "@/db/statuses";
-import { upsertUser } from "@/db/users";
+import { getUserHandle, upsertUser } from "@/db/users";
+
+type DidDocument = {
+	service?: Array<{ id: string; type: string; serviceEndpoint: string }>;
+};
+
+// Resolve a DID to its AT Protocol handle by looking up the DID document
+// and calling describeRepo against the user's actual PDS.
+// Returns null if resolution fails at any step (best-effort).
+async function resolveHandle(did: string): Promise<string | null> {
+	try {
+		let didDoc: DidDocument;
+		if (did.startsWith("did:plc:")) {
+			const plcUrl = env.ATPROTO_PLC_URL || "https://plc.directory";
+			const res = await fetch(`${plcUrl}/${did}`);
+			if (!res.ok) return null;
+			didDoc = (await res.json()) as DidDocument;
+		} else if (did.startsWith("did:web:")) {
+			const domain = did.slice("did:web:".length);
+			const res = await fetch(`https://${domain}/.well-known/did.json`);
+			if (!res.ok) return null;
+			didDoc = (await res.json()) as DidDocument;
+		} else {
+			return null;
+		}
+
+		const pdsService = didDoc.service?.find(
+			(s) =>
+				s.type === "AtprotoPersonalDataServer" &&
+				(s.id === "#atproto_pds" || s.id.endsWith("#atproto_pds")),
+		);
+		if (!pdsService?.serviceEndpoint) return null;
+
+		const res = await fetch(
+			`${pdsService.serviceEndpoint}/xrpc/com.atproto.repo.describeRepo?repo=${did}`,
+		);
+		if (!res.ok) return null;
+		const data = (await res.json()) as { handle?: string };
+		return data.handle ?? null;
+	} catch {
+		return null;
+	}
+}
 
 async function post({ request }: RequestInfo): Promise<Response> {
 	// Tap forwards the same Basic auth credentials it uses for its own API.
@@ -43,19 +85,13 @@ async function post({ request }: RequestInfo): Promise<Response> {
 		const stub = env.DO_APPVIEW_SYNC_STATE.getByName("appViewSyncState");
 		await stub.removeStatus(event.did);
 	} else {
-		const status = (event.record?.status as string) ?? "";
+		const status = event.record?.status as string;
 
-		// Resolve the handle — describeRepo is public, no auth needed.
-		let handle: string | null = null;
-		try {
-			const res = await fetch(
-				`${env.ATPROTO_PDS_URL}/xrpc/com.atproto.repo.describeRepo?repo=${event.did}`,
-			);
-			const data = (await res.json()) as { handle?: string };
-			handle = data.handle ?? null;
-		} catch {
-			// Handle resolution is best-effort; fall back to null.
-		}
+		// Use the stored handle from D1 if we've seen this user before —
+		// avoids two HTTP requests (PLC + describeRepo) on every event.
+		// Falls back to full resolution for new users or previously-failed lookups.
+		const handle =
+			(await getUserHandle(event.did)) ?? (await resolveHandle(event.did));
 
 		await upsertUser(event.did, handle);
 		await upsertStatus(event.did, atUri, status, event.rev);

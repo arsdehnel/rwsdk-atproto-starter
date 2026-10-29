@@ -153,11 +153,12 @@ services:
       test:
         [
           "CMD-SHELL",
-          "wget -q --spider --user=admin --password=${TAP_ADMIN_PASSWORD:-tap-dev-password} http://127.0.0.1:2480/health",
+          "wget -q --spider http://admin:${TAP_ADMIN_PASSWORD:-tap-dev-password}@127.0.0.1:2480/health",
         ]
-      interval: 60s
+      interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 15
+      start_period: 10s
 
   init:
     image: alpine:3.20
